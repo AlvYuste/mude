@@ -18,7 +18,10 @@
     "build": "parcel build ./src/index.html"
   },
   "dependencies": {
+    "@blueprintjs/core": "^3.10.0",
+    "@firebase/app-types": "^0.3.2",
     "firebase": "^5.7.1",
+    "normalize.css": "^8.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   },
