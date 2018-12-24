@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import {
   Navbar,
   NavbarGroup,
@@ -8,17 +10,30 @@ import {
   Alignment,
 } from '@blueprintjs/core';
 import { Account } from './Account';
+import { SignIn } from './SignIn';
 
-export const Header = () => (
-  <Navbar>
-    <NavbarGroup>
-      <NavbarHeading>MUDE</NavbarHeading>
-      <NavbarDivider />
-      <Button minimal icon="document" text="File" />
-      <Button minimal icon="edit" text="Edit" />
-    </NavbarGroup>
-    <NavbarGroup align={Alignment.RIGHT}>
-      <Account />
-    </NavbarGroup>
-  </Navbar>
-);
+export class Header extends Component {
+  render() {
+    const { currentUser } = this.props;
+    return (
+      <Navbar>
+        <NavbarGroup>
+          <NavbarHeading>MUDE</NavbarHeading>
+          <NavbarDivider />
+          <Button minimal icon="document" text="File" />
+          <Button minimal icon="edit" text="Edit" />
+        </NavbarGroup>
+        <NavbarGroup align={Alignment.RIGHT}>
+          {currentUser ? <Account /> : <SignIn />}
+        </NavbarGroup>
+      </Navbar>
+    );
+  }
+}
+
+Header.propTypes = {
+  currentUser: PropTypes.object,
+};
+Header.defaultProps = {
+  currentUser: undefined,
+};
