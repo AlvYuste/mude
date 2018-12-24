@@ -1,0 +1,26 @@
+{
+  "name": "mude",
+  "version": "0.0.1",
+  "description": " Web app to write music",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel ./src/index.html"
+  },
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlvYuste/mude.git"
+  },
+  "author": "Alvaro Yuste Torregrosa <hola@alvaroyuste.com> (https://alvyuste.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlvYuste/mude/issues"
+  },
+  "homepage": "https://github.com/AlvYuste/mude#readme"
+}
