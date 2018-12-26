@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 export const Flex = styled.div`
   display: flex;
   flex-direction: ${({ direction }) => direction || 'row'};
+  align-items: ${({ align }) => align || 'unset'};
   padding: ${({ spaced }) =>
     spaced === 'container' || spaced === true ? '1rem' : 'unset'};
   & > * + * {

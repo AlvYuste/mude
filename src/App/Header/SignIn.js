@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   InputGroup,
@@ -7,10 +8,14 @@ import {
   Divider,
 } from '@blueprintjs/core';
 import styled from '@emotion/styled';
+
 import googleLogo from '../../../assets/google.svg';
 import { Flex } from '../../components/layout/Flex';
 import { ImgIcon } from '../../components/utils/ImgIcon';
 import { prevent } from '../../utils/utils';
+
+const SIGNIN = 'signin';
+const SIGNUP = 'signup';
 
 const SignInFormWrapper = styled(Flex)`
   width: 20rem;
@@ -19,6 +24,7 @@ export class SignIn extends Component {
   state = {
     email: '',
     password: '',
+    action: SIGNIN,
     showPassword: false,
   };
 
@@ -29,12 +35,22 @@ export class SignIn extends Component {
     });
   };
 
+  onToggleAction = () => {
+    const { action } = this.state;
+    this.setState({
+      action: action === SIGNIN ? SIGNUP : SIGNIN,
+    });
+  };
+
   onInputChange = ({ target }) =>
     this.setState({ [target.name]: target.value });
 
   onSubmit = () => {
-    const { email, password } = this.state;
-    console.log(email, password);
+    const { email, password, action } = this.state;
+    const { onSignInWithEmail, onSignUpWithEmail } = this.props;
+    return action === SIGNIN
+      ? onSignInWithEmail({ email, password })
+      : onSignUpWithEmail({ email, password });
   };
 
   renderPasswordToggleButton = () => {
@@ -51,7 +67,8 @@ export class SignIn extends Component {
   };
 
   renderSignInForm = () => {
-    const { email, password, showPassword } = this.state;
+    const { onSignInWithGoogle } = this.props;
+    const { email, password, showPassword, action } = this.state;
     return (
       <form onSubmit={prevent(this.onSubmit)}>
         <SignInFormWrapper spaced direction="column">
@@ -79,8 +96,20 @@ export class SignIn extends Component {
             value={password || ''}
           />
           <Flex spaced="items">
-            <Button fill text="Create account" />
-            <Button fill type="submit" intent={Intent.PRIMARY} text="Sign in" />
+            <Button
+              fill
+              small
+              minimal
+              intent={Intent.PRIMARY}
+              text={action === SIGNIN ? 'Create account' : 'I have an account'}
+              onClick={this.onToggleAction}
+            />
+            <Button
+              fill
+              type="submit"
+              intent={Intent.PRIMARY}
+              text={action === SIGNIN ? 'Sign in' : 'Create account'}
+            />
           </Flex>
           <Divider />
           <p>Or with other account:</p>
@@ -88,6 +117,7 @@ export class SignIn extends Component {
             type="button"
             text="Sign in with Google"
             icon={<ImgIcon src={googleLogo} alt="Google logo" />}
+            onClick={onSignInWithGoogle}
           />
         </SignInFormWrapper>
       </form>
@@ -102,3 +132,15 @@ export class SignIn extends Component {
     );
   }
 }
+
+SignIn.propTypes = {
+  onSignInWithGoogle: PropTypes.func,
+  onSignInWithEmail: PropTypes.func,
+  onSignUpWithEmail: PropTypes.func,
+};
+
+SignIn.defaultProps = {
+  onSignInWithGoogle: () => {},
+  onSignInWithEmail: () => {},
+  onSignUpWithEmail: () => {},
+};
