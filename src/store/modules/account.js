@@ -1,5 +1,6 @@
-import { createAsyncReducer } from '../helpers/async/async.reducer';
+// import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createAsyncAction } from '../helpers/async/async.action';
+import { createAsyncReducer } from '../helpers/async/async.reducer';
 import {
   getCurrentUser,
   signInWithGoogle,
@@ -7,7 +8,6 @@ import {
   signInEmail,
   signUpEmail,
 } from '../../services/auth';
-import { createAsyncReducerTemplate } from '../helpers/async/async.reducer.template';
 
 /* CURRENT_ACCOUNT */
 export const CURRENT_ACCOUNT_KEY = 'CURRENT_ACCOUNT';
@@ -19,17 +19,12 @@ export const currentAccountAction = createAsyncAction({
 
 /* SIGNUP_EMAIL */
 export const SIGNUP_EMAIL_KEY = 'SIGNUP_EMAIL';
-export const signUpWithEmailReducer = createAsyncReducerTemplate(
-  SIGNUP_EMAIL_KEY,
-  {
-    request: s => ({ ...s, loading: true }),
-    success: (s, a) => ({
-      loading: false,
-      data: a.response.user,
-    }),
-    error: (s, a) => ({ loading: false, error: a.error }),
-  },
-);
+export const signUpWithEmailReducer = createAsyncReducer(SIGNUP_EMAIL_KEY, {
+  successReducer: (s, a) => ({
+    loading: false,
+    data: a.response.user,
+  }),
+});
 export const signUpWithEmailAction = createAsyncAction({
   key: SIGNUP_EMAIL_KEY,
   asyncFunction: signUpEmail,
@@ -37,17 +32,12 @@ export const signUpWithEmailAction = createAsyncAction({
 
 /* SIGNIN_EMAIL */
 export const SIGNIN_EMAIL_KEY = 'SIGNIN_EMAIL';
-export const signInWithEmailReducer = createAsyncReducerTemplate(
-  SIGNIN_EMAIL_KEY,
-  {
-    request: s => ({ ...s, loading: true }),
-    success: (s, a) => ({
-      loading: false,
-      data: a.response.user,
-    }),
-    error: (s, a) => ({ loading: false, error: a.error }),
-  },
-);
+export const signInWithEmailReducer = createAsyncReducer(SIGNIN_EMAIL_KEY, {
+  successReducer: (s, a) => ({
+    loading: false,
+    data: a.response.user,
+  }),
+});
 export const signInWithEmailAction = createAsyncAction({
   key: SIGNIN_EMAIL_KEY,
   asyncFunction: signInEmail,
@@ -55,17 +45,12 @@ export const signInWithEmailAction = createAsyncAction({
 
 /* SIGNIN_GOOGLE */
 export const SIGNIN_GOOGLE_KEY = 'SIGNIN_GOOGLE';
-export const signInWithGoogleReducer = createAsyncReducerTemplate(
-  SIGNIN_GOOGLE_KEY,
-  {
-    request: s => ({ ...s, loading: true }),
-    success: (s, a) => ({
-      loading: false,
-      data: a.response.user,
-    }),
-    error: (s, a) => ({ loading: false, error: a.error }),
-  },
-);
+export const signInWithGoogleReducer = createAsyncReducer(SIGNIN_GOOGLE_KEY, {
+  successReducer: (s, a) => ({
+    loading: false,
+    data: a.response.user,
+  }),
+});
 export const signInWithGoogleAction = createAsyncAction({
   key: SIGNIN_GOOGLE_KEY,
   asyncFunction: signInWithGoogle,
@@ -77,8 +62,6 @@ export const signOutAction = createAsyncAction({
   key: SIGNOUT_KEY,
   asyncFunction: signOut,
 });
-export const signOutReducer = createAsyncReducerTemplate(SIGNOUT_KEY, {
-  request: state => ({ ...state, loading: true }),
-  success: () => ({ data: undefined, loading: false }),
-  error: (state, action) => ({ loading: false, error: action.error }),
+export const signOutReducer = createAsyncReducer(SIGNOUT_KEY, {
+  successReducer: () => ({ data: undefined, loading: false }),
 });
