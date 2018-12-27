@@ -1,32 +1,49 @@
 import styled from '@emotion/styled';
+import { css } from '@emotion/core';
 import { mq } from '../../utils/mq';
 
 const spaceItems = distance => ({ spaced, direction }) =>
   spaced === 'items' || spaced === true
-    ? (direction === 'column' && `${distance} 0 0 0`) || `0 0 0 ${distance}`
+    ? css`
+        margin: ${direction === 'column'
+          ? `${distance} 0 0 0`
+          : `0 0 0 ${distance}`};
+      `
     : '';
 const spaceContainer = distance => ({ spaced }) =>
-  spaced === 'container' || spaced === true ? distance : '';
+  spaced === 'container' || spaced === true
+    ? css`
+        padding: ${distance};
+      `
+    : '';
 
 export const Flex = styled.div`
   display: flex;
   flex-direction: ${({ direction }) => direction || 'row'};
   align-items: ${({ align }) => align || 'unset'};
   justify-content: ${({ justify }) => justify || 'unset'};
-  padding: ${spaceContainer('0.25rem')};
+
+  ${spaceContainer('1rem')}
+  & > * + * {
+    ${spaceItems('1rem')};
+  }
+`;
+
+export const FlexResponsive = styled(Flex)`
+  ${spaceContainer('0.25rem')}
   ${mq.mobile} {
-    padding: ${spaceContainer('0.5rem')};
+    ${spaceContainer('0.5rem')}
   }
   ${mq.tablet} {
-    padding: ${spaceContainer('1rem')};
+    ${spaceContainer('1rem')}
   }
   & > * + * {
-    margin: ${spaceItems('0.25rem')};
+    ${spaceItems('0.25rem')};
     ${mq.mobile} {
-      margin: ${spaceItems('0.5rem')};
+      ${spaceItems('0.5rem')};
     }
     ${mq.tablet} {
-      margin: ${spaceItems('1rem')};
+      ${spaceItems('1rem')};
     }
   }
 `;

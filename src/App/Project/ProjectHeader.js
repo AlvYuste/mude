@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import styled from '@emotion/styled';
 import { EditableText, Button, Intent } from '@blueprintjs/core';
-import { Flex } from '../../components/layout/Flex';
+import { FlexResponsive } from '../../components/layout/Flex';
 
 const ProjectTitle = styled.div`
   font-size: 1.5rem;
@@ -19,7 +19,7 @@ export class ProjectHeader extends React.Component {
     const { title } = this.state;
     const { onTitleChange, onAddTrack } = this.props;
     return (
-      <Flex spaced align="center" justify="space-between">
+      <FlexResponsive spaced align="center" justify="space-between">
         <ProjectTitle>
           <EditableText
             placeholder="(Untitled project)"
@@ -28,7 +28,7 @@ export class ProjectHeader extends React.Component {
             onConfirm={onTitleChange}
           />
         </ProjectTitle>
-        <Flex spaced="items">
+        <FlexResponsive spaced="items">
           <Button
             large
             minimal
@@ -43,9 +43,15 @@ export class ProjectHeader extends React.Component {
             icon="record"
             intent={Intent.DANGER}
           />
-          <Button large icon="plus" text="Add track" onClick={onAddTrack} />
-        </Flex>
-      </Flex>
+          <Button
+            large
+            icon="plus"
+            text="Track"
+            title="Add track"
+            onClick={onAddTrack}
+          />
+        </FlexResponsive>
+      </FlexResponsive>
     );
   }
 }
