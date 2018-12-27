@@ -16,7 +16,7 @@ const TrackContentStyled = styled(TrackContent)`
   flex: 1;
 `;
 export const Track = props => (
-  <TrackWrapper className={Classes.NAVBAR}>
+  <TrackWrapper className={Classes.ELEVATION_1}>
     <TrackInfoStyled {...props} />
     <TrackContentStyled />
   </TrackWrapper>
