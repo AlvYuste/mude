@@ -13,6 +13,7 @@
     "global-require": "off",
     "linebreak-style": "off",
     "react/forbid-prop-types": "off",
+    "react/destructuring-assignment": "off",
     "no-loop-func": "off",
     "class-methods-use-this": "off",
     "jsx-a11y/no-noninteractive-tabindex": "off",

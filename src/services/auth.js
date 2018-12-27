@@ -1,10 +1,4 @@
-import app from '@firebase/app';
-import '@firebase/auth';
-import { config } from '../config';
-
-app.initializeApp(config.firebase);
-// const db = app.database().ref();
-const auth = app.auth();
+import { auth } from './api';
 
 export const getCurrentUser = () =>
   new Promise(resolve => auth.onAuthStateChanged(resolve));
@@ -16,7 +10,7 @@ export const signInEmail = async ({ email, password }) =>
   auth.signInWithEmailAndPassword(email, password);
 
 export const signInWithGoogle = async () =>
-  auth.signInWithPopup(new app.auth.GoogleAuthProvider());
+  auth.signInWithPopup(new auth.GoogleAuthProvider());
 
 export const resetPassword = email => auth.sendPasswordResetEmail(email);
 

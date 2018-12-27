@@ -3,6 +3,7 @@ import reduceReducers from 'reduce-reducers';
 
 import * as account from './modules/account';
 import * as errors from './modules/errors';
+import * as project from './modules/project';
 
 export const rootReducer = combineReducers({
   [errors.ERRORS_KEY]: reduceReducers(
@@ -14,5 +15,10 @@ export const rootReducer = combineReducers({
     account.signInWithGoogleReducer,
     account.signInWithEmailReducer,
     account.signOutReducer,
+  ),
+  [project.CURRENT_PROJECT_KEY]: reduceReducers(
+    project.currentProjectReducer,
+    project.updateProjectNameReducer,
+    project.addTrackReducer,
   ),
 });

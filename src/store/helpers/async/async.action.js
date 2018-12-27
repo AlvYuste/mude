@@ -38,7 +38,7 @@ export const actionCreators = {
 };
 export const createAsyncAction = ({
   key,
-  asyncFunction,
+  asyncFunction = () => true,
 }) => payload => dispatch => {
   if (typeof key !== 'string') {
     throw new Error('Expected key to be string.');
