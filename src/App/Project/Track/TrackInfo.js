@@ -1,5 +1,4 @@
 import React from 'react';
-import { omit } from 'ramda';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
@@ -43,12 +42,11 @@ export class TrackInfo extends React.Component {
   };
 
   render() {
-    const { name: _, volume: _2, pan: _3, ...rest } = this.props;
     const {
       track: { name, volume, pan, mute, solo },
     } = this.state;
     return (
-      <TrackInfoWrapper {...omit([], rest)} direction="column">
+      <TrackInfoWrapper {...this.props} direction="column">
         <TrackTitle
           value={name}
           placeholder="(Untitled track)"

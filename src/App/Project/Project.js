@@ -10,8 +10,7 @@ import {
   updateProjectNameAction,
   addTrackAction,
 } from '../../store/modules/project';
-import { Track } from './Track/Track';
-import { FlexResponsive } from '../../components/layout/Flex';
+import { TracksList } from './TracksList';
 
 const ProjectWrapper = styled(Body)`
   background-color: ${Colors.DARK_GRAY4};
@@ -23,10 +22,7 @@ const RawProject = ({ project, updateProjectName, addTrack }) => (
       onTitleChange={updateProjectName}
       onAddTrack={addTrack}
     />
-    <FlexResponsive direction="column" spaced>
-      {!!project.tracks &&
-        project.tracks.map(track => <Track key={track.id} track={track} />)}
-    </FlexResponsive>
+    <TracksList lockAxis="y" useDragHandle tracks={project.tracks} />
   </ProjectWrapper>
 );
 
