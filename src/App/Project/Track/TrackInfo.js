@@ -29,7 +29,7 @@ export class TrackInfo extends React.Component {
     track: this.props.track,
   };
 
-  onChange = (prop, doSubmit) => value => {
+  onChangeState = (prop, doSubmit) => value => {
     const { track } = this.state;
     this.setState({ track: { ...track, [prop]: value } }, () =>
       doSubmit ? this.onSubmit() : null,
@@ -38,19 +38,21 @@ export class TrackInfo extends React.Component {
 
   onSubmit = () => {
     const { track } = this.state;
-    this.props.onChange(track);
+    console.log('SUBMIT');
+    this.props.onChangeTrack(track);
   };
 
   render() {
     const {
       track: { name, volume, pan, mute, solo },
     } = this.state;
+    const { track, onChangeTrack, ...rest } = this.props;
     return (
-      <TrackInfoWrapper {...this.props} direction="column">
+      <TrackInfoWrapper {...rest} direction="column">
         <TrackTitle
           value={name}
           placeholder="(Untitled track)"
-          onChange={this.onChange('name')}
+          onChange={this.onChangeState('name')}
           onConfirm={this.onSubmit}
         />
         <Flex direction="column" style={{ padding: '0.5rem' }}>
@@ -58,7 +60,7 @@ export class TrackInfo extends React.Component {
             maxLabel={<Icon iconSize={14} icon="volume-up" />}
             minLabel={<Icon iconSize={14} icon="volume-off" />}
             value={volume}
-            onChange={this.onChange('volume')}
+            onChange={this.onChangeState('volume')}
             onRelease={this.onSubmit}
           />
           <SimpleSlider
@@ -68,7 +70,7 @@ export class TrackInfo extends React.Component {
             minLabel="L"
             showTrackFill={false}
             value={pan}
-            onChange={this.onChange('pan')}
+            onChange={this.onChangeState('pan')}
             onRelease={this.onSubmit}
           />
         </Flex>
@@ -77,13 +79,13 @@ export class TrackInfo extends React.Component {
             small
             text="mute"
             active={mute}
-            onClick={() => this.onChange('mute', true)(!mute)}
+            onClick={() => this.onChangeState('mute', true)(!mute)}
           />
           <ButtonStyled
             small
             text="solo"
             active={solo}
-            onClick={() => this.onChange('solo', true)(!solo)}
+            onClick={() => this.onChangeState('solo', true)(!solo)}
           />
         </ButtonGroupStyled>
       </TrackInfoWrapper>
@@ -98,7 +100,7 @@ TrackInfo.propTypes = {
     mute: PropTypes.bool,
     solo: PropTypes.bool,
   }),
-  onChange: PropTypes.func,
+  onChangeTrack: PropTypes.func,
 };
 
 TrackInfo.defaultProps = {
@@ -109,5 +111,5 @@ TrackInfo.defaultProps = {
     mute: false,
     solo: false,
   },
-  onChange: console.log,
+  onChangeTrack: () => {},
 };
