@@ -11,10 +11,10 @@ import {
 /* CURRENT_ACCOUNT */
 export const CURRENT_ACCOUNT_KEY = 'CURRENT_ACCOUNT';
 export const currentAccountReducer = createAsyncReducer(CURRENT_ACCOUNT_KEY);
-export const currentAccountAction = createAsyncAction({
-  key: CURRENT_ACCOUNT_KEY,
-  asyncFunction: getCurrentUser,
-});
+export const currentAccountAction = createAsyncAction(
+  CURRENT_ACCOUNT_KEY,
+  getCurrentUser,
+);
 
 /* SIGNUP_EMAIL */
 export const SIGNUP_EMAIL_KEY = 'SIGNUP_EMAIL';
@@ -24,10 +24,10 @@ export const signUpWithEmailReducer = createAsyncReducer(SIGNUP_EMAIL_KEY, {
     data: a.response.user,
   }),
 });
-export const signUpWithEmailAction = createAsyncAction({
-  key: SIGNUP_EMAIL_KEY,
-  asyncFunction: signUpEmail,
-});
+export const signUpWithEmailAction = createAsyncAction(
+  SIGNUP_EMAIL_KEY,
+  signUpEmail,
+);
 
 /* SIGNIN_EMAIL */
 export const SIGNIN_EMAIL_KEY = 'SIGNIN_EMAIL';
@@ -37,10 +37,10 @@ export const signInWithEmailReducer = createAsyncReducer(SIGNIN_EMAIL_KEY, {
     data: a.response.user,
   }),
 });
-export const signInWithEmailAction = createAsyncAction({
-  key: SIGNIN_EMAIL_KEY,
-  asyncFunction: signInEmail,
-});
+export const signInWithEmailAction = createAsyncAction(
+  SIGNIN_EMAIL_KEY,
+  signInEmail,
+);
 
 /* SIGNIN_GOOGLE */
 export const SIGNIN_GOOGLE_KEY = 'SIGNIN_GOOGLE';
@@ -50,17 +50,14 @@ export const signInWithGoogleReducer = createAsyncReducer(SIGNIN_GOOGLE_KEY, {
     data: a.response.user,
   }),
 });
-export const signInWithGoogleAction = createAsyncAction({
-  key: SIGNIN_GOOGLE_KEY,
-  asyncFunction: signInWithGoogle,
-});
+export const signInWithGoogleAction = createAsyncAction(
+  SIGNIN_GOOGLE_KEY,
+  signInWithGoogle,
+);
 
 /* SIGNOUT */
 export const SIGNOUT_KEY = 'SIGNOUT';
-export const signOutAction = createAsyncAction({
-  key: SIGNOUT_KEY,
-  asyncFunction: signOut,
-});
+export const signOutAction = createAsyncAction(SIGNOUT_KEY, signOut);
 export const signOutReducer = createAsyncReducer(SIGNOUT_KEY, {
   successReducer: () => ({ data: undefined, loading: false }),
 });

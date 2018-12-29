@@ -36,18 +36,17 @@ export const actionCreators = {
   [SUCCESS]: createSuccessAction,
   [ERROR]: createErrorAction,
 };
-export const createAsyncAction = ({
+export const createAsyncAction = (
   key,
   asyncFunction = () => true,
-}) => payload => dispatch => {
+) => payload => (dispatch, getState) => {
   if (typeof key !== 'string') {
     throw new Error('Expected key to be string.');
   }
   const [requestType, successType, failureType] = createAsyncTypes(key);
   const transactionId = uuid();
-
   dispatch({ type: requestType, payload, transactionId });
-  const result = asyncFunction(payload);
+  const result = asyncFunction(payload, getState());
   if (!result || !result.then) {
     return dispatch({
       response: result,

@@ -2,7 +2,7 @@ export const ERRORS_KEY = 'ERRORS';
 
 export const errorsReducer = (state = [], action) => {
   const { type, error, payload, transactionId } = action;
-  if (error && payload && payload.notifyErrors !== false) {
+  if (error && (!payload || payload.notifyErrors !== false)) {
     return [
       {
         key: transactionId,

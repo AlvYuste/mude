@@ -18,6 +18,7 @@ export const rootReducer = combineReducers({
   ),
   [project.CURRENT_PROJECT_KEY]: reduceReducers(
     project.currentProjectReducer,
+    project.saveProjectReducer,
     project.updateProjectNameReducer,
     project.updateProjectTracksReducer,
     project.addTrackReducer,

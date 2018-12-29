@@ -38,7 +38,6 @@ export class TrackInfo extends React.Component {
 
   onSubmit = () => {
     const { track } = this.state;
-    console.log('SUBMIT');
     this.props.onChangeTrack(track);
   };
 

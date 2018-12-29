@@ -7,10 +7,10 @@ import {
   NavbarGroup,
   NavbarHeading,
   NavbarDivider,
-  Button,
   Alignment,
   Spinner,
 } from '@blueprintjs/core';
+import styled from '@emotion/styled';
 import { Account } from './Account';
 import { SignIn } from './SignIn';
 import {
@@ -21,6 +21,16 @@ import {
   signInWithEmailAction,
   signUpWithEmailAction,
 } from '../../store/modules/account';
+import { mq } from '../../utils/mq';
+import { HeaderMenu } from './HeaderMenu';
+import { saveProjectAction } from '../../store/modules/project';
+
+const NavbarStyled = styled(Navbar)`
+  padding: 0 0.5rem;
+  ${mq.tablet} {
+    padding: 0 1rem;
+  }
+`;
 
 class RawHeader extends Component {
   componentDidMount = () => {
@@ -36,14 +46,21 @@ class RawHeader extends Component {
       signOut,
       signInWithEmail,
       signUpWithEmail,
+      openNewProject,
+      openProject,
+      saveProject,
     } = this.props;
     return (
-      <Navbar>
+      <NavbarStyled>
         <NavbarGroup>
           <NavbarHeading>MUDE</NavbarHeading>
           <NavbarDivider />
-          <Button minimal icon="document" text="File" />
-          <Button minimal icon="edit" text="Edit" />
+          <HeaderMenu
+            isAuthenticated={!!account}
+            onNewProject={openNewProject}
+            onOpenProject={openProject}
+            onSaveProject={saveProject}
+          />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
           {!!accountLoading && <Spinner size={Spinner.SIZE_SMALL} />}
@@ -58,7 +75,7 @@ class RawHeader extends Component {
               />
             ))}
         </NavbarGroup>
-      </Navbar>
+      </NavbarStyled>
     );
   }
 }
@@ -71,6 +88,8 @@ RawHeader.propTypes = {
   signInWithEmail: PropTypes.func.isRequired,
   signUpWithEmail: PropTypes.func.isRequired,
   signOut: PropTypes.func.isRequired,
+  openNewProject: PropTypes.func.isRequired,
+  openProject: PropTypes.func.isRequired,
 };
 RawHeader.defaultProps = {
   account: undefined,
@@ -89,6 +108,9 @@ const mapDispatchToProps = dispatch => ({
   signInWithEmail: ({ email, password }) =>
     dispatch(signInWithEmailAction({ email, password })),
   signOut: () => dispatch(signOutAction()),
+  openNewProject: () => dispatch(openNewProjectAction()),
+  openProject: id => dispatch(openProjectAction(id)),
+  saveProject: () => dispatch(saveProjectAction()),
 });
 export const Header = connect(
   mapStateToProps,
