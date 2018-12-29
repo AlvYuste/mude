@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Toaster, Toast, Intent } from '@blueprintjs/core';
 import { ERRORS_KEY, dismissErrorAction } from '../store/modules/errors';
 
-export const RawErrorsDisplay = ({ errors, dismissError }) => (
+export const RawToastsManager = ({ errors, dismissError }) => (
   <Toaster>
     {errors.map(error => (
       <Toast
@@ -17,11 +17,11 @@ export const RawErrorsDisplay = ({ errors, dismissError }) => (
     ))}
   </Toaster>
 );
-RawErrorsDisplay.propTypes = {
+RawToastsManager.propTypes = {
   errors: PropTypes.array,
   dismissError: PropTypes.func.isRequired,
 };
-RawErrorsDisplay.defaultProps = {
+RawToastsManager.defaultProps = {
   errors: [],
 };
 
@@ -32,7 +32,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = dispatch => ({
   dismissError: key => dispatch(dismissErrorAction(key)),
 });
-export const ErrorsDisplay = connect(
+export const ToastsManager = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(RawErrorsDisplay);
+)(RawToastsManager);

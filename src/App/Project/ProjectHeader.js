@@ -10,51 +10,34 @@ const ProjectTitle = styled.div`
   font-weight: 500;
   max-width: 50%;
 `;
-export class ProjectHeader extends React.Component {
-  state = {
-    title: this.props.title,
-  };
-
-  render() {
-    const { title } = this.state;
-    const { onTitleChange, onAddTrack } = this.props;
-    return (
-      <FlexResponsive spaced align="center" justify="space-between">
-        <ProjectTitle>
-          <EditableText
-            placeholder="(Untitled project)"
-            value={title}
-            onChange={value => this.setState({ title: value })}
-            onConfirm={onTitleChange}
-          />
-        </ProjectTitle>
-        <FlexResponsive spaced="items">
-          <Button
-            large
-            minimal
-            title="Play"
-            icon="play"
-            intent={Intent.SUCCESS}
-          />
-          <Button
-            large
-            minimal
-            title="Record"
-            icon="record"
-            intent={Intent.DANGER}
-          />
-          <Button
-            large
-            icon="plus"
-            text="Track"
-            title="Add track"
-            onClick={onAddTrack}
-          />
-        </FlexResponsive>
-      </FlexResponsive>
-    );
-  }
-}
+export const ProjectHeader = ({ title, onTitleChange, onAddTrack }) => (
+  <FlexResponsive spaced align="center" justify="space-between">
+    <ProjectTitle>
+      <EditableText
+        placeholder="(Untitled project)"
+        value={title}
+        onChange={onTitleChange}
+      />
+    </ProjectTitle>
+    <FlexResponsive spaced="items">
+      <Button large minimal title="Play" icon="play" intent={Intent.SUCCESS} />
+      <Button
+        large
+        minimal
+        title="Record"
+        icon="record"
+        intent={Intent.DANGER}
+      />
+      <Button
+        large
+        icon="plus"
+        text="Track"
+        title="Add track"
+        onClick={onAddTrack}
+      />
+    </FlexResponsive>
+  </FlexResponsive>
+);
 ProjectHeader.propTypes = {
   title: PropTypes.string,
   onTitleChange: PropTypes.func,

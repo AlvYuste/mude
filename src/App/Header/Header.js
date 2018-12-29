@@ -23,7 +23,12 @@ import {
 } from '../../store/modules/account';
 import { mq } from '../../utils/mq';
 import { HeaderMenu } from './HeaderMenu';
-import { saveProjectAction } from '../../store/modules/project';
+import {
+  saveProjectAction,
+  newProjectAction,
+  OWN_PROJECTS_KEY,
+  ownProjectsAction,
+} from '../../store/modules/project';
 
 const NavbarStyled = styled(Navbar)`
   padding: 0 0.5rem;
@@ -38,6 +43,14 @@ class RawHeader extends Component {
     getCurrentAccount();
   };
 
+  componentDidUpdate(prevProps) {
+    const { account: prevAccount } = prevProps;
+    const { account, getOwnProjects } = this.props;
+    if (account && (!prevAccount || prevAccount.uid !== account.uid)) {
+      getOwnProjects();
+    }
+  }
+
   render() {
     const {
       account,
@@ -46,6 +59,7 @@ class RawHeader extends Component {
       signOut,
       signInWithEmail,
       signUpWithEmail,
+      ownProjects,
       openNewProject,
       openProject,
       saveProject,
@@ -57,6 +71,7 @@ class RawHeader extends Component {
           <NavbarDivider />
           <HeaderMenu
             isAuthenticated={!!account}
+            ownProjects={ownProjects}
             onNewProject={openNewProject}
             onOpenProject={openProject}
             onSaveProject={saveProject}
@@ -82,23 +97,27 @@ class RawHeader extends Component {
 
 RawHeader.propTypes = {
   account: PropTypes.object,
+  ownProjects: PropTypes.arrayOf(PropTypes.object),
   accountLoading: PropTypes.bool,
   getCurrentAccount: PropTypes.func.isRequired,
   signInWithGoogle: PropTypes.func.isRequired,
   signInWithEmail: PropTypes.func.isRequired,
   signUpWithEmail: PropTypes.func.isRequired,
   signOut: PropTypes.func.isRequired,
+  getOwnProjects: PropTypes.func.isRequired,
   openNewProject: PropTypes.func.isRequired,
   openProject: PropTypes.func.isRequired,
 };
 RawHeader.defaultProps = {
   account: undefined,
   accountLoading: false,
+  ownProjects: [],
 };
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   account: state[CURRENT_ACCOUNT_KEY].data,
   accountLoading: state[CURRENT_ACCOUNT_KEY].loading,
+  ownProjects: state[OWN_PROJECTS_KEY].data,
 });
 const mapDispatchToProps = dispatch => ({
   getCurrentAccount: () => dispatch(currentAccountAction()),
@@ -108,7 +127,8 @@ const mapDispatchToProps = dispatch => ({
   signInWithEmail: ({ email, password }) =>
     dispatch(signInWithEmailAction({ email, password })),
   signOut: () => dispatch(signOutAction()),
-  openNewProject: () => dispatch(openNewProjectAction()),
+  getOwnProjects: () => dispatch(ownProjectsAction()),
+  openNewProject: () => dispatch(newProjectAction()),
   openProject: id => dispatch(openProjectAction(id)),
   saveProject: () => dispatch(saveProjectAction()),
 });

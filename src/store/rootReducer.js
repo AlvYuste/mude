@@ -16,8 +16,10 @@ export const rootReducer = combineReducers({
     account.signInWithEmailReducer,
     account.signOutReducer,
   ),
+  [project.OWN_PROJECTS_KEY]: reduceReducers(project.ownProjectsReducer),
   [project.CURRENT_PROJECT_KEY]: reduceReducers(
     project.currentProjectReducer,
+    project.newProjectReducer,
     project.saveProjectReducer,
     project.updateProjectNameReducer,
     project.updateProjectTracksReducer,

@@ -10,6 +10,7 @@ export class HeaderMenu extends React.Component {
       onNewProject,
       onOpenProject,
       onSaveProject,
+      ownProjects,
     } = this.props;
     return (
       <Menu>
@@ -25,17 +26,17 @@ export class HeaderMenu extends React.Component {
           label="Ctrl+S"
           onClick={onSaveProject}
         />
-        {isAuthenticated && (
+        {isAuthenticated && ownProjects && ownProjects.length && (
           <>
-            <MenuItem
-              icon="folder-open"
-              text="Open..."
-              label="Ctrl+O"
-              onClick={onOpenProject}
-            />
-            {/* <MenuItem icon="folder-shared-open" text="Open recent">
-              <MenuItem text="Place for recent projects" />
-            </MenuItem> */}
+            <MenuItem icon="folder-open" text="Open..." label="Ctrl+O">
+              {ownProjects.map(project => (
+                <MenuItem
+                  key={project.id}
+                  text={project.name || '(Untitled project)'}
+                  onClick={() => onOpenProject(project.id)}
+                />
+              ))}
+            </MenuItem>
           </>
         )}
       </Menu>
@@ -60,12 +61,14 @@ export class HeaderMenu extends React.Component {
 
 HeaderMenu.propTypes = {
   isAuthenticated: PropTypes.bool,
+  ownProjects: PropTypes.arrayOf(PropTypes.object),
   onNewProject: PropTypes.func,
   onOpenProject: PropTypes.func,
   onSaveProject: PropTypes.func,
 };
 HeaderMenu.defaultProps = {
   isAuthenticated: false,
+  ownProjects: [],
   onNewProject: () => {},
   onOpenProject: () => {},
   onSaveProject: () => {},

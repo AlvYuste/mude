@@ -5,7 +5,7 @@ import { createAsyncAction } from '../helpers/async/async.action';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
-import { saveProject } from '../../services/project';
+import { saveProject, getOwnProjects } from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
 
 const nameLens = R.lensPath(['data', 'name']);
@@ -20,6 +20,18 @@ const trackLens = id =>
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
 export const currentProjectReducer = createAsyncReducer(CURRENT_PROJECT_KEY);
 export const currentProjectAction = createAsyncAction(CURRENT_PROJECT_KEY);
+
+/* OWN_PROJECTS */
+export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
+export const ownProjectsReducer = createAsyncReducer(
+  OWN_PROJECTS_KEY,
+  undefined,
+  [],
+);
+export const ownProjectsAction = createAsyncAction(
+  OWN_PROJECTS_KEY,
+  getOwnProjects,
+);
 
 /* CURRENT PROJECT SAVE */
 export const PROJECT_SAVE_KEY = 'PROJECT_SAVE';
@@ -44,10 +56,13 @@ export const saveProjectAction = () => (dispatch, getState) => {
 };
 export const saveProjectReducer = createAsyncReducer(PROJECT_SAVE_KEY);
 
-// TODO: complete the action
-// openNewProjectAction;
-// TODO: complete the action
-// openProjectAction;
+/* PROJECT_NEW */
+export const PROJECT_NEW_KEY = 'PROJECT_NEW';
+export const newProjectReducer = createBasicReducer(
+  PROJECT_NEW_KEY,
+  () => ({}),
+);
+export const newProjectAction = createBasicAction(PROJECT_NEW_KEY);
 
 /* PROJECT_UPDATE_NAME */
 export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
