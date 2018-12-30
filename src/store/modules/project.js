@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import uuid from 'uuid';
+import { navigate } from '@reach/router';
 import { lensById } from '../../utils/fp';
-import { createAsyncAction } from '../helpers/async/async.action';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
@@ -27,6 +27,7 @@ export const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
 export const openProjectReducer = createAsyncReducer(OPEN_PROJECT_KEY);
 export const openProjectAction = payload => dispatch => {
   const [req, succ, fail] = createAsyncTypes(OPEN_PROJECT_KEY);
+  const transactionId = uuid();
   dispatch({ type: req });
   getProjectDetail(payload, asyncResponse =>
     dispatch({
@@ -36,6 +37,7 @@ export const openProjectAction = payload => dispatch => {
   ).catch(error =>
     dispatch({
       type: fail,
+      transactionId,
       error: error.message,
     }),
   );
@@ -56,6 +58,7 @@ export const ownProjectsAction = () => dispatch => {
   ).catch(error =>
     dispatch({
       type: fail,
+      transactionId,
       error: error.message,
     }),
   );
@@ -88,7 +91,9 @@ export const newProjectReducer = createBasicReducer(
   PROJECT_NEW_KEY,
   () => ({}),
 );
-export const newProjectAction = createBasicAction(PROJECT_NEW_KEY);
+export const newProjectAction = createBasicAction(PROJECT_NEW_KEY, () =>
+  navigate('/'),
+);
 
 /* PROJECT_UPDATE_NAME */
 export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';

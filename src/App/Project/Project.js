@@ -131,7 +131,7 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
-  projectError: PropTypes.object,
+  projectError: PropTypes.string,
   projectLoading: PropTypes.bool,
   updateProjectName: PropTypes.func.isRequired,
   updateTracks: PropTypes.func.isRequired,
