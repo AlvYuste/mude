@@ -28,6 +28,7 @@ import {
   newProjectAction,
   OWN_PROJECTS_KEY,
   ownProjectsAction,
+  CURRENT_PROJECT_KEY,
 } from '../../store/modules/project';
 
 const NavbarStyled = styled(Navbar)`
@@ -54,6 +55,7 @@ class RawHeader extends Component {
   render() {
     const {
       account,
+      currentProject,
       accountLoading,
       signInWithGoogle,
       signOut,
@@ -71,6 +73,7 @@ class RawHeader extends Component {
           <NavbarDivider />
           <HeaderMenu
             isAuthenticated={!!account}
+            currentProject={currentProject}
             ownProjects={ownProjects}
             onNewProject={openNewProject}
             onOpenProject={openProject}
@@ -97,6 +100,7 @@ class RawHeader extends Component {
 
 RawHeader.propTypes = {
   account: PropTypes.object,
+  currentProject: PropTypes.object,
   ownProjects: PropTypes.arrayOf(PropTypes.object),
   accountLoading: PropTypes.bool,
   getCurrentAccount: PropTypes.func.isRequired,
@@ -110,6 +114,7 @@ RawHeader.propTypes = {
 };
 RawHeader.defaultProps = {
   account: undefined,
+  currentProject: undefined,
   accountLoading: false,
   ownProjects: [],
 };
@@ -117,6 +122,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   account: state[CURRENT_ACCOUNT_KEY].data,
   accountLoading: state[CURRENT_ACCOUNT_KEY].loading,
+  currentProject: state[CURRENT_PROJECT_KEY].data,
   ownProjects: state[OWN_PROJECTS_KEY].data,
 });
 const mapDispatchToProps = dispatch => ({

@@ -8,19 +8,23 @@ if (!firebase.apps.length) {
 }
 const db = firebase.database();
 
-export const getOwnProjects = async () => {
+const ownProjectsRef = account =>
+  db
+    .ref('projects')
+    .orderByChild('owner')
+    .equalTo(account.uid);
+
+export const getOwnProjects = async (updateCallback = () => {}) => {
   const account = await getCurrentUser();
   if (!account) {
     throw new Error('You must sign in to get your project');
   }
-  return Object.values(
-    (await db
-      .ref('projects')
-      .orderByChild('owner')
-      .equalTo(account.uid)
-      .once('value')).val(),
+  ownProjectsRef(account).on('value', snapshot =>
+    updateCallback(Object.values(snapshot.val())),
   );
+  return Object.values((await ownProjectsRef(account).once('value')).val());
 };
+
 export const saveProject = async (project = {}) => {
   const account = await getCurrentUser();
   if (!account) {

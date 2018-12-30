@@ -7,6 +7,7 @@ import {
   signInEmail,
   signUpEmail,
 } from '../../services/auth';
+import { OWN_PROJECTS_KEY } from './project';
 
 /* CURRENT_ACCOUNT */
 export const CURRENT_ACCOUNT_KEY = 'CURRENT_ACCOUNT';
@@ -59,5 +60,11 @@ export const signInWithGoogleAction = createAsyncAction(
 export const SIGNOUT_KEY = 'SIGNOUT';
 export const signOutAction = createAsyncAction(SIGNOUT_KEY, signOut);
 export const signOutReducer = createAsyncReducer(SIGNOUT_KEY, {
-  successReducer: () => ({ data: undefined, loading: false }),
+  requestReducer: state => state,
+  successReducer: state => ({
+    ...state,
+    [CURRENT_ACCOUNT_KEY]: {},
+    [OWN_PROJECTS_KEY]: {},
+  }),
+  errorReducer: state => state,
 });

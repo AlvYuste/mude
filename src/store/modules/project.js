@@ -23,32 +23,33 @@ export const currentProjectAction = createAsyncAction(CURRENT_PROJECT_KEY);
 
 /* OWN_PROJECTS */
 export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
-export const ownProjectsReducer = createAsyncReducer(
-  OWN_PROJECTS_KEY,
-  undefined,
-  [],
-);
-export const ownProjectsAction = createAsyncAction(
-  OWN_PROJECTS_KEY,
-  getOwnProjects,
-);
+export const ownProjectsReducer = createAsyncReducer(OWN_PROJECTS_KEY);
+export const ownProjectsAction = () => dispatch => {
+  const [req, succ] = createAsyncTypes(OWN_PROJECTS_KEY);
+  const transactionId = uuid();
+  dispatch({ type: req, transactionId });
+  getOwnProjects(asyncResponse =>
+    dispatch({
+      type: succ,
+      response: asyncResponse,
+    }),
+  );
+};
 
 /* CURRENT PROJECT SAVE */
 export const PROJECT_SAVE_KEY = 'PROJECT_SAVE';
 export const saveProjectAction = () => (dispatch, getState) => {
-  const [requestType, successType, failureType] = createAsyncTypes(
-    PROJECT_SAVE_KEY,
-  );
+  const [req, succ, fail] = createAsyncTypes(PROJECT_SAVE_KEY);
   const transactionId = uuid();
   const {
     [CURRENT_PROJECT_KEY]: { data: currentProject },
   } = getState();
-  dispatch({ type: requestType, transactionId });
+  dispatch({ type: req, transactionId });
   saveProject(currentProject).then(
-    response => dispatch({ response, type: successType, transactionId }),
+    response => dispatch({ response, type: succ, transactionId }),
     error =>
       dispatch({
-        type: failureType,
+        type: fail,
         error: error.message,
         transactionId,
       }),

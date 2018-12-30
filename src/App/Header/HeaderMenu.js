@@ -5,13 +5,7 @@ import { Button, Popover, Menu, MenuItem, Position } from '@blueprintjs/core';
 
 export class HeaderMenu extends React.Component {
   renderProjectMenu = () => {
-    const {
-      isAuthenticated,
-      onNewProject,
-      onOpenProject,
-      onSaveProject,
-      ownProjects,
-    } = this.props;
+    const { onNewProject, onSaveProject } = this.props;
     return (
       <Menu>
         <MenuItem
@@ -26,20 +20,39 @@ export class HeaderMenu extends React.Component {
           label="Ctrl+S"
           onClick={onSaveProject}
         />
-        {isAuthenticated && ownProjects && ownProjects.length && (
-          <>
-            <MenuItem icon="folder-open" text="Open..." label="Ctrl+O">
-              {ownProjects.map(project => (
-                <MenuItem
-                  key={project.id}
-                  text={project.name || '(Untitled project)'}
-                  onClick={() => onOpenProject(project.id)}
-                />
-              ))}
-            </MenuItem>
-          </>
-        )}
+        {this.renderOpenProjectSubmenu()}
       </Menu>
+    );
+  };
+
+  renderOpenProjectSubmenu = () => {
+    const {
+      isAuthenticated,
+      onOpenProject,
+      ownProjects,
+      currentProject,
+    } = this.props;
+    if (!isAuthenticated || !ownProjects || !ownProjects.length) {
+      return '';
+    }
+    return (
+      <MenuItem icon="folder-open" text="Open..." label="Ctrl+O">
+        {ownProjects
+          .filter(p => !!p.id)
+          .map(p => (
+            <MenuItem
+              key={p.id}
+              disabled={currentProject && p.id === currentProject.id}
+              text={p.name || '(Untitled project)'}
+              onClick={() => onOpenProject(p.id)}
+              label={
+                !!currentProject && p.id === currentProject.id
+                  ? '(Already opened)'
+                  : ''
+              }
+            />
+          ))}
+      </MenuItem>
     );
   };
 
@@ -61,6 +74,7 @@ export class HeaderMenu extends React.Component {
 
 HeaderMenu.propTypes = {
   isAuthenticated: PropTypes.bool,
+  currentProject: PropTypes.object,
   ownProjects: PropTypes.arrayOf(PropTypes.object),
   onNewProject: PropTypes.func,
   onOpenProject: PropTypes.func,
@@ -68,6 +82,7 @@ HeaderMenu.propTypes = {
 };
 HeaderMenu.defaultProps = {
   isAuthenticated: false,
+  currentProject: undefined,
   ownProjects: [],
   onNewProject: () => {},
   onOpenProject: () => {},
