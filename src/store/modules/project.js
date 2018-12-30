@@ -12,11 +12,10 @@ import {
 } from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
 
-const nameLens = R.lensPath(['data', 'name']);
-const tracksLens = R.lensPath(['data', 'tracks']);
+const dataLense = prop => R.lensPath(['data', prop]);
 const trackLens = id =>
   R.compose(
-    tracksLens,
+    dataLense('tracks'),
     lensById(id),
   );
 
@@ -99,7 +98,7 @@ export const newProjectAction = createBasicAction(PROJECT_NEW_KEY, () =>
 export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
 export const updateProjectNameReducer = createBasicReducer(
   PROJECT_UPDATE_NAME_KEY,
-  (state, action) => R.set(nameLens, action.payload, state),
+  (state, action) => R.set(dataLense('name'), action.payload, state),
 );
 export const updateProjectNameAction = createBasicAction(
   PROJECT_UPDATE_NAME_KEY,
@@ -109,11 +108,20 @@ export const updateProjectNameAction = createBasicAction(
 export const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
 export const updateProjectTracksReducer = createBasicReducer(
   PROJECT_UPDATE_TRACKS_KEY,
-  (state, action) => R.set(tracksLens, action.payload, state),
+  (state, action) => R.set(dataLense('tracks'), action.payload, state),
 );
 export const updateProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
 );
+
+/* PROJECT_SELECT_TRACK */
+export const PROJECT_SELECT_TRACK_KEY = 'PROJECT_SELECT_TRACK';
+export const selectTrackReducer = createBasicReducer(
+  PROJECT_SELECT_TRACK_KEY,
+  (state, action) =>
+    R.set(dataLense('selectedTrackId'), action.payload.id, state),
+);
+export const selectTrackAction = createBasicAction(PROJECT_SELECT_TRACK_KEY);
 
 /* PROJECT_ADD_TRACK */
 export const PROJECT_ADD_TRACK_KEY = 'PROJECT_ADD_TRACK';
@@ -121,7 +129,7 @@ export const addTrackReducer = createBasicReducer(
   PROJECT_ADD_TRACK_KEY,
   (state, action) =>
     R.over(
-      tracksLens,
+      dataLense('tracks'),
       R.prepend({ id: action.transactionId, volume: 5 }),
       state,
     ),

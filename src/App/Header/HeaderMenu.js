@@ -41,15 +41,16 @@ export class HeaderMenu extends React.Component {
     if (!ownProjects || !ownProjects.length) {
       return <MenuItem disabled text="(No projects saved)" />;
     }
+    const isCurrentProject = id => !!currentProject && id === currentProject.id;
     return ownProjects
       .filter(p => !!p.id)
       .map(p => (
         <MenuItem
           key={p.id}
-          active={currentProject && p.id === currentProject.id}
+          disabled={isCurrentProject(p.id)}
           text={p.name || '(Untitled project)'}
           onClick={() => onOpenProject(p.id)}
-          label={!!currentProject && p.id === currentProject.id ? 'Opened' : ''}
+          label={isCurrentProject(p.id) ? '(Opened)' : ''}
         />
       ));
   };

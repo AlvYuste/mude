@@ -26,6 +26,7 @@ export const rootReducer = reduceReducers(
       project.updateProjectTracksReducer,
       project.addTrackReducer,
       project.updateTrackReducer,
+      project.selectTrackReducer,
     ),
   }),
 );

@@ -12,7 +12,8 @@ import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
 
 const TrackInfoWrapper = styled(Flex)`
-  background-color: ${Colors.DARK_GRAY5};
+  background-color: ${({ isSelected }) =>
+    isSelected ? Colors.DARK_GRAY5 : Colors.DARK_GRAY4};
   padding: 0.5rem;
 `;
 const TrackTitle = styled(EditableText)`
@@ -22,7 +23,8 @@ const ButtonGroupStyled = styled(ButtonGroup)`
   justify-content: center;
 `;
 const ButtonStyled = styled(Button)`
-  font-variant: small-caps;
+  text-transform: uppercase;
+  font-size: 0.65rem;
 `;
 export class TrackInfo extends React.Component {
   state = {
@@ -99,6 +101,7 @@ TrackInfo.propTypes = {
     mute: PropTypes.bool,
     solo: PropTypes.bool,
   }),
+  isSelected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
 };
 
@@ -110,5 +113,6 @@ TrackInfo.defaultProps = {
     mute: false,
     solo: false,
   },
+  isSelected: false,
   onChangeTrack: () => {},
 };

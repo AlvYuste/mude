@@ -18,10 +18,14 @@ const TrackInfoStyled = styled(TrackInfo)`
 const TrackContentStyled = styled(TrackContent)`
   flex: 1;
 `;
-const RawTrack = ({ onChangeTrack, track, ...rest }) => (
+const RawTrack = ({ onChangeTrack, track, isSelected, ...rest }) => (
   <TrackWrapper {...rest} className={`${Classes.ELEVATION_1} ${Classes.DARK}`}>
-    <TrackHandle />
-    <TrackInfoStyled track={track} onChangeTrack={onChangeTrack} />
+    <TrackHandle isSelected={isSelected} />
+    <TrackInfoStyled
+      track={track}
+      isSelected={isSelected}
+      onChangeTrack={onChangeTrack}
+    />
     <TrackContentStyled />
   </TrackWrapper>
 );
@@ -36,6 +40,7 @@ RawTrack.propTypes = {
     mute: PropTypes.bool,
     solo: PropTypes.bool,
   }),
+  isSelected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
 };
 
@@ -47,5 +52,6 @@ RawTrack.defaultProps = {
     mute: false,
     solo: false,
   },
+  isSelected: false,
   onChangeTrack: () => {},
 };

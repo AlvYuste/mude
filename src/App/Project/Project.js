@@ -13,6 +13,7 @@ import {
   updateTrackAction,
   openProjectAction,
   newProjectAction,
+  selectTrackAction,
 } from '../../store/modules/project';
 import { TracksList } from './TracksList';
 import { getSearchValue } from '../../utils/utils';
@@ -70,6 +71,7 @@ class RawProject extends React.Component {
       updateProjectName,
       updateTracks,
       addTrack,
+      selectTrack,
       updateTrack,
     } = this.props;
     return (
@@ -88,6 +90,8 @@ class RawProject extends React.Component {
             onSortEnd={({ oldIndex, newIndex }) =>
               updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
             }
+            selectedTrackId={project.selectedTrackId}
+            onClickTrack={selectTrack}
             onChangeTrack={updateTrack}
           />
         ) : (
@@ -124,6 +128,7 @@ const mapDispatchToProps = dispatch => ({
   updateTracks: tracks => dispatch(updateProjectTracksAction(tracks)),
   addTrack: () => dispatch(addTrackAction()),
   updateTrack: track => dispatch(updateTrackAction(track)),
+  selectTrack: track => dispatch(selectTrackAction(track)),
 });
 
 export const Project = connect(
@@ -145,6 +150,7 @@ RawProject.propTypes = {
   updateTracks: PropTypes.func.isRequired,
   addTrack: PropTypes.func.isRequired,
   updateTrack: PropTypes.func.isRequired,
+  selectTrack: PropTypes.func.isRequired,
   openProject: PropTypes.func.isRequired,
   newProject: PropTypes.func.isRequired,
 };

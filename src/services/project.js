@@ -18,7 +18,7 @@ const projectByIdRef = id => db.ref(`projects/${id}`);
 export const getOwnProjects = async (updateCallback = () => {}) => {
   const account = await getCurrentUser();
   if (!account) {
-    throw new Error('You must sign in to get your project');
+    throw new Error('You must sign in to get your projects');
   }
   ownProjectsRef(account).on('value', snapshot =>
     updateCallback(Object.values(snapshot.val())),
