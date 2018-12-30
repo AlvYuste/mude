@@ -8,7 +8,11 @@ export const createAsyncReducer = (
       data: action.response,
       loading: false,
     }),
-    errorReducer = (state, action) => ({ loading: false, error: action.error }),
+    errorReducer = (state, action) => ({
+      ...state,
+      loading: false,
+      error: action.error,
+    }),
   } = {},
   initialState = {},
 ) => (state = initialState, action) => {

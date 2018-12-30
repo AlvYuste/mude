@@ -1,3 +1,4 @@
+import { navigate } from '@reach/router';
 import { createAsyncAction } from '../helpers/async/async.action';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import {
@@ -58,7 +59,10 @@ export const signInWithGoogleAction = createAsyncAction(
 
 /* SIGNOUT */
 export const SIGNOUT_KEY = 'SIGNOUT';
-export const signOutAction = createAsyncAction(SIGNOUT_KEY, signOut);
+export const signOutAction = createAsyncAction(SIGNOUT_KEY, () => {
+  navigate('/');
+  return signOut();
+});
 export const signOutReducer = createAsyncReducer(SIGNOUT_KEY, {
   requestReducer: state => state,
   successReducer: state => ({

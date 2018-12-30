@@ -39,7 +39,10 @@ class RawProject extends React.Component {
       location: { search: prevSearch } = {},
       project: prevProject = {},
     } = prevProps;
-    if (projectError || (search === prevSearch && project === prevProject)) {
+    if (
+      (projectError && projectError.includes('permission_denied')) ||
+      (search === prevSearch && project === prevProject)
+    ) {
       return null;
     }
     const routeProjectId = getSearchValue(search, 'project');
@@ -110,7 +113,9 @@ class RawProject extends React.Component {
     const { projectError } = this.props;
     return (
       <ProjectWrapper>
-        {projectError ? this.renderError() : this.renderProjectContent()}
+        {projectError && projectError.includes('permission_denied')
+          ? this.renderError()
+          : this.renderProjectContent()}
       </ProjectWrapper>
     );
   }

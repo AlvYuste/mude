@@ -22,7 +22,7 @@ const RawTracksList = ({
   selectedTrackId,
   onClickTrack,
 }) => (
-  <FlexResponsive direction="column" spaced>
+  <FlexResponsive direction="column">
     {!!tracks &&
       tracks.map((track, i) => (
         <Track

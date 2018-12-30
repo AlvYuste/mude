@@ -34,18 +34,18 @@ export const getProjectDetail = async (id, updateCallback = () => {}) => {
 
 export const saveProject = async (project = {}) => {
   const account = await getCurrentUser();
+  if (!account) {
+    throw new Error('You must sign in to save your project');
+  }
   const projectWithOwner = {
     ...project,
     owner: account.uid,
   };
-  if (!account) {
-    throw new Error('You must sign in to save your project');
-  }
   if (project.id) {
     db.ref(`projects/${project.id}`).update(projectWithOwner);
     return project;
   }
-  const newProjectRef = db.ref('projects').push(projectWithOwner);
+  const newProjectRef = await db.ref('projects').push(projectWithOwner);
   await newProjectRef.update({ id: newProjectRef.key });
   return { ...project, owner: account.uid, id: newProjectRef.key };
 };

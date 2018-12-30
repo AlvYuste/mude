@@ -12,8 +12,7 @@ import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
 
 const TrackInfoWrapper = styled(Flex)`
-  background-color: ${({ isSelected }) =>
-    isSelected ? Colors.DARK_GRAY5 : Colors.DARK_GRAY4};
+  background-color: ${Colors.DARK_GRAY5};
   padding: 0.5rem;
 `;
 const TrackTitle = styled(EditableText)`
@@ -52,6 +51,7 @@ export class TrackInfo extends React.Component {
       <TrackInfoWrapper {...rest} direction="column">
         <TrackTitle
           value={name}
+          selectAllOnFocus
           placeholder="(Untitled track)"
           onChange={this.onChangeState('name')}
           onConfirm={this.onSubmit}
