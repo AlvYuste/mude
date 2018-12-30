@@ -19,7 +19,7 @@ export const rootReducer = reduceReducers(
     ),
     [project.OWN_PROJECTS_KEY]: reduceReducers(project.ownProjectsReducer),
     [project.CURRENT_PROJECT_KEY]: reduceReducers(
-      project.currentProjectReducer,
+      project.openProjectReducer,
       project.newProjectReducer,
       project.saveProjectReducer,
       project.updateProjectNameReducer,

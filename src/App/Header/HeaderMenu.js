@@ -42,13 +42,11 @@ export class HeaderMenu extends React.Component {
           .map(p => (
             <MenuItem
               key={p.id}
-              disabled={currentProject && p.id === currentProject.id}
+              active={currentProject && p.id === currentProject.id}
               text={p.name || '(Untitled project)'}
               onClick={() => onOpenProject(p.id)}
               label={
-                !!currentProject && p.id === currentProject.id
-                  ? '(Already opened)'
-                  : ''
+                !!currentProject && p.id === currentProject.id ? 'Opened' : ''
               }
             />
           ))}

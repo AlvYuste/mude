@@ -5,7 +5,11 @@ import { createAsyncAction } from '../helpers/async/async.action';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
-import { saveProject, getOwnProjects } from '../../services/project';
+import {
+  saveProject,
+  getOwnProjects,
+  getProjectDetail,
+} from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
 
 const nameLens = R.lensPath(['data', 'name']);
@@ -16,22 +20,43 @@ const trackLens = id =>
     lensById(id),
   );
 
-/* CURRENT_PROJECT */
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
-export const currentProjectReducer = createAsyncReducer(CURRENT_PROJECT_KEY);
-export const currentProjectAction = createAsyncAction(CURRENT_PROJECT_KEY);
+
+/* OPEN PROJECT */
+export const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
+export const openProjectReducer = createAsyncReducer(OPEN_PROJECT_KEY);
+export const openProjectAction = payload => dispatch => {
+  const [req, succ, fail] = createAsyncTypes(OPEN_PROJECT_KEY);
+  dispatch({ type: req });
+  getProjectDetail(payload, asyncResponse =>
+    dispatch({
+      type: succ,
+      response: asyncResponse,
+    }),
+  ).catch(error =>
+    dispatch({
+      type: fail,
+      error: error.message,
+    }),
+  );
+};
 
 /* OWN_PROJECTS */
 export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
 export const ownProjectsReducer = createAsyncReducer(OWN_PROJECTS_KEY);
 export const ownProjectsAction = () => dispatch => {
-  const [req, succ] = createAsyncTypes(OWN_PROJECTS_KEY);
+  const [req, succ, fail] = createAsyncTypes(OWN_PROJECTS_KEY);
   const transactionId = uuid();
   dispatch({ type: req, transactionId });
   getOwnProjects(asyncResponse =>
     dispatch({
       type: succ,
       response: asyncResponse,
+    }),
+  ).catch(error =>
+    dispatch({
+      type: fail,
+      error: error.message,
     }),
   );
 };

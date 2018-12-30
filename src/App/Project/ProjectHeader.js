@@ -2,22 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import styled from '@emotion/styled';
-import { EditableText, Button, Intent } from '@blueprintjs/core';
-import { FlexResponsive } from '../../components/layout/Flex';
+import { EditableText, Button, Intent, Spinner } from '@blueprintjs/core';
+import { FlexResponsive, Flex } from '../../components/layout/Flex';
 
-const ProjectTitle = styled.div`
+const ProjectTitle = styled(Flex)`
   font-size: 1.5rem;
   font-weight: 500;
   max-width: 50%;
 `;
-export const ProjectHeader = ({ title, onTitleChange, onAddTrack }) => (
+export const ProjectHeader = ({
+  title,
+  loading,
+  onTitleChange,
+  onAddTrack,
+}) => (
   <FlexResponsive spaced align="center" justify="space-between">
-    <ProjectTitle>
+    <ProjectTitle spaced="items">
       <EditableText
         placeholder="(Untitled project)"
         value={title}
         onChange={onTitleChange}
       />
+      {loading && <Spinner size={Spinner.SIZE_SMALL} />}
     </ProjectTitle>
     <FlexResponsive spaced="items">
       <Button large minimal title="Play" icon="play" intent={Intent.SUCCESS} />
@@ -40,11 +46,13 @@ export const ProjectHeader = ({ title, onTitleChange, onAddTrack }) => (
 );
 ProjectHeader.propTypes = {
   title: PropTypes.string,
+  loading: PropTypes.bool,
   onTitleChange: PropTypes.func,
   onAddTrack: PropTypes.func,
 };
 ProjectHeader.defaultProps = {
   title: '',
+  loading: false,
   onTitleChange: () => {},
   onAddTrack: () => {},
 };

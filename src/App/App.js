@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route, BrowserRouter } from 'react-router-dom';
 import { Classes } from '@blueprintjs/core';
 import { Header } from './Header/Header';
 import { withStore } from '../store/withStore';
@@ -9,7 +10,9 @@ import { Body } from '../components/layout/Body';
 const RawApp = () => (
   <Body className={Classes.DARK}>
     <Header />
-    <Project />
+    <BrowserRouter>
+      <Route path="/" component={Project} />
+    </BrowserRouter>
     <ToastsManager />
   </Body>
 );
