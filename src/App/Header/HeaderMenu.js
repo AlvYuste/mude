@@ -44,7 +44,6 @@ export class HeaderMenu extends React.Component {
           active={currentProject && p.id === currentProject.id}
           text={p.name || '(Untitled project)'}
           onClick={() => onOpenProject(p.id)}
-          shouldDismissPopover={false}
           label={!!currentProject && p.id === currentProject.id ? 'Opened' : ''}
         />
       ));
