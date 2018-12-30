@@ -1,6 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Popover, Menu, MenuItem, Position } from '@blueprintjs/core';
+import {
+  Button,
+  Popover,
+  Menu,
+  MenuItem,
+  Position,
+  MenuDivider,
+} from '@blueprintjs/core';
 
 export class HeaderMenu extends React.Component {
   renderProjectMenu = () => {
@@ -20,9 +27,10 @@ export class HeaderMenu extends React.Component {
           onClick={onSaveProject}
         />
         {isAuthenticated && (
-          <MenuItem icon="folder-open" text="Open...">
+          <>
+            <MenuDivider title="Open project:" />
             {this.renderOpenProjectSubmenu()}
-          </MenuItem>
+          </>
         )}
       </Menu>
     );
@@ -31,7 +39,7 @@ export class HeaderMenu extends React.Component {
   renderOpenProjectSubmenu = () => {
     const { onOpenProject, ownProjects, currentProject } = this.props;
     if (!ownProjects || !ownProjects.length) {
-      return '';
+      return <MenuItem disabled text="(No projects saved)" />;
     }
     return ownProjects
       .filter(p => !!p.id)
