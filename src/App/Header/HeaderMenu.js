@@ -4,7 +4,7 @@ import { Button, Popover, Menu, MenuItem, Position } from '@blueprintjs/core';
 
 export class HeaderMenu extends React.Component {
   renderProjectMenu = () => {
-    const { onNewProject, onSaveProject } = this.props;
+    const { onNewProject, onSaveProject, isAuthenticated } = this.props;
     return (
       <Menu>
         <MenuItem
@@ -19,21 +19,18 @@ export class HeaderMenu extends React.Component {
           label="Ctrl+S"
           onClick={onSaveProject}
         />
-        <MenuItem icon="folder-open" text="Open...">
-          {this.renderOpenProjectSubmenu()}
-        </MenuItem>
+        {isAuthenticated && (
+          <MenuItem icon="folder-open" text="Open...">
+            {this.renderOpenProjectSubmenu()}
+          </MenuItem>
+        )}
       </Menu>
     );
   };
 
   renderOpenProjectSubmenu = () => {
-    const {
-      isAuthenticated,
-      onOpenProject,
-      ownProjects,
-      currentProject,
-    } = this.props;
-    if (!isAuthenticated || !ownProjects || !ownProjects.length) {
+    const { onOpenProject, ownProjects, currentProject } = this.props;
+    if (!ownProjects || !ownProjects.length) {
       return '';
     }
     return ownProjects
