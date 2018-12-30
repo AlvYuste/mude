@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Button, Popover, Menu, MenuItem, Position } from '@blueprintjs/core';
 
 export class HeaderMenu extends React.Component {
@@ -20,7 +19,9 @@ export class HeaderMenu extends React.Component {
           label="Ctrl+S"
           onClick={onSaveProject}
         />
-        {this.renderOpenProjectSubmenu()}
+        <MenuItem icon="folder-open" text="Open...">
+          {this.renderOpenProjectSubmenu()}
+        </MenuItem>
       </Menu>
     );
   };
@@ -35,23 +36,18 @@ export class HeaderMenu extends React.Component {
     if (!isAuthenticated || !ownProjects || !ownProjects.length) {
       return '';
     }
-    return (
-      <MenuItem icon="folder-open" text="Open..." label="Ctrl+O">
-        {ownProjects
-          .filter(p => !!p.id)
-          .map(p => (
-            <MenuItem
-              key={p.id}
-              active={currentProject && p.id === currentProject.id}
-              text={p.name || '(Untitled project)'}
-              onClick={() => onOpenProject(p.id)}
-              label={
-                !!currentProject && p.id === currentProject.id ? 'Opened' : ''
-              }
-            />
-          ))}
-      </MenuItem>
-    );
+    return ownProjects
+      .filter(p => !!p.id)
+      .map(p => (
+        <MenuItem
+          key={p.id}
+          active={currentProject && p.id === currentProject.id}
+          text={p.name || '(Untitled project)'}
+          onClick={() => onOpenProject(p.id)}
+          shouldDismissPopover={false}
+          label={!!currentProject && p.id === currentProject.id ? 'Opened' : ''}
+        />
+      ));
   };
 
   render() {

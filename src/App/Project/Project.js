@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Colors, NonIdealState, Button, Classes } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
-import { Body } from '../../components/layout/Body';
 import { ProjectHeader } from './ProjectHeader';
 import {
   CURRENT_PROJECT_KEY,
@@ -18,8 +17,9 @@ import {
 import { TracksList } from './TracksList';
 import { getSearchValue } from '../../utils/utils';
 
-const ProjectWrapper = styled(Body)`
+const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
+  height: 100%;
 `;
 class RawProject extends React.Component {
   componentDidMount = () => this.checkRouteProject();
@@ -28,17 +28,20 @@ class RawProject extends React.Component {
 
   checkRouteProject = (prevProps = {}) => {
     const {
-      location,
+      location: { search },
       projectError,
       project,
       openProject,
       newProject,
     } = this.props;
-    const { location: prevLocation, project: prevProject } = prevProps;
-    if (projectError || location === prevLocation || project === prevProject) {
+    const {
+      location: { search: prevSearch } = {},
+      project: prevProject = {},
+    } = prevProps;
+    if (projectError || (search === prevSearch && project === prevProject)) {
       return null;
     }
-    const routeProjectId = getSearchValue(location.search, 'project');
+    const routeProjectId = getSearchValue(search, 'project');
     if (routeProjectId && routeProjectId !== project.id) {
       return openProject(routeProjectId);
     }
@@ -94,7 +97,7 @@ class RawProject extends React.Component {
   render() {
     const { projectError } = this.props;
     return (
-      <ProjectWrapper hasHeaders>
+      <ProjectWrapper>
         {projectError ? this.renderError() : this.renderProjectContent()}
       </ProjectWrapper>
     );

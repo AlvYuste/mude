@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { navigate } from '@reach/router';
 
 import {
   Navbar,
@@ -52,6 +53,8 @@ class RawHeader extends Component {
     }
   }
 
+  onOpenProject = id => navigate(`/?project=${id}`);
+
   render() {
     const {
       account,
@@ -63,7 +66,6 @@ class RawHeader extends Component {
       signUpWithEmail,
       ownProjects,
       openNewProject,
-      openProject,
       saveProject,
     } = this.props;
     return (
@@ -76,8 +78,8 @@ class RawHeader extends Component {
             currentProject={currentProject}
             ownProjects={ownProjects}
             onNewProject={openNewProject}
-            onOpenProject={openProject}
             onSaveProject={saveProject}
+            onOpenProject={this.onOpenProject}
           />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
@@ -110,7 +112,6 @@ RawHeader.propTypes = {
   signOut: PropTypes.func.isRequired,
   getOwnProjects: PropTypes.func.isRequired,
   openNewProject: PropTypes.func.isRequired,
-  openProject: PropTypes.func.isRequired,
 };
 RawHeader.defaultProps = {
   account: undefined,
@@ -135,7 +136,6 @@ const mapDispatchToProps = dispatch => ({
   signOut: () => dispatch(signOutAction()),
   getOwnProjects: () => dispatch(ownProjectsAction()),
   openNewProject: () => dispatch(newProjectAction()),
-  openProject: id => dispatch(openProjectAction(id)),
   saveProject: () => dispatch(saveProjectAction()),
 });
 export const Header = connect(
