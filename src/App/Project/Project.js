@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { Colors, NonIdealState, Button, Classes } from '@blueprintjs/core';
+import { Colors, NonIdealState, Button } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
 import { ProjectHeader } from './ProjectHeader';
@@ -55,7 +55,6 @@ class RawProject extends React.Component {
     const { newProject } = this.props;
     return (
       <NonIdealState
-        className={Classes.DARK}
         icon="path-search"
         title="Project not found"
         description="This project doesn't exist or you don't have permission to view it."
@@ -81,15 +80,24 @@ class RawProject extends React.Component {
           onTitleChange={updateProjectName}
           onAddTrack={addTrack}
         />
-        <TracksList
-          lockAxis="y"
-          useDragHandle
-          tracks={project.tracks}
-          onSortEnd={({ oldIndex, newIndex }) =>
-            updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
-          }
-          onChangeTrack={updateTrack}
-        />
+        {project.tracks && project.tracks.length ? (
+          <TracksList
+            lockAxis="y"
+            useDragHandle
+            tracks={project.tracks}
+            onSortEnd={({ oldIndex, newIndex }) =>
+              updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+            }
+            onChangeTrack={updateTrack}
+          />
+        ) : (
+          <NonIdealState
+            icon="document"
+            title="Project is empty"
+            description="Start adding tracks to your project."
+            action={<Button icon="plus" text="Add track" onClick={addTrack} />}
+          />
+        )}
       </>
     );
   };

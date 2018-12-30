@@ -30,18 +30,12 @@ export const Flex = styled.div`
 `;
 
 export const FlexResponsive = styled(Flex)`
-  ${spaceContainer('0.25rem')}
-  ${mq.mobile} {
-    ${spaceContainer('0.5rem')}
-  }
+  ${spaceContainer('0.5rem')}
   ${mq.tablet} {
     ${spaceContainer('1rem')}
   }
   & > * + * {
-    ${spaceItems('0.25rem')};
-    ${mq.mobile} {
-      ${spaceItems('0.5rem')};
-    }
+    ${spaceItems('0.5rem')};
     ${mq.tablet} {
       ${spaceItems('1rem')};
     }
