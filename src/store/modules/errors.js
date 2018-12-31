@@ -7,7 +7,7 @@ export const errorsReducer = (state = [], action) => {
       {
         key: transactionId,
         actionType: type,
-        message: error,
+        message: error.message || error,
         firedAt: new Date(),
       },
       ...state,

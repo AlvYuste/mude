@@ -29,7 +29,11 @@ export const getOwnProjects = async (updateCallback = () => {}) => {
 export const getProjectDetail = async (id, updateCallback = () => {}) => {
   const projectRef = projectByIdRef(id);
   projectRef.on('value', snapshot => updateCallback(snapshot.val()));
-  return (await projectRef.once('value')).val();
+  const response = (await projectRef.once('value')).val();
+  if (!response) {
+    throw new Error('NOT_FOUND: Project not found');
+  }
+  return response;
 };
 
 export const saveProject = async (project = {}) => {

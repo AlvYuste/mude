@@ -62,7 +62,7 @@ export const createAsyncAction = (
       dispatch({
         payload,
         type: failureType,
-        error: error.message,
+        error,
         transactionId,
       }),
   );

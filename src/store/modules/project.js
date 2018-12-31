@@ -37,7 +37,7 @@ export const openProjectAction = payload => dispatch => {
     dispatch({
       type: fail,
       transactionId,
-      error: error.message,
+      error,
     }),
   );
 };
@@ -58,7 +58,7 @@ export const ownProjectsAction = () => dispatch => {
     dispatch({
       type: fail,
       transactionId,
-      error: error.message,
+      error,
     }),
   );
 };
@@ -77,8 +77,8 @@ export const saveProjectAction = () => (dispatch, getState) => {
     error =>
       dispatch({
         type: fail,
-        error: error.message,
         transactionId,
+        error,
       }),
   );
 };

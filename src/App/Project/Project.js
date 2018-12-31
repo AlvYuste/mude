@@ -40,13 +40,13 @@ class RawProject extends React.Component {
       project: prevProject = {},
     } = prevProps;
     if (
-      (projectError && projectError.includes('permission_denied')) ||
+      (projectError && projectError.code === 'PERMISSION_DENIED') ||
       (search === prevSearch && project === prevProject)
     ) {
       return null;
     }
     const routeProjectId = getSearchValue(search, 'project');
-    if (routeProjectId && routeProjectId !== project.id) {
+    if (routeProjectId && project && routeProjectId !== project.id) {
       return openProject(routeProjectId);
     }
     if (!routeProjectId && !!project.id) {
@@ -110,10 +110,10 @@ class RawProject extends React.Component {
   };
 
   render() {
-    const { projectError } = this.props;
+    const { projectError, project } = this.props;
     return (
       <ProjectWrapper>
-        {projectError && projectError.includes('permission_denied')
+        {!project || (projectError && projectError.code === 'PERMISSION_DENIED')
           ? this.renderError()
           : this.renderProjectContent()}
       </ProjectWrapper>
@@ -149,7 +149,7 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
-  projectError: PropTypes.string,
+  projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
   updateProjectName: PropTypes.func.isRequired,
   updateTracks: PropTypes.func.isRequired,
