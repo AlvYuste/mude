@@ -16,7 +16,7 @@ const RouterStyled = styled(Router)`
 const RawApp = () => (
   <Body className={Classes.DARK}>
     <Header />
-    <Body hasHeaders hasFooters="responsive">
+    <Body hasHeaders>
       <RouterStyled>
         <Project path="/" />
       </RouterStyled>
