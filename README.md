@@ -16,3 +16,4 @@ Web app to write music.
 - Webaudio Peaks: https://github.com/naomiaro/webaudio-peaks
 - Draw Wave: https://github.com/meandavejustice/draw-wave
 - Waveform Viewer: https://github.com/substack/waveform-viewer
+- Loop Drop: https://github.com/mmckegg/loop-drop-app
