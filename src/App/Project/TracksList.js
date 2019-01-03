@@ -9,7 +9,7 @@ import { FlexResponsive } from '../../components/layout/Flex';
 
 const TracksListWrapper = styled(FlexResponsive)`
   background-color: ${Colors.DARK_GRAY3};
-  padding-bottom: 3.5rem;
+  margin-bottom: 0;
 `;
 
 const shouldMuteTrack = (track, tracks) => {
@@ -41,7 +41,9 @@ const RawTracksList = ({
           selected={selectedTrackId === track.id}
           shouldMute={shouldMuteTrack(track, tracks)}
           onChangeTrack={onChangeTrack}
-          onClick={() => onClickTrack(track)}
+          onClick={() =>
+            selectedTrackId !== track.id ? onClickTrack(track) : null
+          }
         />
       ))}
   </TracksListWrapper>

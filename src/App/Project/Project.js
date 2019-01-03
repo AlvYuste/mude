@@ -58,7 +58,7 @@ class RawProject extends React.Component {
     return null;
   };
 
-  renderError = () => {
+  renderNotFound = () => {
     const { newProject } = this.props;
     return (
       <NonIdealState
@@ -66,6 +66,18 @@ class RawProject extends React.Component {
         title="Project not found"
         description="This project doesn't exist or you don't have permission to view it."
         action={<Button icon="plus" text="New project" onClick={newProject} />}
+      />
+    );
+  };
+
+  renderEmpty = () => {
+    const { addTrack } = this.props;
+    return (
+      <NonIdealState
+        icon="document"
+        title="Project is empty"
+        description="Start adding tracks to your project."
+        action={<Button icon="plus" text="Add track" onClick={addTrack} />}
       />
     );
   };
@@ -90,7 +102,7 @@ class RawProject extends React.Component {
           onTitleChange={updateProjectName}
           onAddTrack={addTrack}
         />
-        {(project.tracks && project.tracks.length && (
+        {project.tracks && project.tracks.length ? (
           <>
             <Timeline
               duration={project.duration}
@@ -103,24 +115,18 @@ class RawProject extends React.Component {
               tracks={project.tracks}
               collapsed={collapsed}
               onSortEnd={({ oldIndex, newIndex }) =>
-                updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+                oldIndex !== newIndex
+                  ? updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+                  : null
               }
               selectedTrackId={project.selectedTrackId}
               onClickTrack={selectTrack}
               onChangeTrack={updateTrack}
             />
           </>
-        )) ||
-          (!projectLoading && (
-            <NonIdealState
-              icon="document"
-              title="Project is empty"
-              description="Start adding tracks to your project."
-              action={
-                <Button icon="plus" text="Add track" onClick={addTrack} />
-              }
-            />
-          ))}
+        ) : (
+          !projectLoading && this.renderEmpty()
+        )}
       </>
     );
   };
@@ -131,7 +137,7 @@ class RawProject extends React.Component {
       <ProjectWrapper>
         {(!project && !projectLoading) ||
         (projectError && projectError.code === 'PERMISSION_DENIED')
-          ? this.renderError()
+          ? this.renderNotFound()
           : this.renderProjectContent()}
       </ProjectWrapper>
     );
