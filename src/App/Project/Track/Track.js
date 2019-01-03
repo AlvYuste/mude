@@ -10,6 +10,7 @@ import { TrackHandle } from './TrackHandle';
 import { trackInfoWidth, trackHeight } from '../../../utils/variables';
 
 const TrackWrapper = styled(Flex)`
+  position: relative;
   height: ${trackHeight};
   opacity: ${({ shouldMute }) => (shouldMute ? 0.5 : 1)};
 `;

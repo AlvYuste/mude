@@ -24,6 +24,7 @@ import { UI_KEY, toggleCollapsedAction } from '../../store/modules/ui';
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
   height: 100%;
+  padding-bottom: 3.5rem;
 `;
 class RawProject extends React.Component {
   componentDidMount = () => this.checkRouteProject();

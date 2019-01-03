@@ -30,12 +30,14 @@ const ProjectActions = styled(FlexResponsive)`
   justify-content: flex-end;
   background-color: ${Colors.DARK_GRAY5};
   box-shadow: 0 0 0 1px ${Colors.DARK_GRAY3};
+  z-index: 10;
   ${mq.tablet} {
     background-color: unset;
     position: unset;
     box-shadow: unset;
     padding: 0;
     margin: 0;
+    z-index: 0;
   }
 `;
 export const ProjectHeader = ({
