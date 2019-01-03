@@ -18,6 +18,7 @@ const shouldMuteTrack = (track, tracks) => {
 
 const RawTracksList = ({
   tracks,
+  collapsed,
   onChangeTrack,
   selectedTrackId,
   onClickTrack,
@@ -29,7 +30,8 @@ const RawTracksList = ({
           key={track.id}
           index={i}
           track={track}
-          isSelected={selectedTrackId === track.id}
+          collapsed={collapsed}
+          selected={selectedTrackId === track.id}
           shouldMute={shouldMuteTrack(track, tracks)}
           onChangeTrack={onChangeTrack}
           onClick={() => onClickTrack(track)}
@@ -39,12 +41,14 @@ const RawTracksList = ({
 );
 RawTracksList.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.object),
+  collapsed: PropTypes.bool,
   selectedTrackId: PropTypes.string,
   onClickTrack: PropTypes.func,
   onChangeTrack: PropTypes.func,
 };
 RawTracksList.defaultProps = {
   tracks: [],
+  collapsed: false,
   selectedTrackId: undefined,
   onClickTrack: () => {},
   onChangeTrack: () => {},

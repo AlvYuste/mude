@@ -17,9 +17,21 @@ const TrackInfoWrapper = styled(Flex)`
 `;
 const TrackTitle = styled(EditableText)`
   margin-bottom: 0.5rem;
+  transition: margin ease 200ms;
+  position: ${({ collapsed }) => (collapsed ? 'absolute' : 'relative')};
+  margin: ${({ collapsed }) => (collapsed ? '0.5rem' : '')};
+`;
+const SliderGroupStyled = styled(Flex)`
+  transition: opacity ease 100ms;
+  opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
+  pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
+  margin-top: ${({ collapsed }) => (collapsed ? '1.5rem' : '0')};
 `;
 const ButtonGroupStyled = styled(ButtonGroup)`
   justify-content: center;
+  transition: opacity ease 100ms;
+  opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
+  pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
 `;
 const ButtonStyled = styled(Button)`
   text-transform: uppercase;
@@ -46,17 +58,26 @@ export class TrackInfo extends React.Component {
     const {
       track: { name, volume, pan, mute, solo },
     } = this.state;
-    const { track, onChangeTrack, ...rest } = this.props;
+    const { track, onChangeTrack, collapsed, ...rest } = this.props;
     return (
-      <TrackInfoWrapper {...rest} direction="column">
+      <TrackInfoWrapper
+        {...rest}
+        collapsed={collapsed ? 1 : 0}
+        direction="column"
+      >
         <TrackTitle
           value={name}
+          collapsed={collapsed ? 1 : 0}
           selectAllOnFocus
           placeholder="(Untitled track)"
           onChange={this.onChangeState('name')}
           onConfirm={this.onSubmit}
         />
-        <Flex direction="column" style={{ padding: '0.5rem' }}>
+        <SliderGroupStyled
+          collapsed={collapsed ? 1 : 0}
+          direction="column"
+          style={{ padding: '0.5rem' }}
+        >
           <SimpleSlider
             maxLabel={<Icon iconSize={14} icon="volume-up" />}
             minLabel={<Icon iconSize={14} icon="volume-off" />}
@@ -74,8 +95,8 @@ export class TrackInfo extends React.Component {
             onChange={this.onChangeState('pan')}
             onRelease={this.onSubmit}
           />
-        </Flex>
-        <ButtonGroupStyled>
+        </SliderGroupStyled>
+        <ButtonGroupStyled collapsed={collapsed ? 1 : 0}>
           <ButtonStyled
             small
             text="mute"
@@ -101,7 +122,8 @@ TrackInfo.propTypes = {
     mute: PropTypes.bool,
     solo: PropTypes.bool,
   }),
-  isSelected: PropTypes.bool,
+  collapsed: PropTypes.bool,
+  selected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
 };
 
@@ -113,6 +135,7 @@ TrackInfo.defaultProps = {
     mute: false,
     solo: false,
   },
-  isSelected: false,
+  collapsed: false,
+  selected: false,
   onChangeTrack: () => {},
 };

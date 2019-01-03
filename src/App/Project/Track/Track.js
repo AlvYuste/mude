@@ -7,23 +7,27 @@ import { TrackInfo } from './TrackInfo';
 import { Flex } from '../../../components/layout/Flex';
 import { TrackContent } from './TrackContent';
 import { TrackHandle } from './TrackHandle';
+import { trackInfoWidth, trackHeight } from '../../../utils/variables';
 
 const TrackWrapper = styled(Flex)`
-  height: 10rem;
+  height: ${trackHeight};
   opacity: ${({ shouldMute }) => (shouldMute ? 0.5 : 1)};
 `;
 const TrackInfoStyled = styled(TrackInfo)`
-  width: 10rem;
+  transition: width ease 200ms, padding ease 200ms;
+  width: ${({ collapsed }) => (collapsed ? 0 : trackInfoWidth)};
+  padding: ${({ collapsed }) => (collapsed ? 0 : '')};
 `;
 const TrackContentStyled = styled(TrackContent)`
   flex: 1;
 `;
-const RawTrack = ({ onChangeTrack, track, isSelected, ...rest }) => (
+const RawTrack = ({ onChangeTrack, track, collapsed, selected, ...rest }) => (
   <TrackWrapper {...rest} className={`${Classes.ELEVATION_1} ${Classes.DARK}`}>
-    <TrackHandle isSelected={isSelected} />
+    <TrackHandle selected={selected} />
     <TrackInfoStyled
       track={track}
-      isSelected={isSelected}
+      collapsed={collapsed}
+      selected={selected}
       onChangeTrack={onChangeTrack}
     />
     <TrackContentStyled />
@@ -40,7 +44,8 @@ RawTrack.propTypes = {
     mute: PropTypes.bool,
     solo: PropTypes.bool,
   }),
-  isSelected: PropTypes.bool,
+  collapsed: PropTypes.bool,
+  selected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
 };
 
@@ -52,6 +57,7 @@ RawTrack.defaultProps = {
     mute: false,
     solo: false,
   },
-  isSelected: false,
+  collapsed: false,
+  selected: false,
   onChangeTrack: () => {},
 };

@@ -17,12 +17,15 @@ import {
 } from '../../store/modules/project';
 import { TracksList } from './TracksList';
 import { getSearchValue } from '../../utils/utils';
+import { Timeline } from './Timeline';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
   height: 100%;
 `;
 class RawProject extends React.Component {
+  state = { collapsed: false };
+
   componentDidMount = () => this.checkRouteProject();
 
   componentDidUpdate = prevProps => this.checkRouteProject(prevProps);
@@ -77,6 +80,7 @@ class RawProject extends React.Component {
       selectTrack,
       updateTrack,
     } = this.props;
+    const { collapsed } = this.state;
     return (
       <>
         <ProjectHeader
@@ -85,11 +89,17 @@ class RawProject extends React.Component {
           onTitleChange={updateProjectName}
           onAddTrack={addTrack}
         />
+        <Timeline
+          duration={project.duration}
+          collapsed={collapsed}
+          onCollapsedChange={value => this.setState({ collapsed: value })}
+        />
         {project.tracks && project.tracks.length ? (
           <TracksList
             lockAxis="y"
             useDragHandle
             tracks={project.tracks}
+            collapsed={collapsed}
             onSortEnd={({ oldIndex, newIndex }) =>
               updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
             }
