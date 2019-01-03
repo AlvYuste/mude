@@ -84,6 +84,7 @@ export class TrackInfo extends React.Component {
             value={volume}
             onChange={this.onChangeState('volume')}
             onRelease={this.onSubmit}
+            tabIndex={collapsed ? -1 : ''}
           />
           <SimpleSlider
             min={-5}
@@ -94,6 +95,7 @@ export class TrackInfo extends React.Component {
             value={pan}
             onChange={this.onChangeState('pan')}
             onRelease={this.onSubmit}
+            tabIndex={collapsed ? -1 : ''}
           />
         </SliderGroupStyled>
         <ButtonGroupStyled collapsed={collapsed ? 1 : 0}>
@@ -102,12 +104,14 @@ export class TrackInfo extends React.Component {
             text="mute"
             active={mute}
             onClick={() => this.onChangeState('mute', true)(!mute)}
+            tabIndex={collapsed ? -1 : ''}
           />
           <ButtonStyled
             small
             text="solo"
             active={solo}
             onClick={() => this.onChangeState('solo', true)(!solo)}
+            tabIndex={collapsed ? -1 : ''}
           />
         </ButtonGroupStyled>
       </TrackInfoWrapper>

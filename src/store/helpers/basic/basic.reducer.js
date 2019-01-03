@@ -1,7 +1,8 @@
-export const createBasicReducer = (key, reducer, initialState = {}) => (
-  state = initialState,
-  action,
-) => {
+export const createBasicReducer = (
+  key,
+  reducer = state => state,
+  initialState = {},
+) => (state = initialState, action) => {
   if (typeof key !== 'string') {
     throw new Error('Expected key to be string.');
   }

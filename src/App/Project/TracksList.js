@@ -1,9 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import styled from '@emotion/styled';
+import { Colors } from '@blueprintjs/core';
 import { SortableContainer as withSortableContainer } from 'react-sortable-hoc';
+
 import { Track } from './Track/Track';
 import { FlexResponsive } from '../../components/layout/Flex';
+
+const TracksListWrapper = styled(FlexResponsive)`
+  background-color: ${Colors.DARK_GRAY3};
+`;
 
 const shouldMuteTrack = (track, tracks) => {
   if (track.mute || !track.volume) {
@@ -23,7 +29,7 @@ const RawTracksList = ({
   selectedTrackId,
   onClickTrack,
 }) => (
-  <FlexResponsive direction="column">
+  <TracksListWrapper direction="column">
     {!!tracks &&
       tracks.map((track, i) => (
         <Track
@@ -37,7 +43,7 @@ const RawTracksList = ({
           onClick={() => onClickTrack(track)}
         />
       ))}
-  </FlexResponsive>
+  </TracksListWrapper>
 );
 RawTracksList.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.object),

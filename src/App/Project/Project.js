@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Colors, NonIdealState, Button } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
-import { ProjectHeader } from './ProjectHeader';
 import {
   CURRENT_PROJECT_KEY,
   updateProjectNameAction,
@@ -15,17 +14,18 @@ import {
   newProjectAction,
   selectTrackAction,
 } from '../../store/modules/project';
-import { TracksList } from './TracksList';
 import { getSearchValue } from '../../utils/utils';
-import { Timeline } from './Timeline';
+
+import { ProjectHeader } from './ProjectHeader';
+import { TracksList } from './TracksList';
+import { Timeline } from './Timeline/Timeline';
+import { UI_KEY, toggleCollapsedAction } from '../../store/modules/ui';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
   height: 100%;
 `;
 class RawProject extends React.Component {
-  state = { collapsed: false };
-
   componentDidMount = () => this.checkRouteProject();
 
   componentDidUpdate = prevProps => this.checkRouteProject(prevProps);
@@ -72,6 +72,8 @@ class RawProject extends React.Component {
 
   renderProjectContent = () => {
     const {
+      collapsed,
+      toggleCollapsed,
       project,
       projectLoading,
       updateProjectName,
@@ -80,7 +82,6 @@ class RawProject extends React.Component {
       selectTrack,
       updateTrack,
     } = this.props;
-    const { collapsed } = this.state;
     return (
       <>
         <ProjectHeader
@@ -89,41 +90,47 @@ class RawProject extends React.Component {
           onTitleChange={updateProjectName}
           onAddTrack={addTrack}
         />
-        <Timeline
-          duration={project.duration}
-          collapsed={collapsed}
-          onCollapsedChange={value => this.setState({ collapsed: value })}
-        />
-        {project.tracks && project.tracks.length ? (
-          <TracksList
-            lockAxis="y"
-            useDragHandle
-            tracks={project.tracks}
-            collapsed={collapsed}
-            onSortEnd={({ oldIndex, newIndex }) =>
-              updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
-            }
-            selectedTrackId={project.selectedTrackId}
-            onClickTrack={selectTrack}
-            onChangeTrack={updateTrack}
-          />
-        ) : (
-          <NonIdealState
-            icon="document"
-            title="Project is empty"
-            description="Start adding tracks to your project."
-            action={<Button icon="plus" text="Add track" onClick={addTrack} />}
-          />
-        )}
+        {(project.tracks && project.tracks.length && (
+          <>
+            <Timeline
+              duration={project.duration}
+              collapsed={collapsed}
+              onCollapsedChange={toggleCollapsed}
+            />
+            <TracksList
+              lockAxis="y"
+              useDragHandle
+              tracks={project.tracks}
+              collapsed={collapsed}
+              onSortEnd={({ oldIndex, newIndex }) =>
+                updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+              }
+              selectedTrackId={project.selectedTrackId}
+              onClickTrack={selectTrack}
+              onChangeTrack={updateTrack}
+            />
+          </>
+        )) ||
+          (!projectLoading && (
+            <NonIdealState
+              icon="document"
+              title="Project is empty"
+              description="Start adding tracks to your project."
+              action={
+                <Button icon="plus" text="Add track" onClick={addTrack} />
+              }
+            />
+          ))}
       </>
     );
   };
 
   render() {
-    const { projectError, project } = this.props;
+    const { projectError, project, projectLoading } = this.props;
     return (
       <ProjectWrapper>
-        {!project || (projectError && projectError.code === 'PERMISSION_DENIED')
+        {(!project && !projectLoading) ||
+        (projectError && projectError.code === 'PERMISSION_DENIED')
           ? this.renderError()
           : this.renderProjectContent()}
       </ProjectWrapper>
@@ -135,6 +142,7 @@ const mapStateToProps = (state, ownProps) => ({
   project: state[CURRENT_PROJECT_KEY].data,
   projectError: state[CURRENT_PROJECT_KEY].error,
   projectLoading: state[CURRENT_PROJECT_KEY].loading,
+  collapsed: state[UI_KEY].collapsed,
 });
 const mapDispatchToProps = dispatch => ({
   newProject: () => dispatch(newProjectAction()),
@@ -144,6 +152,7 @@ const mapDispatchToProps = dispatch => ({
   addTrack: () => dispatch(addTrackAction()),
   updateTrack: track => dispatch(updateTrackAction(track)),
   selectTrack: track => dispatch(selectTrackAction(track)),
+  toggleCollapsed: () => dispatch(toggleCollapsedAction()),
 });
 
 export const Project = connect(
@@ -159,6 +168,7 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
+  collapsed: PropTypes.bool,
   projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
   updateProjectName: PropTypes.func.isRequired,
@@ -168,10 +178,12 @@ RawProject.propTypes = {
   selectTrack: PropTypes.func.isRequired,
   openProject: PropTypes.func.isRequired,
   newProject: PropTypes.func.isRequired,
+  toggleCollapsed: PropTypes.func.isRequired,
 };
 RawProject.defaultProps = {
   project: {},
   projectLoading: false,
   projectError: undefined,
+  collapsed: false,
   location: {},
 };
