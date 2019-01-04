@@ -5,11 +5,7 @@ import { lensById } from '../../utils/fp';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
-import {
-  saveProject,
-  getOwnProjects,
-  getProjectDetail,
-} from '../../services/project';
+import * as projService from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
 
 const dataLense = prop => R.lensPath(['data', prop]);
@@ -27,19 +23,23 @@ export const openProjectReducer = createAsyncReducer(OPEN_PROJECT_KEY);
 export const openProjectAction = payload => dispatch => {
   const [req, succ, fail] = createAsyncTypes(OPEN_PROJECT_KEY);
   const transactionId = uuid();
-  dispatch({ type: req });
-  getProjectDetail(payload, asyncResponse =>
-    dispatch({
-      type: succ,
-      response: asyncResponse,
-    }),
-  ).catch(error =>
-    dispatch({
-      type: fail,
-      transactionId,
-      error,
-    }),
-  );
+  dispatch({ type: req, payload });
+  projService
+    .getProjectDetail(payload, asyncResponse =>
+      dispatch({
+        type: succ,
+        response: asyncResponse,
+        payload,
+      }),
+    )
+    .catch(error =>
+      dispatch({
+        type: fail,
+        transactionId,
+        payload,
+        error,
+      }),
+    );
 };
 
 /* OWN_PROJECTS */
@@ -49,18 +49,20 @@ export const ownProjectsAction = () => dispatch => {
   const [req, succ, fail] = createAsyncTypes(OWN_PROJECTS_KEY);
   const transactionId = uuid();
   dispatch({ type: req, transactionId });
-  getOwnProjects(asyncResponse =>
-    dispatch({
-      type: succ,
-      response: asyncResponse,
-    }),
-  ).catch(error =>
-    dispatch({
-      type: fail,
-      transactionId,
-      error,
-    }),
-  );
+  projService
+    .getOwnProjects(asyncResponse =>
+      dispatch({
+        type: succ,
+        response: asyncResponse,
+      }),
+    )
+    .catch(error =>
+      dispatch({
+        type: fail,
+        transactionId,
+        error,
+      }),
+    );
 };
 
 /* CURRENT PROJECT SAVE */
@@ -72,8 +74,11 @@ export const saveProjectAction = () => (dispatch, getState) => {
     [CURRENT_PROJECT_KEY]: { data: currentProject },
   } = getState();
   dispatch({ type: req, transactionId });
-  saveProject(currentProject).then(
-    response => dispatch({ response, type: succ, transactionId }),
+  projService.saveProject(currentProject).then(
+    response => {
+      navigate(`?project=${response.id}`);
+      dispatch({ response, type: succ, transactionId });
+    },
     error =>
       dispatch({
         type: fail,
@@ -83,6 +88,34 @@ export const saveProjectAction = () => (dispatch, getState) => {
   );
 };
 export const saveProjectReducer = createAsyncReducer(PROJECT_SAVE_KEY);
+
+/* CURRENT PROJECT DELETE */
+export const PROJECT_DELETE_KEY = 'PROJECT_DELETE';
+export const deleteProjectAction = payload => (dispatch, getState) => {
+  const [req, succ, fail] = createAsyncTypes(PROJECT_DELETE_KEY);
+  const transactionId = uuid();
+  const {
+    [CURRENT_PROJECT_KEY]: { data: currentProject },
+  } = getState();
+  const projectId = payload || currentProject.id;
+  dispatch({ type: req, payload: projectId, transactionId });
+  projService.deleteProject(projectId).then(
+    response => {
+      navigate('/');
+      dispatch({ response, payload: projectId, type: succ, transactionId });
+    },
+    error =>
+      dispatch({
+        type: fail,
+        transactionId,
+        payload: projectId,
+        error,
+      }),
+  );
+};
+export const deleteProjectReducer = createAsyncReducer(PROJECT_DELETE_KEY, {
+  successReducer: () => ({}),
+});
 
 /* PROJECT_NEW */
 export const PROJECT_NEW_KEY = 'PROJECT_NEW';

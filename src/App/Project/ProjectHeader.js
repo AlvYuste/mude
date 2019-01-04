@@ -8,6 +8,9 @@ import {
   Intent,
   Spinner,
   Colors,
+  Popover,
+  Menu,
+  MenuItem,
 } from '@blueprintjs/core';
 import { FlexResponsive, Flex } from '../../components/layout/Flex';
 import { mq } from '../../utils/mq';
@@ -45,6 +48,12 @@ export const ProjectHeader = ({
   loading,
   onTitleChange,
   onAddTrack,
+  showPlay,
+  showRecord,
+  showDelete,
+  onDelete,
+  onPlay,
+  onRecord,
 }) => (
   <FlexResponsive spaced align="center" justify="space-between">
     <ProjectTitle spaced="items">
@@ -56,14 +65,26 @@ export const ProjectHeader = ({
       {loading && <Spinner size={Spinner.SIZE_SMALL} />}
     </ProjectTitle>
     <ProjectActions spaced="items">
-      <Button large minimal title="Play" icon="play" intent={Intent.SUCCESS} />
-      <Button
-        large
-        minimal
-        title="Record"
-        icon="record"
-        intent={Intent.DANGER}
-      />
+      {showPlay && (
+        <Button
+          large
+          minimal
+          title="Play"
+          icon="play"
+          intent={Intent.SUCCESS}
+          onClick={onPlay}
+        />
+      )}
+      {showRecord && (
+        <Button
+          large
+          minimal
+          title="Record"
+          icon="record"
+          intent={Intent.DANGER}
+          onClick={onRecord}
+        />
+      )}
       <Button
         large
         icon="plus"
@@ -71,18 +92,42 @@ export const ProjectHeader = ({
         title="Add track"
         onClick={onAddTrack}
       />
+      {showDelete && (
+        <Popover
+          minimal
+          content={
+            <Menu>
+              <MenuItem text="Delete project" icon="trash" onClick={onDelete} />
+            </Menu>
+          }
+        >
+          <Button minimal large icon="more" />
+        </Popover>
+      )}
     </ProjectActions>
   </FlexResponsive>
 );
 ProjectHeader.propTypes = {
   title: PropTypes.string,
+  showPlay: PropTypes.bool,
+  showRecord: PropTypes.bool,
+  showDelete: PropTypes.bool,
   loading: PropTypes.bool,
   onTitleChange: PropTypes.func,
   onAddTrack: PropTypes.func,
+  onDelete: PropTypes.func,
+  onPlay: PropTypes.func,
+  onRecord: PropTypes.func,
 };
 ProjectHeader.defaultProps = {
   title: '',
+  showPlay: false,
+  showRecord: false,
+  showDelete: false,
   loading: false,
   onTitleChange: () => {},
   onAddTrack: () => {},
+  onDelete: () => {},
+  onPlay: () => {},
+  onRecord: () => {},
 };

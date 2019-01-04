@@ -53,3 +53,14 @@ export const saveProject = async (project = {}) => {
   await newProjectRef.update({ id: newProjectRef.key });
   return { ...project, owner: account.uid, id: newProjectRef.key };
 };
+
+export const deleteProject = async id => {
+  if (!id) {
+    return true;
+  }
+  const account = await getCurrentUser();
+  if (!account) {
+    throw new Error('You must sign in to delete a project');
+  }
+  return projectByIdRef(id).remove();
+};

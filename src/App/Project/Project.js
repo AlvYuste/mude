@@ -4,16 +4,7 @@ import styled from '@emotion/styled';
 import { Colors, NonIdealState, Button } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
-import {
-  CURRENT_PROJECT_KEY,
-  updateProjectNameAction,
-  addTrackAction,
-  updateProjectTracksAction,
-  updateTrackAction,
-  openProjectAction,
-  newProjectAction,
-  selectTrackAction,
-} from '../../store/modules/project';
+import * as projStore from '../../store/modules/project';
 import { getSearchValue } from '../../utils/utils';
 
 import { ProjectHeader } from './ProjectHeader';
@@ -36,7 +27,6 @@ class RawProject extends React.Component {
       projectError,
       project,
       openProject,
-      newProject,
     } = this.props;
     const {
       location: { search: prevSearch } = {},
@@ -49,11 +39,9 @@ class RawProject extends React.Component {
       return null;
     }
     const routeProjectId = getSearchValue(search, 'project');
+    console.log(routeProjectId, project, project.id);
     if (routeProjectId && project && routeProjectId !== project.id) {
       return openProject(routeProjectId);
-    }
-    if (!routeProjectId && !!project.id) {
-      return newProject();
     }
     return null;
   };
@@ -93,14 +81,19 @@ class RawProject extends React.Component {
       addTrack,
       selectTrack,
       updateTrack,
+      deleteProject,
     } = this.props;
     return (
       <>
         <ProjectHeader
           title={project.name}
           loading={projectLoading}
+          showRecord={!!project.selectedTrackId}
+          showPlay={!!project.duration}
+          showDelete={!!project.id}
           onTitleChange={updateProjectName}
           onAddTrack={addTrack}
+          onDelete={deleteProject}
         />
         {project.tracks && project.tracks.length ? (
           <>
@@ -145,20 +138,21 @@ class RawProject extends React.Component {
 }
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  project: state[CURRENT_PROJECT_KEY].data,
-  projectError: state[CURRENT_PROJECT_KEY].error,
-  projectLoading: state[CURRENT_PROJECT_KEY].loading,
+  project: state[projStore.CURRENT_PROJECT_KEY].data,
+  projectError: state[projStore.CURRENT_PROJECT_KEY].error,
+  projectLoading: state[projStore.CURRENT_PROJECT_KEY].loading,
   collapsed: state[UI_KEY].collapsed,
 });
 const mapDispatchToProps = dispatch => ({
-  newProject: () => dispatch(newProjectAction()),
-  openProject: id => dispatch(openProjectAction(id)),
-  updateProjectName: name => dispatch(updateProjectNameAction(name)),
-  updateTracks: tracks => dispatch(updateProjectTracksAction(tracks)),
-  addTrack: () => dispatch(addTrackAction()),
-  updateTrack: track => dispatch(updateTrackAction(track)),
-  selectTrack: track => dispatch(selectTrackAction(track)),
+  newProject: () => dispatch(projStore.newProjectAction()),
+  openProject: id => dispatch(projStore.openProjectAction(id)),
+  updateProjectName: name => dispatch(projStore.updateProjectNameAction(name)),
+  updateTracks: tracks => dispatch(projStore.updateProjectTracksAction(tracks)),
+  addTrack: () => dispatch(projStore.addTrackAction()),
+  updateTrack: track => dispatch(projStore.updateTrackAction(track)),
+  selectTrack: track => dispatch(projStore.selectTrackAction(track)),
   toggleCollapsed: () => dispatch(toggleCollapsedAction()),
+  deleteProject: () => dispatch(projStore.deleteProjectAction()),
 });
 
 export const Project = connect(
@@ -185,6 +179,7 @@ RawProject.propTypes = {
   openProject: PropTypes.func.isRequired,
   newProject: PropTypes.func.isRequired,
   toggleCollapsed: PropTypes.func.isRequired,
+  deleteProject: PropTypes.func.isRequired,
 };
 RawProject.defaultProps = {
   project: {},
