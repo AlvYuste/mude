@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 import uuid from 'uuid';
 import { navigate } from '@reach/router';
-import { lensById } from '../../utils/fp';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
@@ -9,11 +8,6 @@ import * as projService from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
 
 const dataLense = prop => R.lensPath(['data', prop]);
-const trackLens = id =>
-  R.compose(
-    dataLense('tracks'),
-    lensById(id),
-  );
 
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
 
@@ -25,13 +19,14 @@ export const openProjectAction = payload => dispatch => {
   const transactionId = uuid();
   dispatch({ type: req, payload });
   projService
-    .getProjectDetail(payload, asyncResponse =>
+    .getProjectDetail(payload, asyncResponse => {
+      navigate(`/?project=${payload}`);
       dispatch({
         type: succ,
         response: asyncResponse,
         payload,
-      }),
-    )
+      });
+    })
     .catch(error =>
       dispatch({
         type: fail,
@@ -168,16 +163,3 @@ export const addTrackReducer = createBasicReducer(
     ),
 );
 export const addTrackAction = createBasicAction(PROJECT_ADD_TRACK_KEY);
-
-/* PROJECT_UPDATE_TRACK */
-export const PROJECT_UPDATE_TRACK_KEY = 'PROJECT_UPDATE_TRACK';
-export const updateTrackReducer = createBasicReducer(
-  PROJECT_UPDATE_TRACK_KEY,
-  (state, action) =>
-    R.over(
-      trackLens(action.payload.id),
-      R.mergeDeepLeft(action.payload),
-      state,
-    ),
-);
-export const updateTrackAction = createBasicAction(PROJECT_UPDATE_TRACK_KEY);

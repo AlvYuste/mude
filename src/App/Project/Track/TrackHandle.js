@@ -12,6 +12,8 @@ const TrackHandleIcon = styled(Icon)`
     selected ? Colors.BLUE2 : Colors.DARK_GRAY3};
   color: ${({ selected }) => (selected ? Colors.WHITE : Colors.GRAY3)};
   width: ${trackHandleWidth};
+  position: sticky;
+  left: 0;
 `;
 
 export const RawTrackHandle = ({ selected, ...rest }) => (

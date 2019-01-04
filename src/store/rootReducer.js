@@ -5,6 +5,7 @@ import * as ui from './modules/ui';
 import * as errors from './modules/errors';
 import * as account from './modules/account';
 import * as project from './modules/project';
+import * as track from './modules/track';
 
 export const rootReducer = reduceReducers(
   account.signOutReducer,
@@ -27,9 +28,10 @@ export const rootReducer = reduceReducers(
       project.updateProjectNameReducer,
       project.updateProjectTracksReducer,
       project.addTrackReducer,
-      project.updateTrackReducer,
       project.selectTrackReducer,
       project.deleteProjectReducer,
+
+      track.updateTrackReducer,
     ),
   }),
 );

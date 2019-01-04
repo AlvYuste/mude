@@ -9,7 +9,6 @@ import { FlexResponsive } from '../../components/layout/Flex';
 
 const TracksListWrapper = styled(FlexResponsive)`
   background-color: ${Colors.DARK_GRAY3};
-  margin-bottom: 0;
 `;
 
 const shouldMuteTrack = (track, tracks) => {

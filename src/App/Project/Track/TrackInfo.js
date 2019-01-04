@@ -10,114 +10,97 @@ import {
 } from '@blueprintjs/core';
 import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
+import { trackHandleWidth } from '../../../utils/variables';
 
 const TrackInfoWrapper = styled(Flex)`
   background-color: ${Colors.DARK_GRAY5};
   padding: 0.5rem;
+  position: sticky;
+  left: ${trackHandleWidth};
+  & > * {
+    pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
+    opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
+  }
 `;
 const TrackTitle = styled(EditableText)`
   margin-bottom: 0.5rem;
   transition: margin ease 200ms;
+  opacity: 1;
+  pointer-events: all;
   position: ${({ collapsed }) => (collapsed ? 'absolute' : 'relative')};
   margin: ${({ collapsed }) => (collapsed ? '0.5rem' : '')};
 `;
 const SliderGroupStyled = styled(Flex)`
   transition: opacity ease 100ms;
-  opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
-  pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
   margin-top: ${({ collapsed }) => (collapsed ? '1.5rem' : '0')};
 `;
 const ButtonGroupStyled = styled(ButtonGroup)`
   justify-content: center;
   transition: opacity ease 100ms;
-  opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
-  pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
 `;
 const ButtonStyled = styled(Button)`
   text-transform: uppercase;
   font-size: 0.65rem;
 `;
-export class TrackInfo extends React.Component {
-  state = {
-    track: this.props.track,
+export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
+  const onChangeInput = key => value => {
+    onChangeTrack({ ...track, [key]: value });
   };
-
-  onChangeState = (prop, doSubmit) => value => {
-    const { track } = this.state;
-    this.setState({ track: { ...track, [prop]: value } }, () =>
-      doSubmit ? this.onSubmit() : null,
-    );
-  };
-
-  onSubmit = () => {
-    const { track } = this.state;
-    this.props.onChangeTrack(track);
-  };
-
-  render() {
-    const {
-      track: { name, volume, pan, mute, solo },
-    } = this.state;
-    const { track, onChangeTrack, collapsed, ...rest } = this.props;
-    return (
-      <TrackInfoWrapper
-        {...rest}
+  return (
+    <TrackInfoWrapper
+      {...rest}
+      collapsed={collapsed ? 1 : 0}
+      direction="column"
+    >
+      <TrackTitle
+        value={track.name}
+        collapsed={collapsed ? 1 : 0}
+        selectAllOnFocus
+        placeholder="(Untitled track)"
+        onChange={onChangeInput('name')}
+      />
+      <SliderGroupStyled
         collapsed={collapsed ? 1 : 0}
         direction="column"
+        style={{ padding: '0.5rem' }}
       >
-        <TrackTitle
-          value={name}
-          collapsed={collapsed ? 1 : 0}
-          selectAllOnFocus
-          placeholder="(Untitled track)"
-          onChange={this.onChangeState('name')}
-          onConfirm={this.onSubmit}
+        <SimpleSlider
+          maxLabel={<Icon iconSize={14} icon="volume-up" />}
+          minLabel={<Icon iconSize={14} icon="volume-off" />}
+          value={track.volume}
+          onChange={onChangeInput('volume')}
+          tabIndex={collapsed ? -1 : ''}
         />
-        <SliderGroupStyled
-          collapsed={collapsed ? 1 : 0}
-          direction="column"
-          style={{ padding: '0.5rem' }}
-        >
-          <SimpleSlider
-            maxLabel={<Icon iconSize={14} icon="volume-up" />}
-            minLabel={<Icon iconSize={14} icon="volume-off" />}
-            value={volume}
-            onChange={this.onChangeState('volume')}
-            onRelease={this.onSubmit}
-            tabIndex={collapsed ? -1 : ''}
-          />
-          <SimpleSlider
-            min={-5}
-            max={5}
-            maxLabel="R"
-            minLabel="L"
-            showTrackFill={false}
-            value={pan}
-            onChange={this.onChangeState('pan')}
-            onRelease={this.onSubmit}
-            tabIndex={collapsed ? -1 : ''}
-          />
-        </SliderGroupStyled>
-        <ButtonGroupStyled collapsed={collapsed ? 1 : 0}>
-          <ButtonStyled
-            small
-            text="mute"
-            active={mute}
-            onClick={() => this.onChangeState('mute', true)(!mute)}
-            tabIndex={collapsed ? -1 : ''}
-          />
-          <ButtonStyled
-            small
-            text="solo"
-            active={solo}
-            onClick={() => this.onChangeState('solo', true)(!solo)}
-            tabIndex={collapsed ? -1 : ''}
-          />
-        </ButtonGroupStyled>
-      </TrackInfoWrapper>
-    );
-  }
-}
+        <SimpleSlider
+          min={-5}
+          max={5}
+          maxLabel="R"
+          minLabel="L"
+          showTrackFill={false}
+          value={track.pan}
+          onChange={onChangeInput('pan')}
+          tabIndex={collapsed ? -1 : ''}
+        />
+      </SliderGroupStyled>
+      <ButtonGroupStyled>
+        <ButtonStyled
+          small
+          text="mute"
+          active={track.mute}
+          onClick={() => onChangeInput('mute', true)(!track.mute)}
+          tabIndex={collapsed ? -1 : ''}
+        />
+        <ButtonStyled
+          small
+          text="solo"
+          active={track.solo}
+          onClick={() => onChangeInput('solo', true)(!track.solo)}
+          tabIndex={collapsed ? -1 : ''}
+        />
+      </ButtonGroupStyled>
+    </TrackInfoWrapper>
+  );
+};
 TrackInfo.propTypes = {
   track: PropTypes.shape({
     name: PropTypes.string,

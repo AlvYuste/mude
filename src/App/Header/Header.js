@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { navigate } from '@reach/router';
-
 import {
   Navbar,
   NavbarGroup,
@@ -30,6 +28,7 @@ import {
   OWN_PROJECTS_KEY,
   ownProjectsAction,
   CURRENT_PROJECT_KEY,
+  openProjectAction,
 } from '../../store/modules/project';
 
 const NavbarStyled = styled(Navbar)`
@@ -53,8 +52,6 @@ class RawHeader extends Component {
     }
   }
 
-  onOpenProject = id => navigate(`/?project=${id}`);
-
   render() {
     const {
       account,
@@ -65,8 +62,9 @@ class RawHeader extends Component {
       signInWithEmail,
       signUpWithEmail,
       ownProjects,
-      openNewProject,
+      newProject,
       saveProject,
+      openProject,
     } = this.props;
     return (
       <NavbarStyled>
@@ -77,9 +75,9 @@ class RawHeader extends Component {
             isAuthenticated={!!account}
             currentProject={currentProject}
             ownProjects={ownProjects}
-            onNewProject={openNewProject}
+            onNewProject={newProject}
             onSaveProject={saveProject}
-            onOpenProject={this.onOpenProject}
+            onOpenProject={openProject}
           />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
@@ -111,7 +109,8 @@ RawHeader.propTypes = {
   signUpWithEmail: PropTypes.func.isRequired,
   signOut: PropTypes.func.isRequired,
   getOwnProjects: PropTypes.func.isRequired,
-  openNewProject: PropTypes.func.isRequired,
+  newProject: PropTypes.func.isRequired,
+  openProject: PropTypes.func.isRequired,
 };
 RawHeader.defaultProps = {
   account: undefined,
@@ -135,7 +134,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(signInWithEmailAction({ email, password })),
   signOut: () => dispatch(signOutAction()),
   getOwnProjects: () => dispatch(ownProjectsAction()),
-  openNewProject: () => dispatch(newProjectAction()),
+  openProject: () => dispatch(openProjectAction()),
+  newProject: () => dispatch(newProjectAction()),
   saveProject: () => dispatch(saveProjectAction()),
 });
 export const Header = connect(
