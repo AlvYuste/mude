@@ -4,7 +4,12 @@ export const prevent = cb => event => {
     cb(event);
   }
 };
-
+export const noPropagate = cb => event => {
+  event.stopPropagation();
+  if (cb && typeof cb === 'function') {
+    cb(event);
+  }
+};
 export const searchToObj = search =>
   search
     .substring(1)

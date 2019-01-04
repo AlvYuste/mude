@@ -11,6 +11,7 @@ import {
 import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
 import { trackHandleWidth, trackInfoWidth } from '../../../utils/variables';
+import { noPropagate } from '../../../utils/utils';
 
 const TrackInfoWrapper = styled(Flex)`
   background-color: ${Colors.DARK_GRAY5};
@@ -64,6 +65,7 @@ export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
         collapsed={collapsed ? 1 : 0}
         direction="column"
         style={{ padding: '0.5rem' }}
+        onClick={noPropagate()}
       >
         <SimpleSlider
           maxLabel={<Icon iconSize={14} icon="volume-up" />}
@@ -83,7 +85,7 @@ export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
           tabIndex={collapsed ? -1 : ''}
         />
       </SliderGroupStyled>
-      <ButtonGroupStyled>
+      <ButtonGroupStyled onClick={noPropagate()}>
         <ButtonStyled
           small
           text="mute"
