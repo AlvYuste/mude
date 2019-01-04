@@ -1,31 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { Colors, NonIdealState, Button, Classes } from '@blueprintjs/core';
+import { Colors, NonIdealState, Button } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
 
-import { CustomScroll } from '../../components/layout/CustomScroll';
 import * as projStore from '../../store/modules/project';
 import * as uiStore from '../../store/modules/ui';
 import { getSearchValue } from '../../utils/utils';
 import { ProjectHeader } from './ProjectHeader';
 import { TracksList } from './TracksList';
 import { Timeline } from './Timeline/Timeline';
+import { ProjectScroller } from './ProjectScroller';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
   height: 100%;
 `;
-const ProjectContentWrapper = styled(CustomScroll)`
-  background-color: ${Colors.DARK_GRAY5};
-  overflow-x: auto;
-  overflow-y: hidden;
-`;
-const ProjectContentInner = styled.div`
-  display: inline-block;
-  min-width: 100%;
-`;
+
 class RawProject extends React.Component {
   componentDidMount = () => {
     const { location, project, openProject } = this.props;
@@ -75,30 +67,28 @@ class RawProject extends React.Component {
           onDelete={this.props.deleteProject}
         />
         {project.tracks && project.tracks.length ? (
-          <ProjectContentWrapper className={`${Classes.ELEVATION_1}`}>
-            <ProjectContentInner>
-              <Timeline
-                duration={project.duration}
-                collapsed={collapsed}
-                onCollapsedChange={this.props.toggleCollapsed}
-              />
-              <TracksList
-                lockAxis="y"
-                useDragHandle
-                tracks={project.tracks}
-                collapsed={collapsed}
-                onSortEnd={({ oldIndex, newIndex }) =>
-                  oldIndex !== newIndex
-                    ? this.props.updateTracks(
-                        arrayMove(project.tracks, oldIndex, newIndex),
-                      )
-                    : null
-                }
-                selectedTrackId={project.selectedTrackId}
-                onClickTrack={selectTrack}
-              />
-            </ProjectContentInner>
-          </ProjectContentWrapper>
+          <ProjectScroller>
+            <Timeline
+              duration={project.duration}
+              collapsed={collapsed}
+              onCollapsedChange={this.props.toggleCollapsed}
+            />
+            <TracksList
+              lockAxis="y"
+              useDragHandle
+              tracks={project.tracks}
+              collapsed={collapsed}
+              onSortEnd={({ oldIndex, newIndex }) =>
+                oldIndex !== newIndex
+                  ? this.props.updateTracks(
+                      arrayMove(project.tracks, oldIndex, newIndex),
+                    )
+                  : null
+              }
+              selectedTrackId={project.selectedTrackId}
+              onClickTrack={selectTrack}
+            />
+          </ProjectScroller>
         ) : (
           !projectLoading && this.renderEmpty()
         )}
