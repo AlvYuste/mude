@@ -20,6 +20,7 @@ const ProjectWrapper = styled.div`
 const ProjectContentWrapper = styled(CustomScroll)`
   background-color: ${Colors.DARK_GRAY5};
   overflow-x: auto;
+  overflow-y: hidden;
 `;
 const ProjectContentInner = styled.div`
   display: inline-block;

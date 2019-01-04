@@ -134,7 +134,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(signInWithEmailAction({ email, password })),
   signOut: () => dispatch(signOutAction()),
   getOwnProjects: () => dispatch(ownProjectsAction()),
-  openProject: () => dispatch(openProjectAction()),
+  openProject: id => dispatch(openProjectAction(id)),
   newProject: () => dispatch(newProjectAction()),
   saveProject: () => dispatch(saveProjectAction()),
 });

@@ -50,6 +50,9 @@ export const CustomScroll = styled.div`
       }
     }
   }
+  &::-webkit-scrollbar-corner {
+    background: ${Colors.DARK_GRAY2};
+  }
   &::-webkit-scrollbar-track {
     background: ${Colors.DARK_GRAY2};
   }
