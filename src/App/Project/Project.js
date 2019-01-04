@@ -24,6 +24,7 @@ const ProjectContentWrapper = styled(CustomScroll)`
 `;
 const ProjectContentInner = styled.div`
   display: inline-block;
+  min-width: 100%;
 `;
 class RawProject extends React.Component {
   componentDidMount = () => {
