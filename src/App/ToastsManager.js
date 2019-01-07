@@ -1,36 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Toaster, Toast, Intent } from '@blueprintjs/core';
-import { ERRORS_KEY, dismissErrorAction } from '../store/modules/errors';
+import { Toaster, Toast } from '@blueprintjs/core';
+import { TOASTS_KEY, toastDismissAction } from '../store/modules/toasts';
 
-export const RawToastsManager = ({ errors, dismissError }) => (
+export const RawToastsManager = ({ toasts, dismissToast }) => (
   <Toaster>
-    {errors.map(error => (
+    {toasts.map(toast => (
       <Toast
-        key={error.key}
-        message={error.message}
-        intent={Intent.DANGER}
+        key={toast.key}
+        message={toast.message}
+        intent={toast.intent}
         timeout={3000}
-        onDismiss={() => dismissError(error.key)}
+        onDismiss={() => dismissToast(toast.key)}
       />
     ))}
   </Toaster>
 );
 RawToastsManager.propTypes = {
-  errors: PropTypes.array,
-  dismissError: PropTypes.func.isRequired,
+  toasts: PropTypes.array,
+  dismissToast: PropTypes.func.isRequired,
 };
 RawToastsManager.defaultProps = {
-  errors: [],
+  toasts: [],
 };
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  errors: state[ERRORS_KEY],
+  toasts: state[TOASTS_KEY],
 });
 const mapDispatchToProps = dispatch => ({
-  dismissError: key => dispatch(dismissErrorAction(key)),
+  dismissToast: key => dispatch(toastDismissAction(key)),
 });
 export const ToastsManager = connect(
   mapStateToProps,

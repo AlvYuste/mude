@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import reduceReducers from 'reduce-reducers';
 
 import * as ui from './modules/ui';
-import * as errors from './modules/errors';
+import * as toasts from './modules/toasts';
 import * as account from './modules/account';
 import * as project from './modules/project';
 import * as track from './modules/track';
@@ -14,16 +14,17 @@ export const rootReducer = reduceReducers(
       ui.selectTracksReducer,
       ui.toggleCollapsedReducer,
     ),
-    [errors.ERRORS_KEY]: reduceReducers(
-      errors.errorsReducer,
-      errors.errorDismissReducer,
+    [toasts.TOASTS_KEY]: reduceReducers(
+      toasts.toastOpenReducer,
+      toasts.toastDismissReducer,
+      toasts.errorsReducer,
     ),
     [account.CURRENT_ACCOUNT_KEY]: reduceReducers(
       account.currentAccountReducer,
       account.signInWithGoogleReducer,
       account.signInWithEmailReducer,
     ),
-    [project.OWN_PROJECTS_KEY]: reduceReducers(project.ownProjectsReducer),
+    [project.OWN_PROJECTS_KEY]: project.ownProjectsReducer,
     [project.CURRENT_PROJECT_KEY]: reduceReducers(
       project.openProjectReducer,
       project.newProjectReducer,

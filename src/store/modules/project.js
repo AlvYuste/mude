@@ -6,6 +6,7 @@ import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import * as projService from '../../services/project';
 import { createAsyncTypes } from '../helpers/async/async.types';
+import { TOAST_OPEN_KEY, createSuccessToast } from './toasts';
 
 const dataLense = prop => R.lensPath(['data', prop]);
 
@@ -72,6 +73,10 @@ export const saveProjectAction = () => (dispatch, getState) => {
   projService.saveProject(currentProject).then(
     response => {
       navigate(`?project=${response.id}`);
+      dispatch({
+        type: TOAST_OPEN_KEY,
+        payload: createSuccessToast('Project saved'),
+      });
       dispatch({ response, type: succ, transactionId });
     },
     error =>
