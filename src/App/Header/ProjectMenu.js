@@ -40,7 +40,7 @@ export class ProjectMenu extends React.Component {
             <MenuItem
               icon="document"
               text="New"
-              label="Ctrl+N"
+              label="Ctrl+O"
               onClick={onNewProject}
             />
             <MenuItem

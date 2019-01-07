@@ -126,7 +126,7 @@ export const newProjectReducer = createBasicReducer(
   NEW_PROJECT_KEY,
   () => ({}),
 );
-export const newProjectAction = dispatch => {
+export const newProjectAction = () => dispatch => {
   navigate('/');
   dispatch({ type: NEW_PROJECT_KEY, transactionId: uuid() });
   dispatch(ActionCreators.clearHistory());
