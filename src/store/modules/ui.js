@@ -10,3 +10,11 @@ export const toggleCollapsedReducer = createBasicReducer(
   state => ({ ...state, collapsed: !state.collapsed }),
   {},
 );
+
+/* UI_SELECT_TRACK */
+const UI_SELECT_TRACKS_KEY = 'UI_SELECT_TRACK';
+export const selectTracksReducer = createBasicReducer(
+  UI_SELECT_TRACKS_KEY,
+  (state, action) => ({ ...state, selectedTracks: action.payload }),
+);
+export const selectTracksAction = createBasicAction(UI_SELECT_TRACKS_KEY);

@@ -142,15 +142,6 @@ export const updateProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
 );
 
-/* PROJECT_SELECT_TRACK */
-export const PROJECT_SELECT_TRACK_KEY = 'PROJECT_SELECT_TRACK';
-export const selectTrackReducer = createBasicReducer(
-  PROJECT_SELECT_TRACK_KEY,
-  (state, action) =>
-    R.set(dataLense('selectedTrackId'), action.payload.id, state),
-);
-export const selectTrackAction = createBasicAction(PROJECT_SELECT_TRACK_KEY);
-
 /* PROJECT_ADD_TRACK */
 export const PROJECT_ADD_TRACK_KEY = 'PROJECT_ADD_TRACK';
 export const addTrackReducer = createBasicReducer(

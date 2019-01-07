@@ -53,14 +53,20 @@ class RawProject extends React.Component {
   };
 
   renderProjectContent = () => {
-    const { collapsed, project, projectLoading, selectTrack } = this.props;
+    const {
+      collapsed,
+      project,
+      projectLoading,
+      selectedTracks,
+      selectTracks,
+    } = this.props;
     return (
       <>
         <ProjectHeader
           title={project.name}
           loading={projectLoading}
-          showRecord={!!project.selectedTrackId}
-          showPlay={!!project.duration}
+          showRecord={selectedTracks.length > 0}
+          showPlay={project.duration > 0}
           showDelete={!!project.id}
           onTitleChange={this.props.updateProjectName}
           onAddTrack={this.props.addTrack}
@@ -85,8 +91,8 @@ class RawProject extends React.Component {
                     )
                   : null
               }
-              selectedTrackId={project.selectedTrackId}
-              onClickTrack={selectTrack}
+              selectedTracks={selectedTracks}
+              onSelectTracks={selectTracks}
             />
           </ProjectScroller>
         ) : (
@@ -114,6 +120,7 @@ const mapStateToProps = (state, ownProps) => ({
   projectError: state[projStore.CURRENT_PROJECT_KEY].error,
   projectLoading: state[projStore.CURRENT_PROJECT_KEY].loading,
   collapsed: state[uiStore.UI_KEY].collapsed,
+  selectedTracks: state[uiStore.UI_KEY].selectedTracks,
 });
 const mapDispatchToProps = dispatch => ({
   newProject: () => dispatch(projStore.newProjectAction()),
@@ -121,9 +128,9 @@ const mapDispatchToProps = dispatch => ({
   updateProjectName: name => dispatch(projStore.updateProjectNameAction(name)),
   updateTracks: tracks => dispatch(projStore.updateProjectTracksAction(tracks)),
   addTrack: () => dispatch(projStore.addTrackAction()),
-  selectTrack: track => dispatch(projStore.selectTrackAction(track)),
   toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
   deleteProject: () => dispatch(projStore.deleteProjectAction()),
+  selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
 });
 
 export const Project = connect(
@@ -139,13 +146,14 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
+  selectedTracks: PropTypes.arrayOf(PropTypes.string),
   collapsed: PropTypes.bool,
   projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
   updateProjectName: PropTypes.func.isRequired,
   updateTracks: PropTypes.func.isRequired,
   addTrack: PropTypes.func.isRequired,
-  selectTrack: PropTypes.func.isRequired,
+  selectTracks: PropTypes.func.isRequired,
   openProject: PropTypes.func.isRequired,
   newProject: PropTypes.func.isRequired,
   toggleCollapsed: PropTypes.func.isRequired,
@@ -155,6 +163,7 @@ RawProject.defaultProps = {
   project: {},
   projectLoading: false,
   projectError: undefined,
+  selectedTracks: [],
   collapsed: false,
   location: {},
 };
