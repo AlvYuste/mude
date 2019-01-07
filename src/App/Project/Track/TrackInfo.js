@@ -45,7 +45,15 @@ const ButtonStyled = styled(Button)`
   text-transform: uppercase;
   font-size: 0.65rem;
 `;
-export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
+export const TrackInfo = ({
+  track,
+  onChangeTrack,
+  collapsed,
+  onChangeName,
+  onChangeVolume,
+  onChangePan,
+  ...rest
+}) => {
   const onChangeInput = key => value => {
     onChangeTrack({ ...track, [key]: value });
   };
@@ -60,7 +68,7 @@ export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
         collapsed={collapsed ? 1 : 0}
         selectAllOnFocus
         placeholder="(Untitled track)"
-        onChange={onChangeInput('name')}
+        onChange={onChangeName}
       />
       <SliderGroupStyled
         collapsed={collapsed ? 1 : 0}
@@ -72,7 +80,7 @@ export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
           maxLabel={<Icon iconSize={14} icon="volume-up" />}
           minLabel={<Icon iconSize={14} icon="volume-off" />}
           value={track.volume}
-          onChange={onChangeInput('volume')}
+          onChange={onChangeVolume}
           tabIndex={collapsed ? -1 : ''}
         />
         <SimpleSlider
@@ -82,7 +90,7 @@ export const TrackInfo = ({ track, onChangeTrack, collapsed, ...rest }) => {
           minLabel="L"
           showTrackFill={false}
           value={track.pan}
-          onChange={onChangeInput('pan')}
+          onChange={onChangePan}
           tabIndex={collapsed ? -1 : ''}
         />
       </SliderGroupStyled>
@@ -116,6 +124,9 @@ TrackInfo.propTypes = {
   collapsed: PropTypes.bool,
   selected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
+  onChangeName: PropTypes.func,
+  onChangeVolume: PropTypes.func,
+  onChangePan: PropTypes.func,
 };
 
 TrackInfo.defaultProps = {
@@ -129,4 +140,7 @@ TrackInfo.defaultProps = {
   collapsed: false,
   selected: false,
   onChangeTrack: () => {},
+  onChangeName: () => {},
+  onChangeVolume: () => {},
+  onChangePan: () => {},
 };

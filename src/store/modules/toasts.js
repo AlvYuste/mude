@@ -4,36 +4,26 @@ import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 
 export const TOASTS_KEY = 'TOASTS';
-export const createToast = (message, rest) => ({
-  message,
+export const TOAST_OPEN_KEY = 'TOAST_OPEN';
+export const createToast = props => ({
   key: uuid(),
   intent: Intent.PRIMARY,
   firedAt: new Date(),
-  ...rest,
+  ...props,
 });
-export const createErrorToast = (message, rest) =>
-  createToast(message, {
-    intent: Intent.DANGER,
-    ...rest,
-  });
-export const createSuccessToast = (message, rest) =>
-  createToast(message, {
-    intent: Intent.SUCCESS,
-    ...rest,
-  });
-export const createWarningToast = (message, rest) =>
-  createToast(message, {
-    intent: Intent.WARNING,
-    ...rest,
-  });
+
+export const createToastAction = props => ({
+  type: TOAST_OPEN_KEY,
+  payload: createToast(props),
+});
 
 /* TOAST_OPEN */
-export const TOAST_OPEN_KEY = 'TOAST_OPEN';
 export const toastOpenAction = createBasicAction(TOAST_OPEN_KEY);
 export const toastOpenReducer = createBasicReducer(
   TOAST_OPEN_KEY,
   (state, action) => [
-    createToast(action.payload.message || action.payload, {
+    createToast({
+      message: action.payload.message || action.payload,
       intent: action.payload.intent || Intent.WARNING,
     }),
     ...state,
@@ -43,7 +33,9 @@ export const toastOpenReducer = createBasicReducer(
 export const errorsReducer = (state = [], action) =>
   action.error && (!action.payload || action.payload.notifyErrors !== false)
     ? [
-        createErrorToast(action.error.message || action.error, {
+        createToast({
+          message: action.error.message || action.error,
+          intent: Intent.DANGER,
           actionType: action.type,
         }),
         ...state,

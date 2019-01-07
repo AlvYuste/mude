@@ -21,7 +21,7 @@ import {
   signUpWithEmailAction,
 } from '../../store/modules/account';
 import { mq } from '../../utils/mq';
-import { HeaderMenu } from './HeaderMenu';
+import { ProjectMenu } from './ProjectMenu';
 import {
   saveProjectAction,
   newProjectAction,
@@ -30,6 +30,11 @@ import {
   CURRENT_PROJECT_KEY,
   openProjectAction,
 } from '../../store/modules/project';
+import {
+  redoHistoryAction,
+  undoHistoryAction,
+} from '../../store/modules/history';
+import { EditMenu } from './EditMenu';
 
 const NavbarStyled = styled(Navbar)`
   padding: 0 0.5rem;
@@ -57,6 +62,8 @@ class RawHeader extends Component {
       account,
       currentProject,
       accountLoading,
+      redoStack,
+      undoStack,
       signInWithGoogle,
       signOut,
       signInWithEmail,
@@ -65,19 +72,27 @@ class RawHeader extends Component {
       newProject,
       saveProject,
       openProject,
+      undo,
+      redo,
     } = this.props;
     return (
       <NavbarStyled>
         <NavbarGroup>
           <NavbarHeading>MUDE</NavbarHeading>
           <NavbarDivider />
-          <HeaderMenu
+          <ProjectMenu
             isAuthenticated={!!account}
             currentProject={currentProject}
             ownProjects={ownProjects}
             onNewProject={newProject}
             onSaveProject={saveProject}
             onOpenProject={openProject}
+          />
+          <EditMenu
+            onRedo={redo}
+            onUndo={undo}
+            redoStack={redoStack}
+            undoStack={undoStack}
           />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
@@ -103,6 +118,7 @@ RawHeader.propTypes = {
   currentProject: PropTypes.object,
   ownProjects: PropTypes.arrayOf(PropTypes.object),
   accountLoading: PropTypes.bool,
+
   getCurrentAccount: PropTypes.func.isRequired,
   signInWithGoogle: PropTypes.func.isRequired,
   signInWithEmail: PropTypes.func.isRequired,
@@ -111,6 +127,8 @@ RawHeader.propTypes = {
   getOwnProjects: PropTypes.func.isRequired,
   newProject: PropTypes.func.isRequired,
   openProject: PropTypes.func.isRequired,
+  undo: PropTypes.func.isRequired,
+  redo: PropTypes.func.isRequired,
 };
 RawHeader.defaultProps = {
   account: undefined,
@@ -124,6 +142,8 @@ const mapStateToProps = (state, ownProps) => ({
   accountLoading: state[CURRENT_ACCOUNT_KEY].loading,
   currentProject: state[CURRENT_PROJECT_KEY].data,
   ownProjects: state[OWN_PROJECTS_KEY].data,
+  undoStack: state[CURRENT_PROJECT_KEY].past,
+  redoStack: state[CURRENT_PROJECT_KEY].future,
 });
 const mapDispatchToProps = dispatch => ({
   getCurrentAccount: () => dispatch(currentAccountAction()),
@@ -137,6 +157,8 @@ const mapDispatchToProps = dispatch => ({
   openProject: id => dispatch(openProjectAction(id)),
   newProject: () => dispatch(newProjectAction()),
   saveProject: () => dispatch(saveProjectAction()),
+  undo: () => dispatch(undoHistoryAction()),
+  redo: () => dispatch(redoHistoryAction()),
 });
 export const Header = connect(
   mapStateToProps,

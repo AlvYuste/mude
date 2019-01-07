@@ -116,9 +116,9 @@ class RawProject extends React.Component {
 }
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  project: state[projStore.CURRENT_PROJECT_KEY].data,
-  projectError: state[projStore.CURRENT_PROJECT_KEY].error,
-  projectLoading: state[projStore.CURRENT_PROJECT_KEY].loading,
+  project: projStore.getCurrentProject(state).data,
+  projectError: projStore.getCurrentProject(state).error,
+  projectLoading: projStore.getCurrentProject(state).loading,
   collapsed: state[uiStore.UI_KEY].collapsed,
   selectedTracks: state[uiStore.UI_KEY].selectedTracks,
 });

@@ -49,6 +49,9 @@ const RawTrack = ({
   collapsed,
   selected,
   updateTrack,
+  setTrackPan,
+  setTrackName,
+  setTrackVolume,
   deleteTrack,
   ...rest
 }) => (
@@ -59,6 +62,9 @@ const RawTrack = ({
       collapsed={collapsed}
       selected={selected}
       onChangeTrack={updateTrack}
+      onChangeName={value => setTrackName({ id: track.id, value })}
+      onChangeVolume={value => setTrackVolume({ id: track.id, value })}
+      onChangePan={value => setTrackPan({ id: track.id, value })}
     />
     <TrackContentStyled />
     <TrackDeleteButton
@@ -74,6 +80,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
 });
 const mapDispatchToProps = dispatch => ({
+  setTrackPan: ({ id, value }) =>
+    dispatch(trckStore.setTrackPanAction({ id, value })),
+  setTrackName: ({ id, value }) =>
+    dispatch(trckStore.setTrackNameAction({ id, value })),
+  setTrackVolume: ({ id, value }) =>
+    dispatch(trckStore.setTrackVolumeAction({ id, value })),
   updateTrack: track => dispatch(trckStore.updateTrackAction(track)),
   deleteTrack: trackId => dispatch(trckStore.deleteTrackAction(trackId)),
 });
@@ -96,6 +108,9 @@ RawTrack.propTypes = {
   }),
   collapsed: PropTypes.bool,
   selected: PropTypes.bool,
+  setTrackPan: PropTypes.func.isRequired,
+  setTrackName: PropTypes.func.isRequired,
+  setTrackVolume: PropTypes.func.isRequired,
   updateTrack: PropTypes.func.isRequired,
   deleteTrack: PropTypes.func.isRequired,
 };

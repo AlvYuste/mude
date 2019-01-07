@@ -1,41 +1,59 @@
 import { combineReducers } from 'redux';
 import reduceReducers from 'reduce-reducers';
+import undoable, { includeAction, groupByActionTypes } from 'redux-undo';
 
 import * as ui from './modules/ui';
-import * as toasts from './modules/toasts';
-import * as account from './modules/account';
-import * as project from './modules/project';
-import * as track from './modules/track';
+import * as tsts from './modules/toasts';
+import * as acct from './modules/account';
+import * as proj from './modules/project';
+import * as trck from './modules/track';
 
 export const rootReducer = reduceReducers(
-  account.signOutReducer,
+  acct.signOutReducer,
   combineReducers({
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,
       ui.toggleCollapsedReducer,
     ),
-    [toasts.TOASTS_KEY]: reduceReducers(
-      toasts.toastOpenReducer,
-      toasts.toastDismissReducer,
-      toasts.errorsReducer,
+    [tsts.TOASTS_KEY]: reduceReducers(
+      tsts.toastOpenReducer,
+      tsts.toastDismissReducer,
+      tsts.errorsReducer,
     ),
-    [account.CURRENT_ACCOUNT_KEY]: reduceReducers(
-      account.currentAccountReducer,
-      account.signInWithGoogleReducer,
-      account.signInWithEmailReducer,
+    [acct.CURRENT_ACCOUNT_KEY]: reduceReducers(
+      acct.currentAccountReducer,
+      acct.signInWithGoogleReducer,
+      acct.signInWithEmailReducer,
     ),
-    [project.OWN_PROJECTS_KEY]: project.ownProjectsReducer,
-    [project.CURRENT_PROJECT_KEY]: reduceReducers(
-      project.openProjectReducer,
-      project.newProjectReducer,
-      project.saveProjectReducer,
-      project.updateProjectNameReducer,
-      project.updateProjectTracksReducer,
-      project.addTrackReducer,
-      project.deleteProjectReducer,
+    [proj.OWN_PROJECTS_KEY]: proj.ownProjectsReducer,
+    [proj.CURRENT_PROJECT_KEY]: undoable(
+      reduceReducers(
+        proj.openProjectReducer,
+        proj.newProjectReducer,
+        proj.saveProjectReducer,
+        proj.updateProjectNameReducer,
+        proj.updateProjectTracksReducer,
+        proj.addTrackReducer,
+        proj.deleteProjectReducer,
 
-      track.updateTrackReducer,
-      track.deleteTrackReducer,
+        trck.updateTrackReducer,
+        trck.setTrackNameReducer,
+        trck.setTrackVolumeReducer,
+        trck.setTrackPanReducer,
+        trck.deleteTrackReducer,
+      ),
+      {
+        limit: 50,
+        ignoreInitialState: true,
+        filter: includeAction([
+          ...trck.undoableActions,
+          ...proj.undoableActions,
+        ]),
+        groupBy: groupByActionTypes([
+          ...trck.groupableActions,
+          ...proj.groupableActions,
+        ]),
+      },
     ),
   }),
 );
