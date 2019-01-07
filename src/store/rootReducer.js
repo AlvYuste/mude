@@ -10,7 +10,10 @@ import * as track from './modules/track';
 export const rootReducer = reduceReducers(
   account.signOutReducer,
   combineReducers({
-    [ui.UI_KEY]: reduceReducers(ui.toggleCollapsedReducer),
+    [ui.UI_KEY]: reduceReducers(
+      ui.selectTracksReducer,
+      ui.toggleCollapsedReducer,
+    ),
     [errors.ERRORS_KEY]: reduceReducers(
       errors.errorsReducer,
       errors.errorDismissReducer,
@@ -28,7 +31,6 @@ export const rootReducer = reduceReducers(
       project.updateProjectNameReducer,
       project.updateProjectTracksReducer,
       project.addTrackReducer,
-      project.selectTrackReducer,
       project.deleteProjectReducer,
 
       track.updateTrackReducer,

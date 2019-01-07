@@ -11,54 +11,62 @@ const TracksListWrapper = styled(FlexResponsive)`
   background-color: ${Colors.DARK_GRAY3};
 `;
 
-const shouldMuteTrack = (track, tracks) => {
-  if (track.mute || !track.volume) {
-    return true;
-  }
-  const soloTracks = tracks.reduce(
-    (memo, curr) => (curr.solo ? [...memo, curr.id] : memo),
-    [],
-  );
-  return soloTracks.length > 0 && !soloTracks.includes(track.id);
-};
-
 const RawTracksList = ({
   tracks,
+  selectedTracks,
+  onSelectTracks,
   collapsed,
   onChangeTrack,
-  selectedTrackId,
-  onClickTrack,
+  ...rest
 }) => (
-  <TracksListWrapper direction="column">
+  <TracksListWrapper {...rest} direction="column">
     {!!tracks &&
-      tracks.map((track, i) => (
-        <Track
-          key={track.id}
-          index={i}
-          track={track}
-          collapsed={collapsed}
-          selected={selectedTrackId === track.id}
-          shouldMute={shouldMuteTrack(track, tracks)}
-          onChangeTrack={onChangeTrack}
-          onClick={() =>
-            selectedTrackId !== track.id ? onClickTrack(track) : null
-          }
-        />
-      ))}
+      tracks.map((track, i) => {
+        const isSelected = selectedTracks.includes(track.id);
+        return (
+          <Track
+            key={track.id}
+            index={i}
+            track={track}
+            collapsed={rest.collapsed}
+            selected={isSelected}
+            shouldMute={(() => {
+              if (track.mute || !track.volume) {
+                return true;
+              }
+              const soloTracks = tracks.reduce(
+                (memo, curr) => (curr.solo ? [...memo, curr.id] : memo),
+                [],
+              );
+              return soloTracks.length > 0 && !soloTracks.includes(track.id);
+            })()}
+            onChangeTrack={rest.onChangeTrack}
+            onClick={e =>
+              e.ctrlKey
+                ? onSelectTracks(
+                    isSelected
+                      ? selectedTracks.filter(t => t !== track.id)
+                      : [...selectedTracks, track.id],
+                  )
+                : onSelectTracks([track.id])
+            }
+          />
+        );
+      })}
   </TracksListWrapper>
 );
 RawTracksList.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.object),
   collapsed: PropTypes.bool,
-  selectedTrackId: PropTypes.string,
-  onClickTrack: PropTypes.func,
+  selectedTracks: PropTypes.arrayOf(PropTypes.string),
+  onSelectTracks: PropTypes.func,
   onChangeTrack: PropTypes.func,
 };
 RawTracksList.defaultProps = {
   tracks: [],
   collapsed: false,
-  selectedTrackId: undefined,
-  onClickTrack: () => {},
+  selectedTracks: [],
+  onSelectTracks: () => {},
   onChangeTrack: () => {},
 };
 
