@@ -1,6 +1,5 @@
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
-import { PIXELS_PER_TICK, TICKS_PER_SEGEMNT } from '../../utils/variables';
 import { getTimeFromOffset } from '../../utils/utils';
 
 export const UI_KEY = 'UI';
@@ -27,4 +26,12 @@ export const selectTimeReducer = createBasicReducer(
     ...state,
     timeSelected: getTimeFromOffset(action.payload),
   }),
+);
+
+/* UI_SELECT_TRACK */
+const UI_SELECT_TRACKS_KEY = 'UI_SELECT_TRACK';
+export const selectTracksAction = createBasicAction(UI_SELECT_TRACKS_KEY);
+export const selectTracksReducer = createBasicReducer(
+  UI_SELECT_TRACKS_KEY,
+  (state, action) => ({ ...state, selectedTracks: action.payload }),
 );

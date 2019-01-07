@@ -9,33 +9,7 @@ import {
   MenuDivider,
 } from '@blueprintjs/core';
 
-export class HeaderMenu extends React.Component {
-  renderProjectMenu = () => {
-    const { onNewProject, onSaveProject, isAuthenticated } = this.props;
-    return (
-      <Menu>
-        <MenuItem
-          icon="document"
-          text="New"
-          label="Ctrl+N"
-          onClick={onNewProject}
-        />
-        <MenuItem
-          icon="floppy-disk"
-          text="Save"
-          label="Ctrl+S"
-          onClick={onSaveProject}
-        />
-        {isAuthenticated && (
-          <>
-            <MenuDivider title="Open project:" />
-            {this.renderOpenProjectSubmenu()}
-          </>
-        )}
-      </Menu>
-    );
-  };
-
+export class ProjectMenu extends React.Component {
   renderOpenProjectSubmenu = () => {
     const { onOpenProject, ownProjects, currentProject } = this.props;
     if (!ownProjects || !ownProjects.length) {
@@ -56,22 +30,41 @@ export class HeaderMenu extends React.Component {
   };
 
   render() {
+    const { onNewProject, onSaveProject, isAuthenticated } = this.props;
     return (
-      <>
-        <Popover
-          minimal
-          position={Position.BOTTOM_LEFT}
-          content={this.renderProjectMenu()}
-        >
-          <Button minimal icon="projects" text="Project" />
-        </Popover>
-        {/* <Button minimal icon="edit" text="Edit" /> */}
-      </>
+      <Popover
+        minimal
+        position={Position.BOTTOM_LEFT}
+        content={
+          <Menu>
+            <MenuItem
+              icon="document"
+              text="New"
+              label="Ctrl+O"
+              onClick={onNewProject}
+            />
+            <MenuItem
+              icon="floppy-disk"
+              text="Save"
+              label="Ctrl+S"
+              onClick={onSaveProject}
+            />
+            {isAuthenticated && (
+              <>
+                <MenuDivider title="Open project:" />
+                {this.renderOpenProjectSubmenu()}
+              </>
+            )}
+          </Menu>
+        }
+      >
+        <Button minimal icon="projects" text="Project" />
+      </Popover>
     );
   }
 }
 
-HeaderMenu.propTypes = {
+ProjectMenu.propTypes = {
   isAuthenticated: PropTypes.bool,
   currentProject: PropTypes.object,
   ownProjects: PropTypes.arrayOf(PropTypes.object),
@@ -79,7 +72,7 @@ HeaderMenu.propTypes = {
   onOpenProject: PropTypes.func,
   onSaveProject: PropTypes.func,
 };
-HeaderMenu.defaultProps = {
+ProjectMenu.defaultProps = {
   isAuthenticated: false,
   currentProject: undefined,
   ownProjects: [],

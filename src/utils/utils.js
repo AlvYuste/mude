@@ -22,6 +22,7 @@ export const getTimeFromOffset = (offset, zoom = 1) =>
   offset / PIXELS_PER_TICK / TICKS_PER_SEGEMNT / zoom;
 export const getOffsetFromTime = (time, zoom = 1) =>
   time * PIXELS_PER_TICK * TICKS_PER_SEGEMNT * zoom;
+
 export const searchToObj = search =>
   search
     .substring(1)

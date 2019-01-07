@@ -1,15 +1,19 @@
 import * as R from 'ramda';
 import uuid from 'uuid';
+import { ActionCreators } from 'redux-undo';
 import { navigate } from '@reach/router';
+import { Intent } from '@blueprintjs/core';
+import { createAsyncTypes } from '../helpers/async/async.types';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import * as projService from '../../services/project';
-import { createAsyncTypes } from '../helpers/async/async.types';
+import { createToastAction } from './toasts';
 
 const dataLense = prop => R.lensPath(['data', prop]);
 
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
+export const getCurrentProject = state => state[CURRENT_PROJECT_KEY].present;
 
 /* OPEN PROJECT */
 export const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
@@ -26,6 +30,7 @@ export const openProjectAction = payload => dispatch => {
         response: asyncResponse,
         payload,
       });
+      dispatch(ActionCreators.clearHistory());
     })
     .catch(error =>
       dispatch({
@@ -61,17 +66,22 @@ export const ownProjectsAction = () => dispatch => {
 };
 
 /* CURRENT PROJECT SAVE */
-export const PROJECT_SAVE_KEY = 'PROJECT_SAVE';
+export const SAVE_PROJECT_KEY = 'SAVE_PROJECT';
+export const saveProjectReducer = createAsyncReducer(SAVE_PROJECT_KEY);
 export const saveProjectAction = () => (dispatch, getState) => {
-  const [req, succ, fail] = createAsyncTypes(PROJECT_SAVE_KEY);
+  const [req, succ, fail] = createAsyncTypes(SAVE_PROJECT_KEY);
   const transactionId = uuid();
-  const {
-    [CURRENT_PROJECT_KEY]: { data: currentProject },
-  } = getState();
+  const currentProject = getCurrentProject(getState()).data;
   dispatch({ type: req, transactionId });
   projService.saveProject(currentProject).then(
     response => {
       navigate(`?project=${response.id}`);
+      dispatch(
+        createToastAction({
+          message: 'Project saved successfuly',
+          intent: Intent.SUCCESS,
+        }),
+      );
       dispatch({ response, type: succ, transactionId });
     },
     error =>
@@ -82,22 +92,23 @@ export const saveProjectAction = () => (dispatch, getState) => {
       }),
   );
 };
-export const saveProjectReducer = createAsyncReducer(PROJECT_SAVE_KEY);
 
 /* CURRENT PROJECT DELETE */
-export const PROJECT_DELETE_KEY = 'PROJECT_DELETE';
+export const DELETE_KEY_PROJECT = 'DELETE_PROJECT';
+export const deleteProjectReducer = createAsyncReducer(DELETE_KEY_PROJECT, {
+  successReducer: () => ({}),
+});
 export const deleteProjectAction = payload => (dispatch, getState) => {
-  const [req, succ, fail] = createAsyncTypes(PROJECT_DELETE_KEY);
+  const [req, succ, fail] = createAsyncTypes(DELETE_KEY_PROJECT);
   const transactionId = uuid();
-  const {
-    [CURRENT_PROJECT_KEY]: { data: currentProject },
-  } = getState();
+  const currentProject = getCurrentProject(getState()).data;
   const projectId = payload || currentProject.id;
   dispatch({ type: req, payload: projectId, transactionId });
   projService.deleteProject(projectId).then(
     response => {
       navigate('/');
       dispatch({ response, payload: projectId, type: succ, transactionId });
+      dispatch(ActionCreators.clearHistory());
     },
     error =>
       dispatch({
@@ -108,19 +119,18 @@ export const deleteProjectAction = payload => (dispatch, getState) => {
       }),
   );
 };
-export const deleteProjectReducer = createAsyncReducer(PROJECT_DELETE_KEY, {
-  successReducer: () => ({}),
-});
 
 /* PROJECT_NEW */
-export const PROJECT_NEW_KEY = 'PROJECT_NEW';
+export const NEW_PROJECT_KEY = 'NEW_PROJECT';
 export const newProjectReducer = createBasicReducer(
-  PROJECT_NEW_KEY,
+  NEW_PROJECT_KEY,
   () => ({}),
 );
-export const newProjectAction = createBasicAction(PROJECT_NEW_KEY, () =>
-  navigate('/'),
-);
+export const newProjectAction = () => dispatch => {
+  navigate('/');
+  dispatch({ type: NEW_PROJECT_KEY, transactionId: uuid() });
+  dispatch(ActionCreators.clearHistory());
+};
 
 /* PROJECT_UPDATE_NAME */
 export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
@@ -142,17 +152,9 @@ export const updateProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
 );
 
-/* PROJECT_SELECT_TRACK */
-export const PROJECT_SELECT_TRACK_KEY = 'PROJECT_SELECT_TRACK';
-export const selectTrackReducer = createBasicReducer(
-  PROJECT_SELECT_TRACK_KEY,
-  (state, action) =>
-    R.set(dataLense('selectedTrackId'), action.payload.id, state),
-);
-export const selectTrackAction = createBasicAction(PROJECT_SELECT_TRACK_KEY);
-
 /* PROJECT_ADD_TRACK */
 export const PROJECT_ADD_TRACK_KEY = 'PROJECT_ADD_TRACK';
+export const addTrackAction = createBasicAction(PROJECT_ADD_TRACK_KEY);
 export const addTrackReducer = createBasicReducer(
   PROJECT_ADD_TRACK_KEY,
   (state, action) =>
@@ -162,4 +164,12 @@ export const addTrackReducer = createBasicReducer(
       state,
     ),
 );
-export const addTrackAction = createBasicAction(PROJECT_ADD_TRACK_KEY);
+
+/* HISTORY */
+
+export const undoableActions = [
+  PROJECT_ADD_TRACK_KEY,
+  PROJECT_UPDATE_TRACKS_KEY,
+  PROJECT_UPDATE_NAME_KEY,
+];
+export const groupableActions = [PROJECT_UPDATE_NAME_KEY];
