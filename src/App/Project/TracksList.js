@@ -28,7 +28,7 @@ const RawTracksList = ({
             key={track.id}
             index={i}
             track={track}
-            collapsed={rest.collapsed}
+            collapsed={collapsed}
             selected={isSelected}
             shouldMute={(() => {
               if (track.mute || !track.volume) {
@@ -40,7 +40,7 @@ const RawTracksList = ({
               );
               return soloTracks.length > 0 && !soloTracks.includes(track.id);
             })()}
-            onChangeTrack={rest.onChangeTrack}
+            onChangeTrack={onChangeTrack}
             onClick={e =>
               e.ctrlKey
                 ? onSelectTracks(
