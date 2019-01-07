@@ -10,14 +10,14 @@ import {
 } from '@blueprintjs/core';
 import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
-import { trackHandleWidth, trackInfoWidth } from '../../../utils/variables';
+import { TRACK_HANDLE_WIDTH, TRACK_INFO_WIDTH } from '../../../utils/variables';
 import { noPropagate } from '../../../utils/utils';
 
 const TrackInfoWrapper = styled(Flex)`
   background-color: ${Colors.DARK_GRAY5};
   padding: 0.5rem;
   position: sticky;
-  left: ${trackHandleWidth};
+  left: ${TRACK_HANDLE_WIDTH};
   & > * {
     pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
     opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
@@ -29,7 +29,7 @@ const TrackTitle = styled(EditableText)`
   opacity: 1;
   pointer-events: all;
   position: ${({ collapsed }) => (collapsed ? 'sticky' : 'relative')};
-  min-width: calc(${trackInfoWidth} - 1rem);
+  min-width: calc(${TRACK_INFO_WIDTH} - 1rem);
   margin: ${({ collapsed }) => (collapsed ? '0.5rem' : '')};
 `;
 const SliderGroupStyled = styled(Flex)`

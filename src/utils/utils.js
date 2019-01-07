@@ -1,3 +1,5 @@
+import { PIXELS_PER_TICK, TICKS_PER_SEGEMNT } from './variables';
+
 export const prevent = cb => event => {
   event.preventDefault();
   if (cb && typeof cb === 'function') {
@@ -10,6 +12,16 @@ export const noPropagate = cb => event => {
     cb(event);
   }
 };
+export const getEventRelativeCoords = event => {
+  const { left, top } = event.target.getBoundingClientRect();
+  const x = event.clientX - left;
+  const y = event.clientY - top;
+  return { x, y };
+};
+export const getTimeFromOffset = (offset, zoom = 1) =>
+  offset / PIXELS_PER_TICK / TICKS_PER_SEGEMNT / zoom;
+export const getOffsetFromTime = (time, zoom = 1) =>
+  time * PIXELS_PER_TICK * TICKS_PER_SEGEMNT * zoom;
 export const searchToObj = search =>
   search
     .substring(1)

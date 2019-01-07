@@ -53,7 +53,7 @@ class RawProject extends React.Component {
   };
 
   renderProjectContent = () => {
-    const { collapsed, project, projectLoading, selectTrack } = this.props;
+    const { ui, project, projectLoading, selectTrack } = this.props;
     return (
       <>
         <ProjectHeader
@@ -70,14 +70,15 @@ class RawProject extends React.Component {
           <ProjectScroller>
             <Timeline
               duration={project.duration}
-              collapsed={collapsed}
+              collapsed={ui.collapsed}
+              zoom={ui.zoom}
               onCollapsedChange={this.props.toggleCollapsed}
             />
             <TracksList
               lockAxis="y"
               useDragHandle
               tracks={project.tracks}
-              collapsed={collapsed}
+              collapsed={ui.collapsed}
               onSortEnd={({ oldIndex, newIndex }) =>
                 oldIndex !== newIndex
                   ? this.props.updateTracks(
@@ -113,7 +114,7 @@ const mapStateToProps = (state, ownProps) => ({
   project: state[projStore.CURRENT_PROJECT_KEY].data,
   projectError: state[projStore.CURRENT_PROJECT_KEY].error,
   projectLoading: state[projStore.CURRENT_PROJECT_KEY].loading,
-  collapsed: state[uiStore.UI_KEY].collapsed,
+  ui: state[uiStore.UI_KEY],
 });
 const mapDispatchToProps = dispatch => ({
   newProject: () => dispatch(projStore.newProjectAction()),
@@ -139,7 +140,7 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
-  collapsed: PropTypes.bool,
+  ui: PropTypes.object,
   projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
   updateProjectName: PropTypes.func.isRequired,
@@ -152,9 +153,9 @@ RawProject.propTypes = {
   deleteProject: PropTypes.func.isRequired,
 };
 RawProject.defaultProps = {
+  location: {},
   project: {},
+  ui: {},
   projectLoading: false,
   projectError: undefined,
-  collapsed: false,
-  location: {},
 };

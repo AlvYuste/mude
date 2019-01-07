@@ -2,20 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Button } from '@blueprintjs/core';
-import { trackHandleWidth, trackInfoWidth } from '../../../utils/variables';
+import { TRACK_HANDLE_WIDTH, TRACK_INFO_WIDTH } from '../../../utils/variables';
 
 const CollapseWrapper = styled.div`
   transition: width ease 200ms, margin-left ease 200ms;
-  width: ${({ collapsed }) => (collapsed ? trackHandleWidth : trackInfoWidth)};
-  margin-left: ${({ collapsed }) => (collapsed ? 0 : trackHandleWidth)};
+  width: ${({ collapsed }) =>
+    collapsed ? TRACK_HANDLE_WIDTH : TRACK_INFO_WIDTH};
+  margin-left: ${({ collapsed }) => (collapsed ? 0 : TRACK_HANDLE_WIDTH)};
   text-align: right;
   flex-shrink: 0;
   position: sticky;
-  left: ${({ collapsed }) => (collapsed ? 0 : trackHandleWidth)};
+  left: ${({ collapsed }) => (collapsed ? 0 : TRACK_HANDLE_WIDTH)};
 `;
 const CollapseButton = styled(Button)`
   transition: min-width ease 200ms, padding ease 200ms;
-  min-width: ${({ collapsed }) => (collapsed ? trackHandleWidth : '')};
+  min-width: ${({ collapsed }) => (collapsed ? TRACK_HANDLE_WIDTH : '')};
   padding: ${({ collapsed }) => (collapsed ? 0 : '')};
 `;
 
