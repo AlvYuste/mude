@@ -3,19 +3,31 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { pipe } from 'ramda';
 import { connect } from 'react-redux';
-import { Classes } from '@blueprintjs/core';
+import { Classes, Button } from '@blueprintjs/core';
 import { SortableElement as withSortableElement } from 'react-sortable-hoc';
-import { TrackInfo } from './TrackInfo';
-import { Flex } from '../../../components/layout/Flex';
-import { TrackContent } from './TrackContent';
-import { TrackHandle } from './TrackHandle';
 import { trackInfoWidth, trackHeight } from '../../../utils/variables';
+import { noPropagate } from '../../../utils/utils';
+import { Flex } from '../../../components/layout/Flex';
 import * as trckStore from '../../../store/modules/track';
 
+import { TrackHandle } from './TrackHandle';
+import { TrackContent } from './TrackContent';
+import { TrackInfo } from './TrackInfo';
+
+const deleteButtonClass = 'track-delete-button';
 const TrackWrapper = styled(Flex)`
   position: relative;
   height: ${trackHeight};
   opacity: ${({ shouldMute }) => (shouldMute ? 0.5 : 1)};
+  .${deleteButtonClass} {
+    transition: opacity 200ms ease;
+    opacity: 0;
+  }
+  &:hover {
+    .${deleteButtonClass} {
+      opacity: 1;
+    }
+  }
 `;
 const TrackInfoStyled = styled(TrackInfo)`
   transition: width ease 200ms, padding ease 200ms;
@@ -25,12 +37,19 @@ const TrackInfoStyled = styled(TrackInfo)`
 const TrackContentStyled = styled(TrackContent)`
   flex: 1;
 `;
+const TrackDeleteButton = styled(Button)`
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
 const RawTrack = ({
   onChangeTrack,
   track,
   collapsed,
   selected,
   updateTrack,
+  deleteTrack,
   ...rest
 }) => (
   <TrackWrapper {...rest} className={`${Classes.ELEVATION_1} ${Classes.DARK}`}>
@@ -42,6 +61,12 @@ const RawTrack = ({
       onChangeTrack={updateTrack}
     />
     <TrackContentStyled />
+    <TrackDeleteButton
+      minimal
+      icon="cross"
+      className={deleteButtonClass}
+      onClick={noPropagate(() => deleteTrack(track.id))}
+    />
   </TrackWrapper>
 );
 
@@ -50,7 +75,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 const mapDispatchToProps = dispatch => ({
   updateTrack: track => dispatch(trckStore.updateTrackAction(track)),
-  deleteTrack: track => dispatch(trckStore.deleteTrackAction(track)),
+  deleteTrack: trackId => dispatch(trckStore.deleteTrackAction(trackId)),
 });
 
 export const Track = pipe(
@@ -72,6 +97,7 @@ RawTrack.propTypes = {
   collapsed: PropTypes.bool,
   selected: PropTypes.bool,
   updateTrack: PropTypes.func.isRequired,
+  deleteTrack: PropTypes.func.isRequired,
 };
 
 RawTrack.defaultProps = {

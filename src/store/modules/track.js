@@ -23,3 +23,12 @@ export const updateTrackReducer = createBasicReducer(
     ),
 );
 export const updateTrackAction = createBasicAction(TRACK_UPDATE_KEY);
+
+/* TRACK_DELETE_TRACK */
+export const TRACK_DELETE_KEY = 'TRACK_DELETE';
+export const deleteTrackReducer = createBasicReducer(
+  TRACK_DELETE_KEY,
+  (state, action) =>
+    R.over(tracksLens, R.filter(track => track.id !== action.payload), state),
+);
+export const deleteTrackAction = createBasicAction(TRACK_DELETE_KEY);

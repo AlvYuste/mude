@@ -35,6 +35,7 @@ export const rootReducer = reduceReducers(
       project.deleteProjectReducer,
 
       track.updateTrackReducer,
+      track.deleteTrackReducer,
     ),
   }),
 );
