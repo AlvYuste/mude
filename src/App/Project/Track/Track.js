@@ -3,17 +3,16 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { pipe } from 'ramda';
 import { connect } from 'react-redux';
-import { Classes, Button, Colors } from '@blueprintjs/core';
+import { Classes, Button } from '@blueprintjs/core';
 import { SortableElement as withSortableElement } from 'react-sortable-hoc';
 import { Flex } from '../../../components/layout/Flex';
 import { TRACK_INFO_WIDTH, TRACK_HEIGHT } from '../../../utils/variables';
 import * as trckStore from '../../../store/modules/track';
 import * as uiStore from '../../../store/modules/ui';
-import { noPropagate, getOffsetFromTime } from '../../../utils/utils';
+import { noPropagate } from '../../../utils/utils';
 import { TrackHandle } from './TrackHandle';
 import { TrackContent } from './TrackContent';
 import { TrackInfo } from './TrackInfo';
-import { Timemarker } from '../../../components/utils/Timemarker';
 
 const deleteButtonClass = 'track-delete-button';
 const TrackWrapper = styled(Flex)`
@@ -67,20 +66,19 @@ const RawTrack = ({
       onChangeVolume={value => actions.setTrackVolume({ id: track.id, value })}
       onChangePan={value => actions.setTrackPan({ id: track.id, value })}
     />
-    <TrackContentStyled onSelectTime={actions.selectTime} />
-    <Timemarker
+    <TrackContentStyled
+      onSelectTime={actions.selectTime}
       collapsed={ui.collapsed}
-      offset={getOffsetFromTime(ui.timeSelected || 0)}
-      color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
+      timeSelected={ui.timeSelected}
+      isSelected={isSelected}
     />
-    <div>
-      <TrackDeleteButton
-        minimal
-        icon="cross"
-        className={deleteButtonClass}
-        onClick={noPropagate(() => actions.deleteTrack(track.id))}
-      />
-    </div>
+
+    <TrackDeleteButton
+      minimal
+      icon="cross"
+      className={deleteButtonClass}
+      onClick={noPropagate(() => actions.deleteTrack(track.id))}
+    />
   </TrackWrapper>
 );
 

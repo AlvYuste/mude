@@ -35,6 +35,9 @@ const TimelineWrapper = styled(Flex)`
   top: 0;
   z-index: 10;
 `;
+const TicksWrapper = styled(Flex)`
+  position: relative;
+`;
 
 const renderSegment = (start, length) =>
   ticks.map((_, i) => {
@@ -69,16 +72,14 @@ export const Timeline = ({
   return (
     <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
       <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
-      <Flex onClick={e => console.log(getEventRelativeCoords(e).x)}>
+      <TicksWrapper onClick={e => console.log(getEventRelativeCoords(e).x)}>
         {segments.map((_, i) =>
           renderSegment(i * segmentLength, segmentLength),
         )}
-      </Flex>
-      <Timemarker
-        collapsed={collapsed}
-        label={`${timeSelected / 1000}s`}
-        offset={getOffsetFromTime(timeSelected)}
-      />
+        <Timemarker offset={getOffsetFromTime(timeSelected)}>
+          {timeSelected / 1000}s
+        </Timemarker>
+      </TicksWrapper>
     </TimelineWrapper>
   );
 };
