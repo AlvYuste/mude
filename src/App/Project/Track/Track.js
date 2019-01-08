@@ -75,19 +75,19 @@ const RawTrack = ({
     <TrackContentStyled
       onClick={e => actions.selectTime(getRelativeCoords(e).x)}
     />
-    {!isMuted && (
-      <Timemarker
-        collapsed={ui.collapsed}
-        offset={getOffsetFromTime(ui.timeSelected)}
-        color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
-      />
-    )}
-    <TrackDeleteButton
-      minimal
-      icon="cross"
-      className={deleteButtonClass}
-      onClick={noPropagate(() => actions.deleteTrack(track.id))}
+    <Timemarker
+      collapsed={ui.collapsed}
+      offset={getOffsetFromTime(ui.timeSelected)}
+      color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
     />
+    <div>
+      <TrackDeleteButton
+        minimal
+        icon="cross"
+        className={deleteButtonClass}
+        onClick={noPropagate(() => actions.deleteTrack(track.id))}
+      />
+    </div>
   </TrackWrapper>
 );
 
