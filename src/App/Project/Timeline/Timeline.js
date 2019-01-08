@@ -33,7 +33,7 @@ const TimelineWrapper = styled(Flex)`
   background-color: ${Colors.DARK_GRAY5};
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 10;
 `;
 
 const renderSegment = (start, length) =>

@@ -12,8 +12,8 @@ export const noPropagate = cb => event => {
     cb(event);
   }
 };
-export const getEventRelativeCoords = event => {
-  const { left, top } = event.target.getBoundingClientRect();
+export const getEventRelativeCoords = (event, container = event.target) => {
+  const { left, top } = container.getBoundingClientRect();
   const x = event.clientX - left;
   const y = event.clientY - top;
   return { x, y };

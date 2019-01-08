@@ -9,11 +9,7 @@ import { Flex } from '../../../components/layout/Flex';
 import { TRACK_INFO_WIDTH, TRACK_HEIGHT } from '../../../utils/variables';
 import * as trckStore from '../../../store/modules/track';
 import * as uiStore from '../../../store/modules/ui';
-import {
-  getEventRelativeCoords as getRelativeCoords,
-  noPropagate,
-  getOffsetFromTime,
-} from '../../../utils/utils';
+import { noPropagate, getOffsetFromTime } from '../../../utils/utils';
 import { TrackHandle } from './TrackHandle';
 import { TrackContent } from './TrackContent';
 import { TrackInfo } from './TrackInfo';
@@ -47,7 +43,6 @@ const TrackDeleteButton = styled(Button)`
   right: 0;
   top: 0;
 `;
-
 const RawTrack = ({
   onChangeTrack,
   track,
@@ -72,12 +67,10 @@ const RawTrack = ({
       onChangeVolume={value => actions.setTrackVolume({ id: track.id, value })}
       onChangePan={value => actions.setTrackPan({ id: track.id, value })}
     />
-    <TrackContentStyled
-      onClick={e => actions.selectTime(getRelativeCoords(e).x)}
-    />
+    <TrackContentStyled onSelectTime={actions.selectTime} />
     <Timemarker
       collapsed={ui.collapsed}
-      offset={getOffsetFromTime(ui.timeSelected)}
+      offset={getOffsetFromTime(ui.timeSelected || 0)}
       color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
     />
     <div>

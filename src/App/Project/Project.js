@@ -14,6 +14,7 @@ import { Timeline } from './Timeline/Timeline';
 import { ProjectScroller } from './ProjectScroller';
 import { ProjectEmpty } from './ProjectEmpty';
 import { ProjectNotFound } from './ProjectNotFound';
+import { getMicrophoneData } from '../../services/audio';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
@@ -57,6 +58,7 @@ class RawProject extends React.Component {
               onTitleChange={actions.updateProjectName}
               onAddTrack={actions.addTrack}
               onDelete={actions.deleteProject}
+              onRecord={getMicrophoneData}
             />
             {project.tracks && project.tracks.length ? (
               <ProjectScroller>

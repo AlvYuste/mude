@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Colors } from '@blueprintjs/core';
+import { Icon, Colors, Classes } from '@blueprintjs/core';
 import { SortableHandle as withSortableHandle } from 'react-sortable-hoc';
 import styled from '@emotion/styled';
 import { TRACK_HANDLE_WIDTH } from '../../../utils/variables';
@@ -14,11 +14,16 @@ const TrackHandleIcon = styled(Icon)`
   width: ${TRACK_HANDLE_WIDTH};
   position: sticky;
   left: 0;
-  z-index: 2;
+  z-index: 5;
 `;
 
 export const RawTrackHandle = ({ selected, ...rest }) => (
-  <TrackHandleIcon {...rest} selected={selected} icon="drag-handle-vertical" />
+  <TrackHandleIcon
+    {...rest}
+    selected={selected}
+    className={`${Classes.ELEVATION_1}`}
+    icon="drag-handle-vertical"
+  />
 );
 
 export const TrackHandle = withSortableHandle(RawTrackHandle);

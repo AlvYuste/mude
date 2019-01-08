@@ -31,9 +31,9 @@ const RawTracksList = ({
               track={track}
               isSelected={isSelected}
               isMuted={
-                track.mute ||
+                !!track.mute ||
                 !track.volume ||
-                (soloTracks.length && !soloTracks.includes(track))
+                (!!soloTracks.length && !soloTracks.includes(track))
               }
               onChangeTrack={onChangeTrack}
               onClick={e =>

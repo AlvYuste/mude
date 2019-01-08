@@ -9,7 +9,7 @@ import {
 
 const TimemarkerWrapper = styled.div`
   height: 100%;
-  z-index: 1;
+  z-index: 4;
   position: absolute;
   border-left: 1px solid ${({ color }) => color || 'white'};
   left: ${({ offset }) => `${offset}px`};

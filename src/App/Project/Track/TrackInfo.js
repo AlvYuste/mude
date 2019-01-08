@@ -7,6 +7,7 @@ import {
   Icon,
   ButtonGroup,
   Button,
+  Classes,
 } from '@blueprintjs/core';
 import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
@@ -18,7 +19,7 @@ const TrackInfoWrapper = styled(Flex)`
   padding: 0.5rem;
   position: sticky;
   left: ${TRACK_HANDLE_WIDTH};
-  z-index: 2;
+  z-index: 5;
   & > * {
     pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
     opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
@@ -61,6 +62,7 @@ export const TrackInfo = ({
     <TrackInfoWrapper
       {...rest}
       collapsed={collapsed ? 1 : 0}
+      className={`${rest.className} ${Classes.ELEVATION_1}`}
       direction="column"
     >
       <TrackTitle
