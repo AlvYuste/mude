@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Colors } from '@blueprintjs/core';
 import { SortableHandle as withSortableHandle } from 'react-sortable-hoc';
 import styled from '@emotion/styled';
-import { trackHandleWidth } from '../../../utils/variables';
+import { TRACK_HANDLE_WIDTH } from '../../../utils/variables';
 
 const TrackHandleIcon = styled(Icon)`
   display: flex;
@@ -11,9 +11,10 @@ const TrackHandleIcon = styled(Icon)`
   background-color: ${({ selected }) =>
     selected ? Colors.BLUE2 : Colors.DARK_GRAY3};
   color: ${({ selected }) => (selected ? Colors.WHITE : Colors.GRAY3)};
-  width: ${trackHandleWidth};
+  width: ${TRACK_HANDLE_WIDTH};
   position: sticky;
   left: 0;
+  z-index: 2;
 `;
 
 export const RawTrackHandle = ({ selected, ...rest }) => (

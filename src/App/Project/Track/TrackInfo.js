@@ -18,6 +18,7 @@ const TrackInfoWrapper = styled(Flex)`
   padding: 0.5rem;
   position: sticky;
   left: ${TRACK_HANDLE_WIDTH};
+  z-index: 2;
   & > * {
     pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
     opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
