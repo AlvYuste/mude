@@ -6,6 +6,7 @@ import { Flex } from '../../../components/layout/Flex';
 import { Collapse } from './Collapse';
 import { getEventRelativeCoords } from '../../../utils/utils';
 import { TICK_WIDTH, TICKS_PER_SEGEMNT } from '../../../utils/variables';
+import { Timemarker } from './Timemarker';
 
 const tickMiddle = Math.floor(TICKS_PER_SEGEMNT / 2);
 const ticks = Array(TICKS_PER_SEGEMNT).fill();
@@ -46,30 +47,39 @@ const renderSegment = (start, length) =>
  * @prop {number} duration Indicates how many miliseconds has to be drawn
  * @prop {number} zoom Indicates how many segments are drawn for one second
  */
-export const Timeline = ({ duration, zoom, ...rest }) => {
+export const Timeline = ({
+  duration,
+  zoom,
+  timeSelected,
+  collapsed,
+  onCollapsedChange,
+}) => {
   const segmentLength = Math.floor(1000 / zoom);
   const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
   const segments = Array(segmentsCount || 1).fill();
   return (
     <Flex>
-      <Collapse {...rest} />
+      <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
       <Flex onClick={e => console.log(getEventRelativeCoords(e).x)}>
         {segments.map((_, i) =>
           renderSegment(i * segmentLength, segmentLength),
         )}
       </Flex>
+      <Timemarker collapsed={collapsed} timeSelected={timeSelected} />
     </Flex>
   );
 };
 Timeline.propTypes = {
   duration: PropTypes.number,
   zoom: PropTypes.number,
+  timeSelected: PropTypes.number,
   collapsed: PropTypes.bool,
   onCollapsedChange: PropTypes.func,
 };
 Timeline.defaultProps = {
   duration: 5000,
   zoom: 1,
+  timeSelected: 0,
   collapsed: false,
   onCollapsedChange: () => {},
 };

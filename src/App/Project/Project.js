@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { Colors, NonIdealState, Button } from '@blueprintjs/core';
+import { Colors } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
 
@@ -12,12 +12,14 @@ import { ProjectHeader } from './ProjectHeader';
 import { TracksList } from './TracksList';
 import { Timeline } from './Timeline/Timeline';
 import { ProjectScroller } from './ProjectScroller';
+import { ProjectEmpty } from './ProjectEmpty';
+import { ProjectNotFound } from './ProjectNotFound';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
+  user-select: none;
   height: 100%;
 `;
-
 class RawProject extends React.Component {
   componentDidMount = () => {
     const { location, project, openProject } = this.props;
@@ -28,89 +30,58 @@ class RawProject extends React.Component {
     return null;
   };
 
-  renderNotFound = () => {
-    const { newProject } = this.props;
-    return (
-      <NonIdealState
-        icon="path-search"
-        title="Project not found"
-        description="This project doesn't exist or you don't have permission to view it."
-        action={<Button icon="plus" text="New project" onClick={newProject} />}
-      />
-    );
-  };
-
-  renderEmpty = () => {
-    const { addTrack } = this.props;
-    return (
-      <NonIdealState
-        icon="document"
-        title="Project empty"
-        description="Start adding tracks to your project."
-        action={<Button icon="plus" text="Add track" onClick={addTrack} />}
-      />
-    );
-  };
-
-  renderProjectContent = () => {
-    const {
-      ui,
-      project,
-      projectLoading,
-      selectedTracks,
-      selectTracks,
-    } = this.props;
-    return (
-      <>
-        <ProjectHeader
-          title={project.name}
-          loading={projectLoading}
-          showRecord={selectedTracks.length > 0}
-          showPlay={project.duration > 0}
-          showDelete={!!project.id}
-          onTitleChange={this.props.updateProjectName}
-          onAddTrack={this.props.addTrack}
-          onDelete={this.props.deleteProject}
-        />
-        {project.tracks && project.tracks.length ? (
-          <ProjectScroller>
-            <Timeline
-              duration={project.duration}
-              collapsed={ui.collapsed}
-              zoom={ui.zoom}
-              onCollapsedChange={this.props.toggleCollapsed}
-            />
-            <TracksList
-              lockAxis="y"
-              useDragHandle
-              tracks={project.tracks}
-              collapsed={ui.collapsed}
-              onSortEnd={({ oldIndex, newIndex }) =>
-                oldIndex !== newIndex
-                  ? this.props.updateTracks(
-                      arrayMove(project.tracks, oldIndex, newIndex),
-                    )
-                  : null
-              }
-              selectedTracks={selectedTracks}
-              onSelectTracks={selectTracks}
-            />
-          </ProjectScroller>
-        ) : (
-          !projectLoading && this.renderEmpty()
-        )}
-      </>
-    );
+  onTrackMoved = ({ oldIndex, newIndex }) => {
+    const { project, updateTracks } = this.props;
+    return oldIndex !== newIndex
+      ? updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+      : null;
   };
 
   render() {
-    const { projectError, project, projectLoading } = this.props;
+    const { ui, project, projectLoading, addTrack, projectError } = this.props;
+    const notFound =
+      (!project && !projectLoading) ||
+      (projectError && projectError.code === 'PERMISSION_DENIED');
     return (
       <ProjectWrapper>
-        {(!project && !projectLoading) ||
-        (projectError && projectError.code === 'PERMISSION_DENIED')
-          ? this.renderNotFound()
-          : this.renderProjectContent()}
+        {notFound ? (
+          <ProjectNotFound onAction={this.props.newProject} />
+        ) : (
+          <>
+            <ProjectHeader
+              title={project.name}
+              loading={projectLoading}
+              showRecord={ui.selectedTracks && ui.selectedTracks.length > 0}
+              showPlay={project.duration > 0}
+              showDelete={!!project.id}
+              onTitleChange={this.props.updateProjectName}
+              onAddTrack={this.props.addTrack}
+              onDelete={this.props.deleteProject}
+            />
+            {project.tracks && project.tracks.length ? (
+              <ProjectScroller>
+                <Timeline
+                  duration={project.duration}
+                  timeSelected={ui.timeSelected}
+                  collapsed={ui.collapsed}
+                  zoom={ui.zoom}
+                  onCollapsedChange={this.props.toggleCollapsed}
+                />
+                <TracksList
+                  lockAxis="y"
+                  useDragHandle
+                  tracks={project.tracks}
+                  collapsed={ui.collapsed}
+                  onSortEnd={this.onTrackMoved}
+                  selectedTracks={ui.selectedTracks}
+                  onSelectTracks={this.props.selectTracks}
+                />
+              </ProjectScroller>
+            ) : (
+              !projectLoading && <ProjectEmpty onAction={addTrack} />
+            )}
+          </>
+        )}
       </ProjectWrapper>
     );
   }
@@ -147,7 +118,6 @@ RawProject.propTypes = {
     name: PropTypes.string,
     tracks: PropTypes.array,
   }),
-  selectedTracks: PropTypes.arrayOf(PropTypes.string),
   ui: PropTypes.object,
   projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
@@ -166,5 +136,4 @@ RawProject.defaultProps = {
   ui: {},
   projectLoading: false,
   projectError: undefined,
-  selectedTracks: [],
 };

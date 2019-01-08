@@ -19,9 +19,9 @@ export const getEventRelativeCoords = event => {
   return { x, y };
 };
 export const getTimeFromOffset = (offset, zoom = 1) =>
-  offset / PIXELS_PER_TICK / TICKS_PER_SEGEMNT / zoom;
+  Math.floor((offset / PIXELS_PER_TICK / TICKS_PER_SEGEMNT / zoom) * 1000);
 export const getOffsetFromTime = (time, zoom = 1) =>
-  time * PIXELS_PER_TICK * TICKS_PER_SEGEMNT * zoom;
+  Math.floor((time * PIXELS_PER_TICK * TICKS_PER_SEGEMNT * zoom) / 1000);
 
 export const searchToObj = search =>
   search

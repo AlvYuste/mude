@@ -10,6 +10,7 @@ const ProjectScrollerWrapper = styled(CustomScroll)`
 `;
 const ProjectScrollerInner = styled.div`
   display: inline-block;
+  position: relative;
   min-width: 100%;
 `;
 export const ProjectScroller = ({ children, ...rest }) => (

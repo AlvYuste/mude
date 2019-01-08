@@ -37,9 +37,8 @@ import {
 import { EditMenu } from './EditMenu';
 
 const NavbarStyled = styled(Navbar)`
-  padding: 0 0.5rem;
-  ${mq.tablet} {
-    padding: 0 1rem;
+  ${mq.untilTablet} {
+    padding: 0 0.5rem;
   }
 `;
 

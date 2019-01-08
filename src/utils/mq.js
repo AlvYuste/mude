@@ -1,11 +1,12 @@
 /* Functions to help with Media Queries */
 
-export const bps = { mobile: 480, tablet: 600, laptop: 1024, desktop: 1200 };
+const bps = { Mobile: 480, Tablet: 600, Laptop: 1024, Desktop: 1200 };
 
 export const mq = Object.keys(bps).reduce(
   (memo, currentKey) => ({
     ...memo,
-    [currentKey]: `@media (min-width: ${bps[currentKey]}px)`,
+    [`from${currentKey}`]: `@media (min-width: ${bps[currentKey]}px)`,
+    [`until${currentKey}`]: `@media (max-width: ${bps[currentKey]}px)`,
   }),
   {},
 );

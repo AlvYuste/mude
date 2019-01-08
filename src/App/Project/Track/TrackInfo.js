@@ -18,7 +18,6 @@ const TrackInfoWrapper = styled(Flex)`
   padding: 0.5rem;
   position: sticky;
   left: ${TRACK_HANDLE_WIDTH};
-  user-select: none;
   & > * {
     pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
     opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
@@ -94,19 +93,19 @@ export const TrackInfo = ({
           tabIndex={collapsed ? -1 : ''}
         />
       </SliderGroupStyled>
-      <ButtonGroupStyled onClick={noPropagate()}>
+      <ButtonGroupStyled>
         <ButtonStyled
           small
           text="mute"
           active={track.mute}
-          onClick={() => onChangeInput('mute', true)(!track.mute)}
+          onClick={noPropagate(() => onChangeInput('mute', true)(!track.mute))}
           tabIndex={collapsed ? -1 : ''}
         />
         <ButtonStyled
           small
           text="solo"
           active={track.solo}
-          onClick={() => onChangeInput('solo', true)(!track.solo)}
+          onClick={noPropagate(() => onChangeInput('solo', true)(!track.solo))}
           tabIndex={collapsed ? -1 : ''}
         />
       </ButtonGroupStyled>

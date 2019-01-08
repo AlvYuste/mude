@@ -18,43 +18,41 @@ const RawTracksList = ({
   collapsed,
   onChangeTrack,
   ...rest
-}) => (
-  <TracksListWrapper {...rest} direction="column">
-    {!!tracks &&
-      tracks.map((track, i) => {
-        const isSelected = selectedTracks.includes(track.id);
-        return (
-          <Track
-            key={track.id}
-            index={i}
-            track={track}
-            collapsed={collapsed}
-            selected={isSelected}
-            shouldMute={(() => {
-              if (track.mute || !track.volume) {
-                return true;
+}) => {
+  const soloTracks = tracks.filter(trck => trck.solo);
+  return (
+    <TracksListWrapper {...rest} direction="column">
+      {!!tracks &&
+        tracks.map((track, i) => {
+          const isSelected = selectedTracks.includes(track.id);
+          return (
+            <Track
+              key={track.id}
+              index={i}
+              track={track}
+              collapsed={collapsed}
+              selected={isSelected}
+              shouldMute={
+                track.mute ||
+                !track.volume ||
+                (soloTracks.length && !soloTracks.includes(track))
               }
-              const soloTracks = tracks.reduce(
-                (memo, curr) => (curr.solo ? [...memo, curr.id] : memo),
-                [],
-              );
-              return soloTracks.length > 0 && !soloTracks.includes(track.id);
-            })()}
-            onChangeTrack={onChangeTrack}
-            onClick={e =>
-              e.ctrlKey
-                ? onSelectTracks(
-                    isSelected
-                      ? selectedTracks.filter(t => t !== track.id)
-                      : [...selectedTracks, track.id],
-                  )
-                : onSelectTracks([track.id])
-            }
-          />
-        );
-      })}
-  </TracksListWrapper>
-);
+              onChangeTrack={onChangeTrack}
+              onClick={e =>
+                e.ctrlKey
+                  ? onSelectTracks(
+                      isSelected
+                        ? selectedTracks.filter(t => t !== track.id)
+                        : [...selectedTracks, track.id],
+                    )
+                  : onSelectTracks([track.id])
+              }
+            />
+          );
+        })}
+    </TracksListWrapper>
+  );
+};
 RawTracksList.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.object),
   collapsed: PropTypes.bool,
