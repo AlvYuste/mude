@@ -15,7 +15,6 @@ const RawTracksList = ({
   tracks,
   selectedTracks,
   onSelectTracks,
-  collapsed,
   onChangeTrack,
   ...rest
 }) => {
@@ -30,9 +29,8 @@ const RawTracksList = ({
               key={track.id}
               index={i}
               track={track}
-              collapsed={collapsed}
-              selected={isSelected}
-              shouldMute={
+              isSelected={isSelected}
+              isMuted={
                 track.mute ||
                 !track.volume ||
                 (soloTracks.length && !soloTracks.includes(track))
@@ -55,14 +53,12 @@ const RawTracksList = ({
 };
 RawTracksList.propTypes = {
   tracks: PropTypes.arrayOf(PropTypes.object),
-  collapsed: PropTypes.bool,
   selectedTracks: PropTypes.arrayOf(PropTypes.string),
   onSelectTracks: PropTypes.func,
   onChangeTrack: PropTypes.func,
 };
 RawTracksList.defaultProps = {
   tracks: [],
-  collapsed: false,
   selectedTracks: [],
   onSelectTracks: () => {},
   onChangeTrack: () => {},

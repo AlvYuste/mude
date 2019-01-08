@@ -5,14 +5,13 @@ import {
   TRACK_HANDLE_WIDTH,
   TRACK_INFO_WIDTH,
   TICK_WIDTH,
-} from '../../../utils/variables';
-import { getOffsetFromTime } from '../../../utils/utils';
+} from '../../utils/variables';
 
 const TimemarkerWrapper = styled.div`
   height: 100%;
   z-index: 1;
   position: absolute;
-  border-left: 1px solid white;
+  border-left: 1px solid ${({ color }) => color || 'white'};
   left: ${({ offset }) => `${offset}px`};
   transition: margin-left ease 200ms;
   pointer-events: none;
@@ -21,25 +20,23 @@ const TimemarkerWrapper = styled.div`
       ? TRACK_HANDLE_WIDTH
       : `calc(${TRACK_HANDLE_WIDTH} + ${TRACK_INFO_WIDTH})`};
   padding: calc(${TICK_WIDTH} / 2);
-  padding: 5px;
   font-size: 0.75rem;
   line-height: 2;
 `;
 
-export const Timemarker = ({ collapsed, timeSelected }) => (
-  <TimemarkerWrapper
-    collapsed={collapsed}
-    offset={getOffsetFromTime(timeSelected)}
-  >
-    {timeSelected / 1000}s
-  </TimemarkerWrapper>
+export const Timemarker = ({ label, ...rest }) => (
+  <TimemarkerWrapper {...rest}>{label}</TimemarkerWrapper>
 );
 
 Timemarker.propTypes = {
   collapsed: PropTypes.bool,
-  timeSelected: PropTypes.number,
+  offset: PropTypes.number,
+  label: PropTypes.string,
+  color: PropTypes.string,
 };
 Timemarker.defaultProps = {
   collapsed: false,
-  timeSelected: 0,
+  offset: 0,
+  label: '',
+  color: '',
 };

@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { Colors } from '@blueprintjs/core';
+import { Colors, Classes } from '@blueprintjs/core';
 import { Flex } from '../../../components/layout/Flex';
-import { Collapse } from './Collapse';
-import { getEventRelativeCoords } from '../../../utils/utils';
+import { Timemarker } from '../../../components/utils/Timemarker';
+import {
+  getEventRelativeCoords,
+  getOffsetFromTime,
+} from '../../../utils/utils';
 import { TICK_WIDTH, TICKS_PER_SEGEMNT } from '../../../utils/variables';
-import { Timemarker } from './Timemarker';
+import { Collapse } from './Collapse';
 
 const tickMiddle = Math.floor(TICKS_PER_SEGEMNT / 2);
 const ticks = Array(TICKS_PER_SEGEMNT).fill();
@@ -25,6 +28,12 @@ const Tick = styled.div`
     (main && '1rem') || (middle && '0.75rem') || '0.25rem'};
   border-color: ${({ main }) => main && Colors.DARK_GRAY1};
   pointer-events: none;
+`;
+const TimelineWrapper = styled(Flex)`
+  background-color: ${Colors.DARK_GRAY5};
+  position: sticky;
+  top: 0;
+  z-index: 3;
 `;
 
 const renderSegment = (start, length) =>
@@ -58,15 +67,19 @@ export const Timeline = ({
   const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
   const segments = Array(segmentsCount || 1).fill();
   return (
-    <Flex>
+    <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
       <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
       <Flex onClick={e => console.log(getEventRelativeCoords(e).x)}>
         {segments.map((_, i) =>
           renderSegment(i * segmentLength, segmentLength),
         )}
       </Flex>
-      <Timemarker collapsed={collapsed} timeSelected={timeSelected} />
-    </Flex>
+      <Timemarker
+        collapsed={collapsed}
+        label={`${timeSelected / 1000}s`}
+        offset={getOffsetFromTime(timeSelected)}
+      />
+    </TimelineWrapper>
   );
 };
 Timeline.propTypes = {

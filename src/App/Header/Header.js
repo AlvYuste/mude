@@ -44,15 +44,15 @@ const NavbarStyled = styled(Navbar)`
 
 class RawHeader extends Component {
   componentDidMount = () => {
-    const { getCurrentAccount } = this.props;
-    getCurrentAccount();
+    const { actions } = this.props;
+    actions.getCurrentAccount();
   };
 
   componentDidUpdate(prevProps) {
     const { account: prevAccount } = prevProps;
-    const { account, getOwnProjects } = this.props;
+    const { account, actions } = this.props;
     if (account && (!prevAccount || prevAccount.uid !== account.uid)) {
-      getOwnProjects();
+      actions.getOwnProjects();
     }
   }
 
@@ -61,18 +61,8 @@ class RawHeader extends Component {
       account,
       currentProject,
       accountLoading,
-      redoStack,
-      undoStack,
-      signInWithGoogle,
-      signOut,
-      signInWithEmail,
-      signUpWithEmail,
       ownProjects,
-      newProject,
-      saveProject,
-      openProject,
-      undo,
-      redo,
+      actions,
     } = this.props;
     return (
       <NavbarStyled>
@@ -83,27 +73,27 @@ class RawHeader extends Component {
             isAuthenticated={!!account}
             currentProject={currentProject}
             ownProjects={ownProjects}
-            onNewProject={newProject}
-            onSaveProject={saveProject}
-            onOpenProject={openProject}
+            onNewProject={actions.newProject}
+            onSaveProject={actions.saveProject}
+            onOpenProject={actions.openProject}
           />
           <EditMenu
-            onRedo={redo}
-            onUndo={undo}
-            redoStack={redoStack}
-            undoStack={undoStack}
+            onRedo={actions.redo}
+            onUndo={actions.undo}
+            redoStack={actions.redoStack}
+            undoStack={actions.undoStack}
           />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
           {!!accountLoading && <Spinner size={Spinner.SIZE_SMALL} />}
           {!accountLoading &&
             (account ? (
-              <Account {...account} onSignOut={signOut} />
+              <Account {...account} onSignOut={actions.signOut} />
             ) : (
               <SignIn
-                onSignInWithGoogle={signInWithGoogle}
-                onSignInWithEmail={signInWithEmail}
-                onSignUpWithEmail={signUpWithEmail}
+                onSignInWithGoogle={actions.signInWithGoogle}
+                onSignInWithEmail={actions.signInWithEmail}
+                onSignUpWithEmail={actions.signUpWithEmail}
               />
             ))}
         </NavbarGroup>
@@ -114,26 +104,17 @@ class RawHeader extends Component {
 
 RawHeader.propTypes = {
   account: PropTypes.object,
+  accountLoading: PropTypes.bool,
   currentProject: PropTypes.object,
   ownProjects: PropTypes.arrayOf(PropTypes.object),
-  accountLoading: PropTypes.bool,
-
-  getCurrentAccount: PropTypes.func.isRequired,
-  signInWithGoogle: PropTypes.func.isRequired,
-  signInWithEmail: PropTypes.func.isRequired,
-  signUpWithEmail: PropTypes.func.isRequired,
-  signOut: PropTypes.func.isRequired,
-  getOwnProjects: PropTypes.func.isRequired,
-  newProject: PropTypes.func.isRequired,
-  openProject: PropTypes.func.isRequired,
-  undo: PropTypes.func.isRequired,
-  redo: PropTypes.func.isRequired,
+  actions: PropTypes.object,
 };
 RawHeader.defaultProps = {
   account: undefined,
   currentProject: undefined,
   accountLoading: false,
   ownProjects: [],
+  actions: {},
 };
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
@@ -145,19 +126,21 @@ const mapStateToProps = (state, ownProps) => ({
   redoStack: state[CURRENT_PROJECT_KEY].future,
 });
 const mapDispatchToProps = dispatch => ({
-  getCurrentAccount: () => dispatch(currentAccountAction()),
-  signUpWithEmail: ({ email, password }) =>
-    dispatch(signUpWithEmailAction({ email, password })),
-  signInWithGoogle: () => dispatch(signInWithGoogleAction()),
-  signInWithEmail: ({ email, password }) =>
-    dispatch(signInWithEmailAction({ email, password })),
-  signOut: () => dispatch(signOutAction()),
-  getOwnProjects: () => dispatch(ownProjectsAction()),
-  openProject: id => dispatch(openProjectAction(id)),
-  newProject: () => dispatch(newProjectAction()),
-  saveProject: () => dispatch(saveProjectAction()),
-  undo: () => dispatch(undoHistoryAction()),
-  redo: () => dispatch(redoHistoryAction()),
+  actions: {
+    getCurrentAccount: () => dispatch(currentAccountAction()),
+    signUpWithEmail: ({ email, password }) =>
+      dispatch(signUpWithEmailAction({ email, password })),
+    signInWithGoogle: () => dispatch(signInWithGoogleAction()),
+    signInWithEmail: ({ email, password }) =>
+      dispatch(signInWithEmailAction({ email, password })),
+    signOut: () => dispatch(signOutAction()),
+    getOwnProjects: () => dispatch(ownProjectsAction()),
+    openProject: id => dispatch(openProjectAction(id)),
+    newProject: () => dispatch(newProjectAction()),
+    saveProject: () => dispatch(saveProjectAction()),
+    undo: () => dispatch(undoHistoryAction()),
+    redo: () => dispatch(redoHistoryAction()),
+  },
 });
 export const Header = connect(
   mapStateToProps,

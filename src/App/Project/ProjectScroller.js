@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Colors, Classes } from '@blueprintjs/core';
+import { Classes } from '@blueprintjs/core';
 import { CustomScroll } from '../../components/layout/CustomScroll';
+import { mq } from '../../utils/mq';
 
 const ProjectScrollerWrapper = styled(CustomScroll)`
-  background-color: ${Colors.DARK_GRAY5};
+  background-color: inherit;
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
+  height: calc(100% - 3.5rem);
+  ${mq.fromTablet} {
+    height: calc(100% - 4.5rem);
+  }
 `;
 const ProjectScrollerInner = styled.div`
   display: inline-block;

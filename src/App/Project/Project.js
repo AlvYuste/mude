@@ -22,30 +22,30 @@ const ProjectWrapper = styled.div`
 `;
 class RawProject extends React.Component {
   componentDidMount = () => {
-    const { location, project, openProject } = this.props;
+    const { location, project, actions } = this.props;
     const routeProjectId = getSearchValue(location.search, 'project');
     if (routeProjectId && project && routeProjectId !== project.id) {
-      return openProject(routeProjectId);
+      return actions.openProject(routeProjectId);
     }
     return null;
   };
 
   onTrackMoved = ({ oldIndex, newIndex }) => {
-    const { project, updateTracks } = this.props;
+    const { project, actions } = this.props;
     return oldIndex !== newIndex
-      ? updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+      ? actions.updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
       : null;
   };
 
   render() {
-    const { ui, project, projectLoading, addTrack, projectError } = this.props;
+    const { ui, project, projectLoading, actions, projectError } = this.props;
     const notFound =
       (!project && !projectLoading) ||
       (projectError && projectError.code === 'PERMISSION_DENIED');
     return (
       <ProjectWrapper>
         {notFound ? (
-          <ProjectNotFound onAction={this.props.newProject} />
+          <ProjectNotFound onAction={actions.newProject} />
         ) : (
           <>
             <ProjectHeader
@@ -54,9 +54,9 @@ class RawProject extends React.Component {
               showRecord={ui.selectedTracks && ui.selectedTracks.length > 0}
               showPlay={project.duration > 0}
               showDelete={!!project.id}
-              onTitleChange={this.props.updateProjectName}
-              onAddTrack={this.props.addTrack}
-              onDelete={this.props.deleteProject}
+              onTitleChange={actions.updateProjectName}
+              onAddTrack={actions.addTrack}
+              onDelete={actions.deleteProject}
             />
             {project.tracks && project.tracks.length ? (
               <ProjectScroller>
@@ -65,20 +65,19 @@ class RawProject extends React.Component {
                   timeSelected={ui.timeSelected}
                   collapsed={ui.collapsed}
                   zoom={ui.zoom}
-                  onCollapsedChange={this.props.toggleCollapsed}
+                  onCollapsedChange={actions.toggleCollapsed}
                 />
                 <TracksList
                   lockAxis="y"
                   useDragHandle
                   tracks={project.tracks}
-                  collapsed={ui.collapsed}
                   onSortEnd={this.onTrackMoved}
                   selectedTracks={ui.selectedTracks}
-                  onSelectTracks={this.props.selectTracks}
+                  onSelectTracks={actions.selectTracks}
                 />
               </ProjectScroller>
             ) : (
-              !projectLoading && <ProjectEmpty onAction={addTrack} />
+              !projectLoading && <ProjectEmpty onAction={actions.addTrack} />
             )}
           </>
         )}
@@ -92,17 +91,20 @@ const mapStateToProps = (state, ownProps) => ({
   projectError: projStore.getCurrentProject(state).error,
   projectLoading: projStore.getCurrentProject(state).loading,
   ui: state[uiStore.UI_KEY],
-  selectedTracks: state[uiStore.UI_KEY].selectedTracks,
 });
 const mapDispatchToProps = dispatch => ({
-  newProject: () => dispatch(projStore.newProjectAction()),
-  openProject: id => dispatch(projStore.openProjectAction(id)),
-  updateProjectName: name => dispatch(projStore.updateProjectNameAction(name)),
-  updateTracks: tracks => dispatch(projStore.updateProjectTracksAction(tracks)),
-  addTrack: () => dispatch(projStore.addTrackAction()),
-  toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
-  deleteProject: () => dispatch(projStore.deleteProjectAction()),
-  selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
+  actions: {
+    newProject: () => dispatch(projStore.newProjectAction()),
+    openProject: id => dispatch(projStore.openProjectAction(id)),
+    updateProjectName: name =>
+      dispatch(projStore.updateProjectNameAction(name)),
+    updateTracks: tracks =>
+      dispatch(projStore.updateProjectTracksAction(tracks)),
+    addTrack: () => dispatch(projStore.addTrackAction()),
+    toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
+    deleteProject: () => dispatch(projStore.deleteProjectAction()),
+    selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
+  },
 });
 
 export const Project = connect(
@@ -121,14 +123,7 @@ RawProject.propTypes = {
   ui: PropTypes.object,
   projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   projectLoading: PropTypes.bool,
-  updateProjectName: PropTypes.func.isRequired,
-  updateTracks: PropTypes.func.isRequired,
-  addTrack: PropTypes.func.isRequired,
-  selectTracks: PropTypes.func.isRequired,
-  openProject: PropTypes.func.isRequired,
-  newProject: PropTypes.func.isRequired,
-  toggleCollapsed: PropTypes.func.isRequired,
-  deleteProject: PropTypes.func.isRequired,
+  actions: PropTypes.object,
 };
 RawProject.defaultProps = {
   location: {},
@@ -136,4 +131,5 @@ RawProject.defaultProps = {
   ui: {},
   projectLoading: false,
   projectError: undefined,
+  actions: {},
 };
