@@ -7,6 +7,7 @@ import { arrayMove } from 'react-sortable-hoc';
 
 import * as projStore from '../../store/modules/project';
 import * as uiStore from '../../store/modules/ui';
+import * as audioStore from '../../store/modules/audio';
 import { getSearchValue } from '../../utils/utils';
 import { ProjectHeader } from './ProjectHeader';
 import { TracksList } from './TracksList';
@@ -14,7 +15,6 @@ import { Timeline } from './Timeline/Timeline';
 import { ProjectScroller } from './ProjectScroller';
 import { ProjectEmpty } from './ProjectEmpty';
 import { ProjectNotFound } from './ProjectNotFound';
-import { getMicrophoneData } from '../../services/audio';
 
 const ProjectWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY4};
@@ -52,13 +52,13 @@ class RawProject extends React.Component {
             <ProjectHeader
               title={project.name}
               loading={projectLoading}
-              showRecord={ui.selectedTracks && ui.selectedTracks.length > 0}
-              showPlay={project.duration > 0}
               showDelete={!!project.id}
+              isRecording={ui.recording}
+              isPlaying={ui.playing}
               onTitleChange={actions.updateProjectName}
               onAddTrack={actions.addTrack}
               onDelete={actions.deleteProject}
-              onRecord={getMicrophoneData}
+              onRecord={actions.recordAudio}
             />
             {project.tracks && project.tracks.length ? (
               <ProjectScroller>
@@ -79,7 +79,12 @@ class RawProject extends React.Component {
                 />
               </ProjectScroller>
             ) : (
-              !projectLoading && <ProjectEmpty onAction={actions.addTrack} />
+              !projectLoading && (
+                <ProjectEmpty
+                  onAddTrack={actions.addTrack}
+                  onRecord={actions.recordAudio}
+                />
+              )
             )}
           </>
         )}
@@ -106,6 +111,7 @@ const mapDispatchToProps = dispatch => ({
     toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
     deleteProject: () => dispatch(projStore.deleteProjectAction()),
     selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
+    recordAudio: () => dispatch(audioStore.audioRecordAction()),
   },
 });
 

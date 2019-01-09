@@ -7,9 +7,11 @@ import * as tsts from './modules/toasts';
 import * as acct from './modules/account';
 import * as proj from './modules/project';
 import * as trck from './modules/track';
+import * as audio from './modules/audio';
 
 export const rootReducer = reduceReducers(
   acct.signOutReducer,
+  audio.audioRecordReducer,
   combineReducers({
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,

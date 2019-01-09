@@ -11,6 +11,7 @@ import {
   Menu,
   MenuItem,
   Classes,
+  Tag,
 } from '@blueprintjs/core';
 import { FlexResponsive, Flex } from '../../components/layout/Flex';
 import { mq } from '../../utils/mq';
@@ -36,17 +37,79 @@ const ProjectActions = styled(FlexResponsive)`
     }
   }
 `;
+export const ProjectRecordingActions = ({ onStop }) => (
+  <>
+    <Tag minimal intent={Intent.DANGER} large icon="record">
+      Recording...
+    </Tag>
+    <Button large icon="stop" onClick={onStop} />
+  </>
+);
+export const ProjectPlayingActions = ({ onStop }) => (
+  <>
+    <Tag minimal intent={Intent.SUCCESS} large icon="play">
+      Playing...
+    </Tag>
+    <Button large icon="stop" onClick={onStop} />
+  </>
+);
+export const ProjectDefaultActions = ({
+  showDelete,
+  onPlay,
+  onRecord,
+  onAddTrack,
+  onDelete,
+}) => (
+  <>
+    <Button
+      large
+      minimal
+      title="Play (Space)"
+      icon="play"
+      intent={Intent.SUCCESS}
+      onClick={onPlay}
+    />
+    <Button
+      large
+      minimal
+      title="Record (Ctrl+Space)"
+      icon="record"
+      intent={Intent.DANGER}
+      onClick={onRecord}
+    />
+    <Button
+      large
+      icon="plus"
+      text="Track"
+      title="Add track"
+      onClick={onAddTrack}
+    />
+    {showDelete && (
+      <Popover
+        minimal
+        content={
+          <Menu>
+            <MenuItem text="Delete project" icon="trash" onClick={onDelete} />
+          </Menu>
+        }
+      >
+        <Button minimal large icon="more" />
+      </Popover>
+    )}
+  </>
+);
 export const ProjectHeader = ({
   title,
   loading,
   onTitleChange,
   onAddTrack,
-  showPlay,
-  showRecord,
   showDelete,
   onDelete,
   onPlay,
   onRecord,
+  onStop,
+  isRecording,
+  isPlaying,
 }) => (
   <FlexResponsive spaced align="center" justify="space-between">
     <ProjectTitle spaced="items">
@@ -58,69 +121,42 @@ export const ProjectHeader = ({
       {loading && <Spinner size={Spinner.SIZE_SMALL} />}
     </ProjectTitle>
     <ProjectActions spaced="items">
-      {showPlay && (
-        <Button
-          large
-          minimal
-          title="Play"
-          icon="play"
-          intent={Intent.SUCCESS}
-          onClick={onPlay}
-        />
-      )}
-      {showRecord && (
-        <Button
-          large
-          minimal
-          title="Record"
-          icon="record"
-          intent={Intent.DANGER}
-          onClick={onRecord}
-        />
-      )}
-      <Button
-        large
-        icon="plus"
-        text="Track"
-        title="Add track"
-        onClick={onAddTrack}
-      />
-      {showDelete && (
-        <Popover
-          minimal
-          content={
-            <Menu>
-              <MenuItem text="Delete project" icon="trash" onClick={onDelete} />
-            </Menu>
-          }
-        >
-          <Button minimal large icon="more" />
-        </Popover>
-      )}
+      {(isRecording && <ProjectRecordingActions onStop={onStop} />) ||
+        (isPlaying && <ProjectPlayingActions onStop={onStop} />) || (
+          <ProjectDefaultActions
+            onAddTrack={onAddTrack}
+            showDelete={showDelete}
+            onDelete={onDelete}
+            onPlay={onPlay}
+            onRecord={onRecord}
+          />
+        )}
     </ProjectActions>
   </FlexResponsive>
 );
 ProjectHeader.propTypes = {
   title: PropTypes.string,
-  showPlay: PropTypes.bool,
-  showRecord: PropTypes.bool,
   showDelete: PropTypes.bool,
+  isRecording: PropTypes.bool,
+  isPlaying: PropTypes.bool,
   loading: PropTypes.bool,
   onTitleChange: PropTypes.func,
   onAddTrack: PropTypes.func,
   onDelete: PropTypes.func,
   onPlay: PropTypes.func,
   onRecord: PropTypes.func,
+  onStop: PropTypes.func,
 };
 ProjectHeader.defaultProps = {
   title: '',
-  showPlay: false,
-  showRecord: false,
   showDelete: false,
   loading: false,
+  isRecording: false,
+  isPlaying: false,
   onTitleChange: () => {},
   onAddTrack: () => {},
   onDelete: () => {},
   onPlay: () => {},
   onRecord: () => {},
+  onStop: () => {},
 };

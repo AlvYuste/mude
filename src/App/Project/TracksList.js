@@ -41,7 +41,7 @@ const RawTracksList = ({
                   ? onSelectTracks(
                       isSelected
                         ? selectedTracks.filter(t => t !== track.id)
-                        : [...selectedTracks, track.id],
+                        : [track.id, ...selectedTracks],
                     )
                   : onSelectTracks([track.id])
               }

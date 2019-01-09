@@ -2,21 +2,20 @@ import * as R from 'ramda';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import { lensById } from '../../utils/fp';
+import { tracksLens } from './project';
 
-const dataLense = prop => R.lensPath(['data', prop]);
-const tracksLens = dataLense('tracks');
-const trackLens = trackId =>
+export const trackLens = trackId =>
   R.compose(
     tracksLens,
     lensById(trackId),
   );
-const trackPropLens = (trackId, prop) =>
+export const trackPropLens = (trackId, prop) =>
   R.compose(
     trackLens(trackId),
     Array.isArray(prop) ? R.lensPath(prop) : R.lensProp(prop),
   );
 
-/* TRACK_UPDATE_TRACK */
+/* TRACK_UPDATE */
 export const TRACK_UPDATE_KEY = 'TRACK_UPDATE';
 export const updateTrackAction = createBasicAction(TRACK_UPDATE_KEY);
 export const updateTrackReducer = createBasicReducer(
@@ -25,7 +24,7 @@ export const updateTrackReducer = createBasicReducer(
     R.over(trackLens(payload.id), R.mergeDeepLeft(payload), state),
 );
 
-/* TRACK_SET_NAME_TRACK */
+/* TRACK_SET_NAME */
 export const TRACK_SET_NAME_KEY = 'TRACK_SET_NAME';
 export const setTrackNameAction = createBasicAction(TRACK_SET_NAME_KEY);
 export const setTrackNameReducer = createBasicReducer(
@@ -34,7 +33,7 @@ export const setTrackNameReducer = createBasicReducer(
     R.set(trackPropLens(payload.id, 'name'), payload.value, state),
 );
 
-/* TRACK_SET_VOLUME_TRACK */
+/* TRACK_SET_VOLUME */
 export const TRACK_SET_VOLUME_KEY = 'TRACK_SET_VOLUME';
 export const setTrackVolumeAction = createBasicAction(TRACK_SET_VOLUME_KEY);
 export const setTrackVolumeReducer = createBasicReducer(
@@ -43,7 +42,7 @@ export const setTrackVolumeReducer = createBasicReducer(
     R.set(trackPropLens(payload.id, 'volume'), payload.value, state),
 );
 
-/* TRACK_SET_PAN_TRACK */
+/* TRACK_SET_PAN */
 export const TRACK_SET_PAN_KEY = 'TRACK_SET_PAN';
 export const setTrackPanAction = createBasicAction(TRACK_SET_PAN_KEY);
 export const setTrackPanReducer = createBasicReducer(
@@ -52,7 +51,7 @@ export const setTrackPanReducer = createBasicReducer(
     R.set(trackPropLens(payload.id, 'pan'), payload.value, state),
 );
 
-/* TRACK_DELETE_TRACK */
+/* TRACK_DELETE */
 export const TRACK_DELETE_KEY = 'TRACK_DELETE';
 export const deleteTrackAction = createBasicAction(TRACK_DELETE_KEY);
 export const deleteTrackReducer = createBasicReducer(

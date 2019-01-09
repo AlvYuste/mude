@@ -77,7 +77,7 @@ export const Timeline = ({
           renderSegment(i * segmentLength, segmentLength),
         )}
         <Timemarker offset={getOffsetFromTime(timeSelected)}>
-          {timeSelected / 1000}s
+          {(timeSelected / 1000).toFixed(zoom * 2)}s
         </Timemarker>
       </TicksWrapper>
     </TimelineWrapper>

@@ -30,6 +30,7 @@ export class TrackContent extends React.Component {
         {...rest}
         ref={this.wrapperRef}
         onClick={e =>
+          !e.ctrlKey &&
           onSelectTime(getEventRelativeCoords(e, this.wrapperRef.current).x)
         }
       >

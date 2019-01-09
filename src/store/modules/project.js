@@ -4,16 +4,17 @@ import { ActionCreators } from 'redux-undo';
 import { navigate } from '@reach/router';
 import { Intent } from '@blueprintjs/core';
 import { createAsyncTypes } from '../helpers/async/async.types';
-import { createAsyncReducer } from '../helpers/async/async.reducer';
+import { createAsyncReducer, dataLense } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import * as projService from '../../services/project';
 import { createToastAction } from './toasts';
 
-const dataLense = prop => R.lensPath(['data', prop]);
-
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
-export const getCurrentProject = state => state[CURRENT_PROJECT_KEY].present;
+export const currentProjectLens = R.lensPath([CURRENT_PROJECT_KEY, 'present']);
+export const nameLens = dataLense('name');
+export const tracksLens = dataLense('tracks');
+export const getCurrentProject = R.view(currentProjectLens);
 
 /* OPEN PROJECT */
 export const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
@@ -136,7 +137,7 @@ export const newProjectAction = () => dispatch => {
 export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
 export const updateProjectNameReducer = createBasicReducer(
   PROJECT_UPDATE_NAME_KEY,
-  (state, action) => R.set(dataLense('name'), action.payload, state),
+  (state, action) => R.set(nameLens, action.payload, state),
 );
 export const updateProjectNameAction = createBasicAction(
   PROJECT_UPDATE_NAME_KEY,
@@ -146,7 +147,7 @@ export const updateProjectNameAction = createBasicAction(
 export const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
 export const updateProjectTracksReducer = createBasicReducer(
   PROJECT_UPDATE_TRACKS_KEY,
-  (state, action) => R.set(dataLense('tracks'), action.payload, state),
+  (state, action) => R.set(tracksLens, action.payload, state),
 );
 export const updateProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
@@ -159,7 +160,7 @@ export const addTrackReducer = createBasicReducer(
   PROJECT_ADD_TRACK_KEY,
   (state, action) =>
     R.over(
-      dataLense('tracks'),
+      tracksLens,
       R.prepend({ id: action.transactionId, volume: 5 }),
       state,
     ),
