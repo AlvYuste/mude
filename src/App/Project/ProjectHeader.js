@@ -55,20 +55,23 @@ export const ProjectPlayingActions = ({ onStop }) => (
 );
 export const ProjectDefaultActions = ({
   showDelete,
+  showPlay,
   onPlay,
   onRecord,
   onAddTrack,
   onDelete,
 }) => (
   <>
-    <Button
-      large
-      minimal
-      title="Play (Space)"
-      icon="play"
-      intent={Intent.SUCCESS}
-      onClick={onPlay}
-    />
+    {showPlay && (
+      <Button
+        large
+        minimal
+        title="Play (Space)"
+        icon="play"
+        intent={Intent.SUCCESS}
+        onClick={onPlay}
+      />
+    )}
     <Button
       large
       minimal
@@ -98,37 +101,30 @@ export const ProjectDefaultActions = ({
     )}
   </>
 );
-export const ProjectHeader = ({
-  title,
-  loading,
-  onTitleChange,
-  onAddTrack,
-  showDelete,
-  onDelete,
-  onPlay,
-  onRecord,
-  onStop,
-  isRecording,
-  isPlaying,
-}) => (
+export const ProjectHeader = props => (
   <FlexResponsive spaced align="center" justify="space-between">
     <ProjectTitle spaced="items">
       <EditableText
         placeholder="(Untitled project)"
-        value={title}
-        onChange={onTitleChange}
+        value={props.title}
+        onChange={props.onTitleChange}
       />
-      {loading && <Spinner size={Spinner.SIZE_SMALL} />}
+      {props.loading && <Spinner size={Spinner.SIZE_SMALL} />}
     </ProjectTitle>
     <ProjectActions spaced="items">
-      {(isRecording && <ProjectRecordingActions onStop={onStop} />) ||
-        (isPlaying && <ProjectPlayingActions onStop={onStop} />) || (
+      {(props.isRecording && (
+        <ProjectRecordingActions onStop={props.onStop} />
+      )) ||
+        (props.isPlaying && (
+          <ProjectPlayingActions onStop={props.onStop} />
+        )) || (
           <ProjectDefaultActions
-            onAddTrack={onAddTrack}
-            showDelete={showDelete}
-            onDelete={onDelete}
-            onPlay={onPlay}
-            onRecord={onRecord}
+            onAddTrack={props.onAddTrack}
+            showDelete={props.showDelete}
+            showPlay={props.showPlay}
+            onDelete={props.onDelete}
+            onPlay={props.onPlay}
+            onRecord={props.onRecord}
           />
         )}
     </ProjectActions>
@@ -137,6 +133,7 @@ export const ProjectHeader = ({
 ProjectHeader.propTypes = {
   title: PropTypes.string,
   showDelete: PropTypes.bool,
+  showPlay: PropTypes.bool,
   isRecording: PropTypes.bool,
   isPlaying: PropTypes.bool,
   loading: PropTypes.bool,
@@ -150,6 +147,7 @@ ProjectHeader.propTypes = {
 ProjectHeader.defaultProps = {
   title: '',
   showDelete: false,
+  showPlay: false,
   loading: false,
   isRecording: false,
   isPlaying: false,

@@ -40,6 +40,7 @@ class RawProject extends React.Component {
 
   render() {
     const { ui, project, projectLoading, actions, projectError } = this.props;
+    const hasTracks = project.tracks && project.tracks.length;
     const notFound =
       (!project && !projectLoading) ||
       (projectError && projectError.code === 'PERMISSION_DENIED');
@@ -53,6 +54,7 @@ class RawProject extends React.Component {
               title={project.name}
               loading={projectLoading}
               showDelete={!!project.id}
+              showPlay={!!hasTracks}
               isRecording={ui.recording}
               isPlaying={ui.playing}
               onTitleChange={actions.updateProjectName}
@@ -62,7 +64,7 @@ class RawProject extends React.Component {
               onPlay={actions.play}
               onStop={actions.stop}
             />
-            {project.tracks && project.tracks.length ? (
+            {hasTracks ? (
               <ProjectScroller>
                 <Timeline
                   duration={project.duration}

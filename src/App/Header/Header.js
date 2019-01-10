@@ -29,6 +29,7 @@ import {
   ownProjectsAction,
   CURRENT_PROJECT_KEY,
   openProjectAction,
+  getCurrentProject,
 } from '../../store/modules/project';
 import {
   redoHistoryAction,
@@ -46,6 +47,7 @@ class RawHeader extends Component {
   componentDidMount = () => {
     const { actions } = this.props;
     actions.getCurrentAccount();
+    console.log(this.props.currentProject);
   };
 
   componentDidUpdate(prevProps) {
@@ -120,7 +122,7 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   account: state[CURRENT_ACCOUNT_KEY].data,
   accountLoading: state[CURRENT_ACCOUNT_KEY].loading,
-  currentProject: state[CURRENT_PROJECT_KEY].data,
+  currentProject: getCurrentProject(state).data,
   ownProjects: state[OWN_PROJECTS_KEY].data,
   undoStack: state[CURRENT_PROJECT_KEY].past,
   redoStack: state[CURRENT_PROJECT_KEY].future,

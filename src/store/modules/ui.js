@@ -60,12 +60,12 @@ export const playAction = () => async (dispatch, getState) => {
         payload: { startedTime, startedTs: ts0 },
       });
     }
-    dispatch({
-      type: UI_SELECT_TIME_KEY,
-      transactionId,
-      payload: startedTime + (ts - ts0),
-    });
     if (R.view(playingLens, getState())) {
+      dispatch({
+        type: UI_SELECT_TIME_KEY,
+        transactionId,
+        payload: startedTime + (ts - ts0),
+      });
       window.requestAnimationFrame(step);
     }
   };
@@ -105,7 +105,7 @@ export const stopReducer = createBasicReducer(
     playingStartedTime: undefined,
     playingStartedTs: undefined,
     timeSelected:
-      state.playingStartedTime + (state.playingStartedTs - action.payload),
+      state.playingStartedTime + (action.payload - state.playingStartedTs),
   }),
   UI_INITIAL_STATE,
 );

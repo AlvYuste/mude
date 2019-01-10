@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import * as R from 'ramda';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createAsyncTypes } from '../helpers/async/async.types';
-import { currentProjectLens, tracksLens, addTrackAction } from './project';
+import { addTrackAction } from './project';
 import {
   recordingLens,
   selectedTracksIdsLens,
@@ -20,45 +20,33 @@ export const AUDIO_RECORD_DATA_KEY = 'AUDIO_RECORD_DATA';
 export const recordAction = () => async (dispatch, getState) => {
   const [req, succ, fail] = createAsyncTypes(AUDIO_RECORD_KEY);
   const transactionId = uuid();
-  const currentProject = R.view(currentProjectLens, getState());
-  const selectedTracksIds = R.view(selectedTracksIdsLens, getState());
-  const tracks = R.view(tracksLens, currentProject);
   try {
     await askMicrophonePermission();
   } catch (error) {
     dispatch({ type: fail, error, transactionId });
     return;
   }
-  let trackId;
-  if (!tracks || !tracks.length) {
-    addTrackAction(transactionId)(dispatch);
-    trackId = transactionId;
-  } else if (!selectedTracksIds || !selectedTracksIds.length) {
-    trackId = tracks[0].id;
-  } else {
-    trackId = selectedTracksIds[0];
-  }
+  addTrackAction(transactionId)(dispatch);
   const { recorder, stream } = await getMicrophoneData({
     onData: buffer =>
       dispatch({
         type: AUDIO_RECORD_DATA_KEY,
         response: buffer,
-        payload: { trackId, recorder, stream },
+        payload: { trackId: transactionId, recorder, stream },
         transactionId,
       }),
     onFinish: blob =>
       dispatch({
         type: succ,
         response: blob,
-        payload: { trackId, recorder, stream },
+        payload: { trackId: transactionId, recorder, stream },
         transactionId,
       }),
   });
-
   dispatch({
     type: req,
     transactionId,
-    payload: { trackId, recorder, stream },
+    payload: { trackId: transactionId, recorder, stream },
   });
   playAction()(dispatch, getState);
 };
