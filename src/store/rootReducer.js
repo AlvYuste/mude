@@ -11,13 +11,17 @@ import * as audio from './modules/audio';
 
 export const rootReducer = reduceReducers(
   acct.signOutReducer,
-  audio.audioRecordReducer,
+  audio.recordReducer,
+  audio.recordDataReducer,
+  audio.stopRecordReducer,
   combineReducers({
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,
       ui.setZoomReducer,
       ui.toggleCollapsedReducer,
       ui.selectTimeReducer,
+      ui.playReducer,
+      ui.stopReducer,
     ),
     [tsts.TOASTS_KEY]: reduceReducers(
       tsts.toastOpenReducer,

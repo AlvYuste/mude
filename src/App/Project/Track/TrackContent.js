@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import {
   getEventRelativeCoords,
   getOffsetFromTime,
+  getTimeFromOffset,
 } from '../../../utils/utils';
 import { Timemarker } from '../../../components/utils/Timemarker';
 
@@ -23,16 +24,21 @@ export class TrackContent extends React.Component {
     this.wrapperRef = React.createRef();
   }
 
+  onClick = event => {
+    const offset = getEventRelativeCoords(event, this.wrapperRef.current).x;
+    const time = getTimeFromOffset(offset);
+    if (!event.ctrlKey) {
+      this.props.onSelectTime(time);
+    }
+  };
+
   render() {
     const { onSelectTime, isSelected, timeSelected, ...rest } = this.props;
     return (
       <TrackContentWrapper
         {...rest}
         ref={this.wrapperRef}
-        onClick={e =>
-          !e.ctrlKey &&
-          onSelectTime(getEventRelativeCoords(e, this.wrapperRef.current).x)
-        }
+        onClick={this.onClick}
       >
         <Timemarker
           offset={getOffsetFromTime(timeSelected || 0)}

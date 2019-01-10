@@ -17,7 +17,7 @@ export const tracksLens = dataLense('tracks');
 export const getCurrentProject = R.view(currentProjectLens);
 
 /* OPEN PROJECT */
-export const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
+const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
 export const openProjectReducer = createAsyncReducer(OPEN_PROJECT_KEY);
 export const openProjectAction = payload => dispatch => {
   const [req, succ, fail] = createAsyncTypes(OPEN_PROJECT_KEY);
@@ -67,7 +67,7 @@ export const ownProjectsAction = () => dispatch => {
 };
 
 /* CURRENT PROJECT SAVE */
-export const SAVE_PROJECT_KEY = 'SAVE_PROJECT';
+const SAVE_PROJECT_KEY = 'SAVE_PROJECT';
 export const saveProjectReducer = createAsyncReducer(SAVE_PROJECT_KEY);
 export const saveProjectAction = () => (dispatch, getState) => {
   const [req, succ, fail] = createAsyncTypes(SAVE_PROJECT_KEY);
@@ -95,7 +95,7 @@ export const saveProjectAction = () => (dispatch, getState) => {
 };
 
 /* CURRENT PROJECT DELETE */
-export const DELETE_KEY_PROJECT = 'DELETE_PROJECT';
+const DELETE_KEY_PROJECT = 'DELETE_PROJECT';
 export const deleteProjectReducer = createAsyncReducer(DELETE_KEY_PROJECT, {
   successReducer: () => ({}),
 });
@@ -122,7 +122,7 @@ export const deleteProjectAction = payload => (dispatch, getState) => {
 };
 
 /* PROJECT_NEW */
-export const NEW_PROJECT_KEY = 'NEW_PROJECT';
+const NEW_PROJECT_KEY = 'NEW_PROJECT';
 export const newProjectReducer = createBasicReducer(
   NEW_PROJECT_KEY,
   () => ({}),
@@ -134,7 +134,7 @@ export const newProjectAction = () => dispatch => {
 };
 
 /* PROJECT_UPDATE_NAME */
-export const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
+const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
 export const updateProjectNameReducer = createBasicReducer(
   PROJECT_UPDATE_NAME_KEY,
   (state, action) => R.set(nameLens, action.payload, state),
@@ -144,7 +144,7 @@ export const updateProjectNameAction = createBasicAction(
 );
 
 /* PROJECT_UPDATE_TRACKS */
-export const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
+const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
 export const updateProjectTracksReducer = createBasicReducer(
   PROJECT_UPDATE_TRACKS_KEY,
   (state, action) => R.set(tracksLens, action.payload, state),
@@ -154,14 +154,14 @@ export const updateProjectTracksAction = createBasicAction(
 );
 
 /* PROJECT_ADD_TRACK */
-export const PROJECT_ADD_TRACK_KEY = 'PROJECT_ADD_TRACK';
+const PROJECT_ADD_TRACK_KEY = 'PROJECT_ADD_TRACK';
 export const addTrackAction = createBasicAction(PROJECT_ADD_TRACK_KEY);
 export const addTrackReducer = createBasicReducer(
   PROJECT_ADD_TRACK_KEY,
   (state, action) =>
     R.over(
       tracksLens,
-      R.prepend({ id: action.transactionId, volume: 5 }),
+      R.prepend({ id: action.payload || action.transactionId, volume: 5 }),
       state,
     ),
 );

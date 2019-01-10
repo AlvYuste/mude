@@ -58,7 +58,9 @@ class RawProject extends React.Component {
               onTitleChange={actions.updateProjectName}
               onAddTrack={actions.addTrack}
               onDelete={actions.deleteProject}
-              onRecord={actions.recordAudio}
+              onRecord={actions.record}
+              onPlay={actions.play}
+              onStop={actions.stop}
             />
             {project.tracks && project.tracks.length ? (
               <ProjectScroller>
@@ -82,7 +84,7 @@ class RawProject extends React.Component {
               !projectLoading && (
                 <ProjectEmpty
                   onAddTrack={actions.addTrack}
-                  onRecord={actions.recordAudio}
+                  onRecord={actions.record}
                 />
               )
             )}
@@ -111,7 +113,9 @@ const mapDispatchToProps = dispatch => ({
     toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
     deleteProject: () => dispatch(projStore.deleteProjectAction()),
     selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
-    recordAudio: () => dispatch(audioStore.audioRecordAction()),
+    record: () => dispatch(audioStore.recordAction()),
+    play: () => dispatch(uiStore.playAction()),
+    stop: () => dispatch(uiStore.stopAction()),
   },
 });
 

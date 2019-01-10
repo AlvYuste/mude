@@ -96,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
       dispatch(trckStore.setTrackVolumeAction({ id, value })),
     updateTrack: track => dispatch(trckStore.updateTrackAction(track)),
     deleteTrack: trackId => dispatch(trckStore.deleteTrackAction(trackId)),
-    selectTime: offset => dispatch(uiStore.selectTimeAction(offset)),
+    selectTime: time => dispatch(uiStore.selectTimeAction(time)),
   },
 });
 
