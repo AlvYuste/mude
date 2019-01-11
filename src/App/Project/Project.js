@@ -34,7 +34,7 @@ class RawProject extends React.Component {
   onTrackMoved = ({ oldIndex, newIndex }) => {
     const { project, actions } = this.props;
     return oldIndex !== newIndex
-      ? actions.updateTracks(arrayMove(project.tracks, oldIndex, newIndex))
+      ? actions.setTracks(arrayMove(project.tracks, oldIndex, newIndex))
       : null;
   };
 
@@ -57,21 +57,25 @@ class RawProject extends React.Component {
               showPlay={!!hasTracks}
               isRecording={ui.recording}
               isPlaying={ui.playing}
-              onTitleChange={actions.updateProjectName}
-              onAddTrack={actions.addTrack}
-              onDelete={actions.deleteProject}
-              onRecord={actions.record}
-              onPlay={actions.play}
-              onStop={actions.stop}
+              onTitleChange={value => actions.setProjectName(value)}
+              onAddTrack={() => actions.addTrack()}
+              onDelete={() => actions.deleteProject()}
+              onRecord={() => actions.record()}
+              onPlay={() => actions.play()}
+              onStop={() => actions.stop()}
             />
             {hasTracks ? (
               <ProjectScroller>
                 <Timeline
-                  duration={project.duration}
+                  duration={
+                    Math.max(project.duration || 0, ui.timeSelected || 0) +
+                    10000
+                  }
                   timeSelected={ui.timeSelected}
                   collapsed={ui.collapsed}
                   zoom={ui.zoom}
-                  onCollapsedChange={actions.toggleCollapsed}
+                  onCollapsedChange={() => actions.toggleCollapsed()}
+                  onClickTimeline={time => actions.play(time)}
                 />
                 <TracksList
                   lockAxis="y"
@@ -79,14 +83,14 @@ class RawProject extends React.Component {
                   tracks={project.tracks}
                   onSortEnd={this.onTrackMoved}
                   selectedTracks={ui.selectedTracks}
-                  onSelectTracks={actions.selectTracks}
+                  onSelectTracks={tracksIds => actions.selectTracks(tracksIds)}
                 />
               </ProjectScroller>
             ) : (
               !projectLoading && (
                 <ProjectEmpty
-                  onAddTrack={actions.addTrack}
-                  onRecord={actions.record}
+                  onAddTrack={() => actions.addTrack()}
+                  onRecord={() => actions.record()}
                 />
               )
             )}
@@ -107,16 +111,14 @@ const mapDispatchToProps = dispatch => ({
   actions: {
     newProject: () => dispatch(projStore.newProjectAction()),
     openProject: id => dispatch(projStore.openProjectAction(id)),
-    updateProjectName: name =>
-      dispatch(projStore.updateProjectNameAction(name)),
-    updateTracks: tracks =>
-      dispatch(projStore.updateProjectTracksAction(tracks)),
+    setProjectName: name => dispatch(projStore.setProjectNameAction(name)),
+    setTracks: tracks => dispatch(projStore.setProjectTracksAction(tracks)),
     addTrack: () => dispatch(projStore.addTrackAction()),
     toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
     deleteProject: () => dispatch(projStore.deleteProjectAction()),
     selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
     record: () => dispatch(audioStore.recordAction()),
-    play: () => dispatch(uiStore.playAction()),
+    play: time => dispatch(uiStore.playAction(time)),
     stop: () => dispatch(uiStore.stopAction()),
   },
 });

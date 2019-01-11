@@ -135,21 +135,19 @@ export const newProjectAction = () => dispatch => {
 
 /* PROJECT_UPDATE_NAME */
 const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
-export const updateProjectNameReducer = createBasicReducer(
+export const setProjectNameReducer = createBasicReducer(
   PROJECT_UPDATE_NAME_KEY,
   (state, action) => R.set(nameLens, action.payload, state),
 );
-export const updateProjectNameAction = createBasicAction(
-  PROJECT_UPDATE_NAME_KEY,
-);
+export const setProjectNameAction = createBasicAction(PROJECT_UPDATE_NAME_KEY);
 
 /* PROJECT_UPDATE_TRACKS */
 const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
-export const updateProjectTracksReducer = createBasicReducer(
+export const setProjectTracksReducer = createBasicReducer(
   PROJECT_UPDATE_TRACKS_KEY,
   (state, action) => R.set(tracksLens, action.payload, state),
 );
-export const updateProjectTracksAction = createBasicAction(
+export const setProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
 );
 

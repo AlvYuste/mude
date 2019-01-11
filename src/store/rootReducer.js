@@ -39,8 +39,8 @@ export const rootReducer = reduceReducers(
         proj.openProjectReducer,
         proj.newProjectReducer,
         proj.saveProjectReducer,
-        proj.updateProjectNameReducer,
-        proj.updateProjectTracksReducer,
+        proj.setProjectNameReducer,
+        proj.setProjectTracksReducer,
         proj.addTrackReducer,
         proj.deleteProjectReducer,
 

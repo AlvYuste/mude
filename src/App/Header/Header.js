@@ -47,7 +47,6 @@ class RawHeader extends Component {
   componentDidMount = () => {
     const { actions } = this.props;
     actions.getCurrentAccount();
-    console.log(this.props.currentProject);
   };
 
   componentDidUpdate(prevProps) {

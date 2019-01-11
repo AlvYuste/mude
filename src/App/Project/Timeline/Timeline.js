@@ -7,6 +7,7 @@ import { Timemarker } from '../../../components/utils/Timemarker';
 import {
   getEventRelativeCoords,
   getOffsetFromTime,
+  getTimeFromOffset,
 } from '../../../utils/utils';
 import { TICK_WIDTH, TICKS_PER_SEGEMNT } from '../../../utils/variables';
 import { Collapse } from './Collapse';
@@ -59,41 +60,59 @@ const renderSegment = (start, length) =>
  * @prop {number} duration Indicates how many miliseconds has to be drawn
  * @prop {number} zoom Indicates how many segments are drawn for one second
  */
-export const Timeline = ({
-  duration,
-  zoom,
-  timeSelected,
-  collapsed,
-  onCollapsedChange,
-}) => {
-  const segmentLength = Math.floor(1000 / zoom);
-  const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
-  const segments = Array(segmentsCount || 1).fill();
-  return (
-    <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
-      <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
-      <TicksWrapper onClick={e => console.log(getEventRelativeCoords(e).x)}>
-        {segments.map((_, i) =>
-          renderSegment(i * segmentLength, segmentLength),
-        )}
-        <Timemarker offset={getOffsetFromTime(timeSelected)}>
-          {(timeSelected / 1000).toFixed(zoom * 2)}s
-        </Timemarker>
-      </TicksWrapper>
-    </TimelineWrapper>
-  );
-};
+export class Timeline extends React.Component {
+  constructor(props) {
+    super(props);
+    this.wrapperRef = React.createRef();
+  }
+
+  onClick = event => {
+    const offset = getEventRelativeCoords(event, this.wrapperRef.current).x;
+    const time = getTimeFromOffset(offset);
+    if (!event.ctrlKey) {
+      this.props.onClickTimeline(time);
+    }
+  };
+
+  render() {
+    const {
+      duration,
+      zoom,
+      timeSelected,
+      collapsed,
+      onCollapsedChange,
+    } = this.props;
+    const segmentLength = Math.floor(1000 / zoom);
+    const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
+    const segments = Array(segmentsCount || 1).fill();
+    return (
+      <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
+        <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
+        <TicksWrapper ref={this.wrapperRef} onClick={this.onClick}>
+          {segments.map((_, i) =>
+            renderSegment(i * segmentLength, segmentLength),
+          )}
+          <Timemarker offset={getOffsetFromTime(timeSelected)}>
+            {(timeSelected / 1000).toFixed(zoom * 2)}s
+          </Timemarker>
+        </TicksWrapper>
+      </TimelineWrapper>
+    );
+  }
+}
 Timeline.propTypes = {
   duration: PropTypes.number,
   zoom: PropTypes.number,
   timeSelected: PropTypes.number,
   collapsed: PropTypes.bool,
   onCollapsedChange: PropTypes.func,
+  onClickTimeline: PropTypes.func,
 };
 Timeline.defaultProps = {
-  duration: 5000,
+  duration: 10000,
   zoom: 1,
   timeSelected: 0,
   collapsed: false,
   onCollapsedChange: () => {},
+  onClickTimeline: () => {},
 };

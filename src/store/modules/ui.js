@@ -7,6 +7,7 @@ import { stopRecordAction } from './audio';
 export const UI_KEY = 'UI';
 export const zoomLens = R.lensPath([UI_KEY, 'zoom']);
 export const playingLens = R.lensPath([UI_KEY, 'playing']);
+export const playingKeyLens = R.lensPath([UI_KEY, 'playingKey']);
 export const recordingLens = R.lensPath([UI_KEY, 'recording']);
 export const recorderLens = R.lensPath([UI_KEY, 'recorder']);
 export const collapsedLens = R.lensPath([UI_KEY, 'collapsed']);
@@ -47,9 +48,9 @@ export const selectTimeReducer = createBasicReducer(
 );
 
 const UI_PLAY_KEY = 'UI_PLAY';
-export const playAction = () => async (dispatch, getState) => {
+export const playAction = time => async (dispatch, getState) => {
   const transactionId = uuid();
-  const startedTime = R.view(timeSelectedLens, getState());
+  const startedTime = time || R.view(timeSelectedLens, getState());
   let ts0 = null;
   const step = ts => {
     if (!ts0) {
@@ -60,7 +61,10 @@ export const playAction = () => async (dispatch, getState) => {
         payload: { startedTime, startedTs: ts0 },
       });
     }
-    if (R.view(playingLens, getState())) {
+    if (
+      R.view(playingLens, getState()) &&
+      R.view(playingKeyLens, getState()) === transactionId
+    ) {
       dispatch({
         type: UI_SELECT_TIME_KEY,
         transactionId,
@@ -78,6 +82,7 @@ export const playReducer = createBasicReducer(
     playing: true,
     playingStartedTime: action.payload.startedTime,
     playingStartedTs: action.payload.startedTs,
+    playingKey: action.transactionId,
   }),
   UI_INITIAL_STATE,
 );
