@@ -10,32 +10,15 @@ import {
   Spinner,
 } from '@blueprintjs/core';
 import styled from '@emotion/styled';
-import { Account } from './Account';
-import { SignIn } from './SignIn';
-import {
-  CURRENT_ACCOUNT_KEY,
-  currentAccountAction,
-  signInWithGoogleAction,
-  signOutAction,
-  signInWithEmailAction,
-  signUpWithEmailAction,
-} from '../../store/modules/account';
 import { mq } from '../../utils/mq';
+import * as accStore from '../../store/modules/account';
+import * as prjStore from '../../store/modules/project';
+import * as htrStore from '../../store/modules/history';
+import * as uiStore from '../../store/modules/ui';
 import { ProjectMenu } from './ProjectMenu';
-import {
-  saveProjectAction,
-  newProjectAction,
-  OWN_PROJECTS_KEY,
-  ownProjectsAction,
-  CURRENT_PROJECT_KEY,
-  openProjectAction,
-  getCurrentProject,
-} from '../../store/modules/project';
-import {
-  redoHistoryAction,
-  undoHistoryAction,
-} from '../../store/modules/history';
-import { EditMenu } from './EditMenu';
+import { EditorMenu } from './EditorMenu';
+import { SignIn } from './SignIn';
+import { Account } from './Account';
 
 const NavbarStyled = styled(Navbar)`
   ${mq.untilTablet} {
@@ -59,6 +42,7 @@ class RawHeader extends Component {
 
   render() {
     const {
+      ui,
       account,
       currentProject,
       accountLoading,
@@ -78,11 +62,15 @@ class RawHeader extends Component {
             onSaveProject={actions.saveProject}
             onOpenProject={actions.openProject}
           />
-          <EditMenu
+          <EditorMenu
             onRedo={actions.redo}
             onUndo={actions.undo}
+            zoom={ui.zoom}
             redoStack={actions.redoStack}
             undoStack={actions.undoStack}
+            onZoomIn={actions.zoomIn}
+            onZoomOut={actions.zoomOut}
+            onResetZoom={actions.resetZoom}
           />
         </NavbarGroup>
         <NavbarGroup align={Alignment.RIGHT}>
@@ -104,6 +92,7 @@ class RawHeader extends Component {
 }
 
 RawHeader.propTypes = {
+  ui: PropTypes.object,
   account: PropTypes.object,
   accountLoading: PropTypes.bool,
   currentProject: PropTypes.object,
@@ -111,6 +100,7 @@ RawHeader.propTypes = {
   actions: PropTypes.object,
 };
 RawHeader.defaultProps = {
+  ui: {},
   account: undefined,
   currentProject: undefined,
   accountLoading: false,
@@ -119,28 +109,32 @@ RawHeader.defaultProps = {
 };
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  account: state[CURRENT_ACCOUNT_KEY].data,
-  accountLoading: state[CURRENT_ACCOUNT_KEY].loading,
-  currentProject: getCurrentProject(state).data,
-  ownProjects: state[OWN_PROJECTS_KEY].data,
-  undoStack: state[CURRENT_PROJECT_KEY].past,
-  redoStack: state[CURRENT_PROJECT_KEY].future,
+  ui: state[uiStore.UI_KEY],
+  account: state[accStore.CURRENT_ACCOUNT_KEY].data,
+  accountLoading: state[accStore.CURRENT_ACCOUNT_KEY].loading,
+  currentProject: prjStore.getCurrentProject(state).data,
+  ownProjects: state[prjStore.OWN_PROJECTS_KEY].data,
+  undoStack: state[prjStore.CURRENT_PROJECT_KEY].past,
+  redoStack: state[prjStore.CURRENT_PROJECT_KEY].future,
 });
 const mapDispatchToProps = dispatch => ({
   actions: {
-    getCurrentAccount: () => dispatch(currentAccountAction()),
+    getCurrentAccount: () => dispatch(accStore.currentAccountAction()),
     signUpWithEmail: ({ email, password }) =>
-      dispatch(signUpWithEmailAction({ email, password })),
-    signInWithGoogle: () => dispatch(signInWithGoogleAction()),
+      dispatch(accStore.signUpWithEmailAction({ email, password })),
+    signInWithGoogle: () => dispatch(accStore.signInWithGoogleAction()),
     signInWithEmail: ({ email, password }) =>
-      dispatch(signInWithEmailAction({ email, password })),
-    signOut: () => dispatch(signOutAction()),
-    getOwnProjects: () => dispatch(ownProjectsAction()),
-    openProject: id => dispatch(openProjectAction(id)),
-    newProject: () => dispatch(newProjectAction()),
-    saveProject: () => dispatch(saveProjectAction()),
-    undo: () => dispatch(undoHistoryAction()),
-    redo: () => dispatch(redoHistoryAction()),
+      dispatch(accStore.signInWithEmailAction({ email, password })),
+    signOut: () => dispatch(accStore.signOutAction()),
+    getOwnProjects: () => dispatch(prjStore.ownProjectsAction()),
+    openProject: id => dispatch(prjStore.openProjectAction(id)),
+    newProject: () => dispatch(prjStore.newProjectAction()),
+    saveProject: () => dispatch(prjStore.saveProjectAction()),
+    undo: () => dispatch(htrStore.undoHistoryAction()),
+    redo: () => dispatch(htrStore.redoHistoryAction()),
+    zoomIn: () => dispatch(uiStore.zoomInAction()),
+    zoomOut: () => dispatch(uiStore.zoomOutAction()),
+    resetZoom: () => dispatch(uiStore.setZoomAction(1)),
   },
 });
 export const Header = connect(

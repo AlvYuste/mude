@@ -35,7 +35,6 @@ const RawTracksList = ({
                 !track.volume ||
                 (!!soloTracks.length && !soloTracks.includes(track))
               }
-              onChangeTrack={onChangeTrack}
               onClick={e =>
                 e.ctrlKey
                   ? onSelectTracks(

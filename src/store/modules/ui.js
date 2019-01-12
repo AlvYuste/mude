@@ -3,6 +3,7 @@ import uuid from 'uuid';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import { stopRecordAction } from './audio';
+import { MIN_ZOOM, MAX_ZOOM } from '../../utils/variables';
 
 export const UI_KEY = 'UI';
 export const zoomLens = R.lensPath([UI_KEY, 'zoom']);
@@ -29,12 +30,27 @@ export const toggleCollapsedReducer = createBasicReducer(
   state => ({ ...state, collapsed: !state.collapsed }),
 );
 const UI_SET_ZOOM_KEY = 'UI_SET_ZOOM';
-export const setZoomAction = createBasicAction(UI_SET_ZOOM_KEY);
+export const setZoomAction = zoom => async dispatch => {
+  if (zoom >= MIN_ZOOM && zoom <= MAX_ZOOM) {
+    dispatch({
+      type: UI_SET_ZOOM_KEY,
+      payload: zoom,
+    });
+  }
+};
 export const setZoomReducer = createBasicReducer(
   UI_SET_ZOOM_KEY,
   (state, action) => ({ ...state, zoom: action.payload }),
   UI_INITIAL_STATE,
 );
+export const zoomInAction = () => (dispatch, getState) => {
+  const currentZoom = R.view(zoomLens, getState());
+  setZoomAction(currentZoom * 2)(dispatch, getState);
+};
+export const zoomOutAction = () => (dispatch, getState) => {
+  const currentZoom = R.view(zoomLens, getState());
+  setZoomAction(currentZoom / 2)(dispatch, getState);
+};
 
 const UI_SELECT_TIME_KEY = 'UI_SELECT_TIME';
 export const selectTimeAction = createBasicAction(UI_SELECT_TIME_KEY);

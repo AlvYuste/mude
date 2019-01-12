@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import googleLogo from '../../../assets/google.svg';
 import { Flex } from '../../components/layout/Flex';
 import { ImgIcon } from '../../components/utils/ImgIcon';
-import { prevent } from '../../utils/utils';
+import { prevent } from '../../utils/events';
 
 const SIGNIN = 'signin';
 const SIGNUP = 'signup';

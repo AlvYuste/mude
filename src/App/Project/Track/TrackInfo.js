@@ -12,7 +12,7 @@ import {
 import { Flex } from '../../../components/layout/Flex';
 import { SimpleSlider } from '../../../components/forms/SimpleSlider';
 import { TRACK_HANDLE_WIDTH, TRACK_INFO_WIDTH } from '../../../utils/variables';
-import { noPropagate } from '../../../utils/utils';
+import { noPropagate } from '../../../utils/events';
 
 const TrackInfoWrapper = styled(Flex)`
   background-color: ${Colors.DARK_GRAY5};
@@ -20,6 +20,9 @@ const TrackInfoWrapper = styled(Flex)`
   position: sticky;
   left: ${TRACK_HANDLE_WIDTH};
   z-index: 5;
+  transition: width ease 200ms, padding ease 200ms;
+  width: ${({ collapsed }) => (collapsed ? 0 : TRACK_INFO_WIDTH)};
+  padding: ${({ collapsed }) => (collapsed ? 0 : '')};
   & > * {
     pointer-events: ${({ collapsed }) => (collapsed ? 'none' : '')};
     opacity: ${({ collapsed }) => (collapsed ? 0 : 1)};
@@ -46,75 +49,80 @@ const ButtonStyled = styled(Button)`
   text-transform: uppercase;
   font-size: 0.65rem;
 `;
-export const TrackInfo = ({
-  track,
-  onChangeTrack,
-  collapsed,
-  onChangeName,
-  onChangeVolume,
-  onChangePan,
-  ...rest
-}) => {
-  const onChangeInput = key => value => {
-    onChangeTrack({ ...track, [key]: value });
-  };
-  return (
-    <TrackInfoWrapper
-      {...rest}
-      collapsed={collapsed ? 1 : 0}
-      className={`${rest.className} ${Classes.ELEVATION_1}`}
-      direction="column"
-    >
-      <TrackTitle
-        value={track.name}
+export class TrackInfo extends React.Component {
+  shouldComponentUpdate = ({ track: trackNext, collapsed: collapsedNext }) =>
+    trackNext !== this.props.track || collapsedNext !== this.props.collapsed;
+
+  render() {
+    const {
+      track,
+      collapsed,
+      onChangeTrack,
+      onChangeName,
+      onChangeVolume,
+      onChangePan,
+    } = this.props;
+    return (
+      <TrackInfoWrapper
         collapsed={collapsed ? 1 : 0}
-        selectAllOnFocus
-        placeholder="(Untitled track)"
-        onChange={onChangeName}
-      />
-      <SliderGroupStyled
-        collapsed={collapsed ? 1 : 0}
+        className={`${Classes.ELEVATION_1}`}
         direction="column"
-        style={{ padding: '0.5rem' }}
-        onClick={noPropagate()}
       >
-        <SimpleSlider
-          maxLabel={<Icon iconSize={14} icon="volume-up" />}
-          minLabel={<Icon iconSize={14} icon="volume-off" />}
-          value={track.volume}
-          onChange={onChangeVolume}
-          tabIndex={collapsed ? -1 : ''}
+        <TrackTitle
+          value={track.name}
+          collapsed={collapsed ? 1 : 0}
+          selectAllOnFocus
+          placeholder="(Untitled track)"
+          onChange={onChangeName}
         />
-        <SimpleSlider
-          min={-5}
-          max={5}
-          maxLabel="R"
-          minLabel="L"
-          showTrackFill={false}
-          value={track.pan}
-          onChange={onChangePan}
-          tabIndex={collapsed ? -1 : ''}
-        />
-      </SliderGroupStyled>
-      <ButtonGroupStyled>
-        <ButtonStyled
-          small
-          text="mute"
-          active={track.mute}
-          onClick={noPropagate(() => onChangeInput('mute', true)(!track.mute))}
-          tabIndex={collapsed ? -1 : ''}
-        />
-        <ButtonStyled
-          small
-          text="solo"
-          active={track.solo}
-          onClick={noPropagate(() => onChangeInput('solo', true)(!track.solo))}
-          tabIndex={collapsed ? -1 : ''}
-        />
-      </ButtonGroupStyled>
-    </TrackInfoWrapper>
-  );
-};
+        <SliderGroupStyled
+          collapsed={collapsed ? 1 : 0}
+          direction="column"
+          style={{ padding: '0.5rem' }}
+          onClick={noPropagate()}
+        >
+          <SimpleSlider
+            maxLabel={<Icon iconSize={14} icon="volume-up" />}
+            minLabel={<Icon iconSize={14} icon="volume-off" />}
+            value={track.volume}
+            onChange={onChangeVolume}
+            tabIndex={collapsed ? -1 : ''}
+          />
+          <SimpleSlider
+            min={-5}
+            max={5}
+            maxLabel="R"
+            minLabel="L"
+            showTrackFill={false}
+            value={track.pan}
+            onChange={onChangePan}
+            tabIndex={collapsed ? -1 : ''}
+          />
+        </SliderGroupStyled>
+        <ButtonGroupStyled>
+          <ButtonStyled
+            small
+            text="mute"
+            active={track.mute}
+            onClick={noPropagate(() =>
+              onChangeTrack({ ...track, mute: !track.mute }),
+            )}
+            tabIndex={collapsed ? -1 : ''}
+          />
+          <ButtonStyled
+            small
+            text="solo"
+            active={track.solo}
+            onClick={noPropagate(() =>
+              onChangeTrack({ ...track, solo: !track.solo }),
+            )}
+            tabIndex={collapsed ? -1 : ''}
+          />
+        </ButtonGroupStyled>
+      </TrackInfoWrapper>
+    );
+  }
+}
 TrackInfo.propTypes = {
   track: PropTypes.shape({
     name: PropTypes.string,
@@ -124,7 +132,6 @@ TrackInfo.propTypes = {
     solo: PropTypes.bool,
   }),
   collapsed: PropTypes.bool,
-  selected: PropTypes.bool,
   onChangeTrack: PropTypes.func,
   onChangeName: PropTypes.func,
   onChangeVolume: PropTypes.func,
@@ -140,7 +147,6 @@ TrackInfo.defaultProps = {
     solo: false,
   },
   collapsed: false,
-  selected: false,
   onChangeTrack: () => {},
   onChangeName: () => {},
   onChangeVolume: () => {},

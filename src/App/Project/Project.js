@@ -69,7 +69,7 @@ class RawProject extends React.Component {
                 <Timeline
                   duration={
                     Math.max(project.duration || 0, ui.timeSelected || 0) +
-                    10000
+                    10000 / ui.zoom
                   }
                   timeSelected={ui.timeSelected}
                   collapsed={ui.collapsed}

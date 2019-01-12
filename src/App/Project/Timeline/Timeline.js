@@ -5,12 +5,13 @@ import { Colors, Classes } from '@blueprintjs/core';
 import { Flex } from '../../../components/layout/Flex';
 import { Timemarker } from '../../../components/utils/Timemarker';
 import {
-  getEventRelativeCoords,
   getOffsetFromTime,
   getTimeFromOffset,
-} from '../../../utils/utils';
+  renderTime,
+} from '../../../utils/time';
 import { TICK_WIDTH, TICKS_PER_SEGEMNT } from '../../../utils/variables';
 import { Collapse } from './Collapse';
+import { getEventRelativeCoords } from '../../../utils/events';
 
 const tickMiddle = Math.floor(TICKS_PER_SEGEMNT / 2);
 const ticks = Array(TICKS_PER_SEGEMNT).fill();
@@ -40,7 +41,7 @@ const TicksWrapper = styled(Flex)`
   position: relative;
 `;
 
-const renderSegment = (start, length) =>
+const renderSegment = (start, length, zoom) =>
   ticks.map((_, i) => {
     const tickValue = (start + i * (length / TICKS_PER_SEGEMNT)) / 1000;
     const tickType =
@@ -51,7 +52,7 @@ const renderSegment = (start, length) =>
         main={tickType === 'main' ? 1 : 0}
         middle={tickType === 'middle' ? 1 : 0}
       >
-        {i === 0 && `${start / 1000}`}
+        {i === 0 && `${renderTime(start, zoom)}`}
       </Tick>
     );
   });
@@ -68,7 +69,7 @@ export class Timeline extends React.Component {
 
   onClick = event => {
     const offset = getEventRelativeCoords(event, this.wrapperRef.current).x;
-    const time = getTimeFromOffset(offset);
+    const time = getTimeFromOffset(offset, this.props.zoom);
     if (!event.ctrlKey) {
       this.props.onClickTimeline(time);
     }
@@ -82,18 +83,20 @@ export class Timeline extends React.Component {
       collapsed,
       onCollapsedChange,
     } = this.props;
-    const segmentLength = Math.floor(1000 / zoom);
+    const segmentLength = 1000 / zoom;
     const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
+    console.log(segmentLength);
+    console.log(segmentsCount);
     const segments = Array(segmentsCount || 1).fill();
     return (
       <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
         <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
         <TicksWrapper ref={this.wrapperRef} onClick={this.onClick}>
           {segments.map((_, i) =>
-            renderSegment(i * segmentLength, segmentLength),
+            renderSegment(i * segmentLength, segmentLength, zoom),
           )}
-          <Timemarker offset={getOffsetFromTime(timeSelected)}>
-            {(timeSelected / 1000).toFixed(zoom * 2)}s
+          <Timemarker offset={getOffsetFromTime(timeSelected, zoom)}>
+            {renderTime(timeSelected, zoom, 1)}
           </Timemarker>
         </TicksWrapper>
       </TimelineWrapper>

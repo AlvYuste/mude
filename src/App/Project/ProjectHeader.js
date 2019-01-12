@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,6 +13,7 @@ import {
   MenuItem,
   Classes,
   Tag,
+  Position,
 } from '@blueprintjs/core';
 import { FlexResponsive, Flex } from '../../components/layout/Flex';
 import { mq } from '../../utils/mq';
@@ -54,12 +56,10 @@ export const ProjectPlayingActions = ({ onStop }) => (
   </>
 );
 export const ProjectDefaultActions = ({
-  showDelete,
   showPlay,
   onPlay,
   onRecord,
   onAddTrack,
-  onDelete,
 }) => (
   <>
     {showPlay && (
@@ -87,49 +87,66 @@ export const ProjectDefaultActions = ({
       title="Add track"
       onClick={onAddTrack}
     />
-    {showDelete && (
-      <Popover
-        minimal
-        content={
-          <Menu>
-            <MenuItem text="Delete project" icon="trash" onClick={onDelete} />
-          </Menu>
-        }
-      >
-        <Button minimal large icon="more" />
-      </Popover>
-    )}
   </>
 );
-export const ProjectHeader = props => (
-  <FlexResponsive spaced align="center" justify="space-between">
-    <ProjectTitle spaced="items">
-      <EditableText
-        placeholder="(Untitled project)"
-        value={props.title}
-        onChange={props.onTitleChange}
-      />
-      {props.loading && <Spinner size={Spinner.SIZE_SMALL} />}
-    </ProjectTitle>
-    <ProjectActions spaced="items">
-      {(props.isRecording && (
-        <ProjectRecordingActions onStop={props.onStop} />
-      )) ||
-        (props.isPlaying && (
-          <ProjectPlayingActions onStop={props.onStop} />
-        )) || (
-          <ProjectDefaultActions
-            onAddTrack={props.onAddTrack}
-            showDelete={props.showDelete}
-            showPlay={props.showPlay}
-            onDelete={props.onDelete}
-            onPlay={props.onPlay}
-            onRecord={props.onRecord}
-          />
+const ProjectOptions = ({ showDelete, onDelete }) => {
+  const options = [];
+  if (showDelete) {
+    options.push(
+      <MenuItem
+        key="delete"
+        text="Delete project"
+        icon="trash"
+        onClick={onDelete}
+      />,
+    );
+  }
+  return options.length ? (
+    <Popover
+      minimal
+      position={Position.BOTTOM_LEFT}
+      content={<Menu>{options}</Menu>}
+    >
+      <Button minimal large icon="more" />
+    </Popover>
+  ) : (
+    ''
+  );
+};
+export class ProjectHeader extends React.Component {
+  shouldComponentUpdate = nextProps =>
+    this.props.title !== nextProps.title ||
+    this.props.showDelete !== nextProps.showDelete ||
+    this.props.showPlay !== nextProps.showPlay ||
+    this.props.isRecording !== nextProps.isRecording ||
+    this.props.isPlaying !== nextProps.isPlaying ||
+    this.props.loading !== nextProps.loading;
+
+  render = () => (
+    <FlexResponsive spaced align="center" justify="space-between">
+      <ProjectTitle spaced="items">
+        <EditableText
+          placeholder="(Untitled project)"
+          value={this.props.title}
+          onChange={this.props.onTitleChange}
+        />
+        {this.props.loading && <Spinner size={Spinner.SIZE_SMALL} />}
+      </ProjectTitle>
+      <ProjectActions spaced="items">
+        {this.props.isRecording && (
+          <ProjectRecordingActions onStop={this.props.onStop} />
         )}
-    </ProjectActions>
-  </FlexResponsive>
-);
+        {this.props.isPlaying && !this.props.isRecording && (
+          <ProjectPlayingActions onStop={this.props.onStop} />
+        )}
+        {!this.props.isPlaying && !this.props.isRecording && (
+          <ProjectDefaultActions {...this.props} />
+        )}
+        <ProjectOptions {...this.props} />
+      </ProjectActions>
+    </FlexResponsive>
+  );
+}
 ProjectHeader.propTypes = {
   title: PropTypes.string,
   showDelete: PropTypes.bool,
@@ -137,6 +154,7 @@ ProjectHeader.propTypes = {
   isRecording: PropTypes.bool,
   isPlaying: PropTypes.bool,
   loading: PropTypes.bool,
+
   onTitleChange: PropTypes.func,
   onAddTrack: PropTypes.func,
   onDelete: PropTypes.func,

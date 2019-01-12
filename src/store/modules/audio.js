@@ -10,8 +10,10 @@ import {
   playAction,
   recorderLens,
 } from './ui';
-import { getMicrophoneData } from '../../services/audio';
-import { askMicrophonePermission } from '../../utils/audio';
+import {
+  getMicrophoneData,
+  askMicrophonePermission,
+} from '../../services/audio';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 
 /* AUDIO_RECORD */

@@ -3,19 +3,17 @@ import PropTypes from 'prop-types';
 
 import { Colors } from '@blueprintjs/core';
 import styled from '@emotion/styled';
-// import { Clip } from '../Clip/Clip';
-import {
-  getEventRelativeCoords,
-  getOffsetFromTime,
-  getTimeFromOffset,
-} from '../../../utils/utils';
+import { getOffsetFromTime, getTimeFromOffset } from '../../../utils/time';
 import { Timemarker } from '../../../components/utils/Timemarker';
+import { getEventRelativeCoords } from '../../../utils/events';
+import { Clip } from '../Clip/Clip';
 
 const TrackContentWrapper = styled.div`
   background-color: ${Colors.DARK_GRAY1};
   border-bottom: 1px solid ${Colors.DARK_GRAY5};
   position: relative;
   cursor: crosshair;
+  flex: 1;
 `;
 
 export class TrackContent extends React.Component {
@@ -26,37 +24,39 @@ export class TrackContent extends React.Component {
 
   onClick = event => {
     const offset = getEventRelativeCoords(event, this.wrapperRef.current).x;
-    const time = getTimeFromOffset(offset);
+    const time = getTimeFromOffset(offset, this.props.zoom);
     if (!event.ctrlKey) {
       this.props.onSelectTime(time);
     }
   };
 
   render() {
-    const { onSelectTime, isSelected, timeSelected, ...rest } = this.props;
+    const { track, isSelected, timeSelected, zoom } = this.props;
     return (
-      <TrackContentWrapper
-        {...rest}
-        ref={this.wrapperRef}
-        onClick={this.onClick}
-      >
+      <TrackContentWrapper ref={this.wrapperRef} onClick={this.onClick}>
         <Timemarker
-          offset={getOffsetFromTime(timeSelected || 0)}
+          offset={getOffsetFromTime(timeSelected || 0, zoom)}
           color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
         />
-        {/* <Clip startAt={1000} endAt={5000} /> */}
+        {track.clips &&
+          track.clips.map(clip => (
+            <Clip startAt={clip.startTime} endAt={clip.endTime} />
+          ))}
       </TrackContentWrapper>
     );
   }
 }
-
 TrackContent.propTypes = {
-  onSelectTime: PropTypes.func,
+  track: PropTypes.object,
+  zoom: PropTypes.number,
   timeSelected: PropTypes.number,
   isSelected: PropTypes.bool,
+  onSelectTime: PropTypes.func,
 };
 TrackContent.defaultProps = {
-  onSelectTime: () => {},
+  track: {},
+  zoom: 1,
   timeSelected: 0,
   isSelected: false,
+  onSelectTime: () => {},
 };

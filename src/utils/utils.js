@@ -1,27 +1,12 @@
-import { PIXELS_PER_TICK, TICKS_PER_SEGEMNT } from './variables';
-
-export const prevent = cb => event => {
-  event.preventDefault();
-  if (cb && typeof cb === 'function') {
-    cb(event);
-  }
+export const pad = (
+  str,
+  length = `${str}`.length,
+  char = '0',
+  truncate = true,
+) => {
+  const realLength = truncate ? length : Math.max(length, `${str}`.length);
+  return `${new Array(realLength + 1).join(char)}${str}`.slice(-realLength);
 };
-export const noPropagate = cb => event => {
-  event.stopPropagation();
-  if (cb && typeof cb === 'function') {
-    cb(event);
-  }
-};
-export const getEventRelativeCoords = (event, container = event.target) => {
-  const { left, top } = container.getBoundingClientRect();
-  const x = event.clientX - left;
-  const y = event.clientY - top;
-  return { x, y };
-};
-export const getTimeFromOffset = (offset, zoom = 1) =>
-  Math.floor((offset / PIXELS_PER_TICK / TICKS_PER_SEGEMNT / zoom) * 1000);
-export const getOffsetFromTime = (time, zoom = 1) =>
-  Math.floor((time * PIXELS_PER_TICK * TICKS_PER_SEGEMNT * zoom) / 1000);
 
 export const searchToObj = search =>
   search
@@ -34,3 +19,13 @@ export const searchToObj = search =>
     }, {});
 
 export const getSearchValue = (search, key) => searchToObj(search)[key];
+
+export const getFirstDecimalPosition = rawNumber => {
+  let position = 0;
+  let number = Math.abs(parseFloat(`${rawNumber}`));
+  while (Math.floor(number) === 0) {
+    position += 1;
+    number *= 10;
+  }
+  return position;
+};

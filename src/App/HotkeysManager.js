@@ -5,32 +5,24 @@ import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 import { saveProjectAction, newProjectAction } from '../store/modules/project';
 import { undoHistoryAction, redoHistoryAction } from '../store/modules/history';
-import { prevent } from '../utils/utils';
+import { prevent, preventInputs } from '../utils/events';
 import { recordAction } from '../store/modules/audio';
-import { stopAction, playAction, playingLens } from '../store/modules/ui';
-
-function stopCallbackFixed(e, element) {
-  if (`${element.className}`.indexOf(' mousetrap ') > -1) {
-    return false;
-  }
-  return (
-    element.tagName === 'INPUT' ||
-    element.tagName === 'SELECT' ||
-    element.tagName === 'TEXTAREA' ||
-    (element.contentEditable && element.contentEditable === 'true')
-  );
-}
-const overrideHotkeysMousetrap = ref => {
-  if (ref) {
-    // eslint-disable-next-line no-proto
-    ref.__mousetrap__.__proto__.stopCallback = stopCallbackFixed;
-  }
-};
+import {
+  stopAction,
+  playAction,
+  playingLens,
+  zoomInAction,
+  zoomOutAction,
+  setZoomAction,
+} from '../store/modules/ui';
 
 export const RawHotkeysManager = ({ actions, children, playing, ...rest }) => (
   <HotKeys
     {...rest}
-    ref={overrideHotkeysMousetrap}
+    onWheel={e =>
+      e.ctrlKey &&
+      prevent(() => (e.deltaY > 0 ? actions.zoomOut() : actions.zoomIn()))(e)
+    }
     keyMap={{
       saveProject: ['command+s', 'ctrl+s'],
       newProject: ['command+o', 'ctrl+o'],
@@ -38,6 +30,9 @@ export const RawHotkeysManager = ({ actions, children, playing, ...rest }) => (
       redo: ['command+y', 'ctrl+y', 'command+shift+z', 'ctrl+shift+z'],
       record: ['command+space', 'ctrl+space'],
       playStop: ['space'],
+      zoomIn: ['command++', 'ctrl++'],
+      zoomOut: ['command+-', 'ctrl+-'],
+      resetZoom: ['command+0', 'ctrl+0'],
     }}
     handlers={{
       saveProject: prevent(actions.saveProject),
@@ -45,7 +40,12 @@ export const RawHotkeysManager = ({ actions, children, playing, ...rest }) => (
       undo: actions.undo,
       redo: actions.redo,
       record: actions.record,
-      playStop: () => (playing ? actions.stop() : actions.play()),
+      playStop: preventInputs(() =>
+        playing ? actions.stop() : actions.play(),
+      ),
+      zoomIn: prevent(actions.zoomIn),
+      zoomOut: prevent(actions.zoomOut),
+      resetZoom: actions.resetZoom,
     }}
   >
     {children}
@@ -74,6 +74,9 @@ const mapDispatchToProps = dispatch => ({
     record: () => dispatch(recordAction()),
     play: () => dispatch(playAction()),
     stop: () => dispatch(stopAction()),
+    zoomIn: () => dispatch(zoomInAction()),
+    zoomOut: () => dispatch(zoomOutAction()),
+    resetZoom: () => dispatch(setZoomAction(1)),
   },
 });
 export const HotkeysManager = connect(

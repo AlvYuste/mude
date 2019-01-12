@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { Classes, Button } from '@blueprintjs/core';
 import { SortableElement as withSortableElement } from 'react-sortable-hoc';
 import { Flex } from '../../../components/layout/Flex';
-import { TRACK_INFO_WIDTH, TRACK_HEIGHT } from '../../../utils/variables';
+import { TRACK_HEIGHT } from '../../../utils/variables';
 import * as trckStore from '../../../store/modules/track';
 import * as uiStore from '../../../store/modules/ui';
-import { noPropagate } from '../../../utils/utils';
+import { noPropagate } from '../../../utils/events';
 import { TrackHandle } from './TrackHandle';
 import { TrackContent } from './TrackContent';
 import { TrackInfo } from './TrackInfo';
@@ -29,48 +29,34 @@ const TrackWrapper = styled(Flex)`
     }
   }
 `;
-const TrackInfoStyled = styled(TrackInfo)`
-  transition: width ease 200ms, padding ease 200ms;
-  width: ${({ collapsed }) => (collapsed ? 0 : TRACK_INFO_WIDTH)};
-  padding: ${({ collapsed }) => (collapsed ? 0 : '')};
-`;
-const TrackContentStyled = styled(TrackContent)`
-  flex: 1;
-`;
 const TrackDeleteButton = styled(Button)`
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
 `;
-const RawTrack = ({
-  onChangeTrack,
-  track,
-  isSelected,
-  isMuted,
-  actions,
-  ui,
-  ...rest
-}) => (
+const RawTrack = ({ track, isSelected, isMuted, actions, ui, ...rest }) => (
   <TrackWrapper
     {...rest}
     isMuted={isMuted}
     className={`${Classes.ELEVATION_1} ${Classes.DARK}`}
   >
     <TrackHandle selected={isSelected} />
-    <TrackInfoStyled
+    <TrackInfo
       track={track}
       collapsed={ui.collapsed}
       selected={isSelected}
       onChangeTrack={actions.updateTrack}
-      onChangeName={value => actions.setTrackName({ id: track.id, value })}
-      onChangeVolume={value => actions.setTrackVolume({ id: track.id, value })}
-      onChangePan={value => actions.setTrackPan({ id: track.id, value })}
+      onChangeName={actions.setTrackName}
+      onChangeVolume={actions.setTrackVolume}
+      onChangePan={actions.setTrackPan}
     />
-    <TrackContentStyled
-      onSelectTime={actions.selectTime}
+    <TrackContent
+      track={track}
+      zoom={ui.zoom}
       collapsed={ui.collapsed}
       timeSelected={ui.timeSelected}
       isSelected={isSelected}
+      onSelectTime={actions.selectTime}
     />
 
     <TrackDeleteButton
@@ -86,13 +72,12 @@ const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
   ui: state[uiStore.UI_KEY],
 });
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch, { track: { id } }) => ({
   actions: {
-    setTrackPan: ({ id, value }) =>
-      dispatch(trckStore.setTrackPanAction({ id, value })),
-    setTrackName: ({ id, value }) =>
+    setTrackPan: value => dispatch(trckStore.setTrackPanAction({ id, value })),
+    setTrackName: value =>
       dispatch(trckStore.setTrackNameAction({ id, value })),
-    setTrackVolume: ({ id, value }) =>
+    setTrackVolume: value =>
       dispatch(trckStore.setTrackVolumeAction({ id, value })),
     updateTrack: track => dispatch(trckStore.updateTrackAction(track)),
     deleteTrack: trackId => dispatch(trckStore.deleteTrackAction(trackId)),
@@ -110,6 +95,7 @@ export const Track = pipe(
 
 RawTrack.propTypes = {
   track: PropTypes.shape({
+    id: PropTypes.string,
     name: PropTypes.string,
     volume: PropTypes.number,
     pan: PropTypes.number,
