@@ -40,7 +40,7 @@ class RawProject extends React.Component {
 
   render() {
     const { ui, project, projectLoading, actions, projectError } = this.props;
-    const hasTracks = project.tracks && project.tracks.length;
+    const hasTracks = project && project.tracks && project.tracks.length;
     const notFound =
       (!project && !projectLoading) ||
       (projectError && projectError.code === 'PERMISSION_DENIED');

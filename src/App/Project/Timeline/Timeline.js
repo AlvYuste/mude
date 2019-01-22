@@ -9,12 +9,12 @@ import {
   getTimeFromOffset,
   renderTime,
 } from '../../../utils/time';
-import { TICK_WIDTH, TICKS_PER_SEGEMNT } from '../../../utils/variables';
+import { TICK_WIDTH, TICKS_PER_SEGMENT } from '../../../utils/variables';
 import { Collapse } from './Collapse';
 import { getEventRelativeCoords } from '../../../utils/events';
 
-const tickMiddle = Math.floor(TICKS_PER_SEGEMNT / 2);
-const ticks = Array(TICKS_PER_SEGEMNT).fill();
+const tickMiddle = Math.floor(TICKS_PER_SEGMENT / 2);
+const segmentTicks = Array(TICKS_PER_SEGMENT).fill();
 
 const Tick = styled.div`
   border-left: solid 1px ${Colors.DARK_GRAY2};
@@ -42,8 +42,8 @@ const TicksWrapper = styled(Flex)`
 `;
 
 const renderSegment = (start, length, zoom) =>
-  ticks.map((_, i) => {
-    const tickValue = (start + i * (length / TICKS_PER_SEGEMNT)) / 1000;
+  segmentTicks.map((_, i) => {
+    const tickValue = (start + i * (length / TICKS_PER_SEGMENT)) / 1000;
     const tickType =
       (i === 0 && 'main') || (i === tickMiddle && 'middle') || '';
     return (
@@ -85,8 +85,6 @@ export class Timeline extends React.Component {
     } = this.props;
     const segmentLength = 1000 / zoom;
     const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
-    console.log(segmentLength);
-    console.log(segmentsCount);
     const segments = Array(segmentsCount || 1).fill();
     return (
       <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
