@@ -49,6 +49,7 @@ export const rootReducer = reduceReducers(
         trck.setTrackVolumeReducer,
         trck.setTrackPanReducer,
         trck.deleteTrackReducer,
+        trck.addClipReducer,
       ),
       {
         limit: 50,

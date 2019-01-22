@@ -10,6 +10,9 @@ export const playingKeyLens = R.lensPath([PLAYING_KEY, 'playingKey']);
 export const playingStartedAt = R.lensPath([PLAYING_KEY, 'playingStartedAt']);
 export const playingStartedTs = R.lensPath([PLAYING_KEY, 'playingStartedTs']);
 
+/**
+ * PLAY
+ */
 export const playAction = time => async (dispatch, getState) => {
   const transactionId = uuid();
   const startedTime = time || R.view(timeSelectedLens, getState());
@@ -23,11 +26,12 @@ export const playAction = time => async (dispatch, getState) => {
         payload: { startedTime, startedTs: ts0 },
       });
     }
+    const inc = ts - ts0;
     if (
       R.view(playingLens, getState()) &&
       R.view(playingKeyLens, getState()) === transactionId
     ) {
-      selectTimeAction(startedTime + (ts - ts0))(dispatch);
+      selectTimeAction(startedTime + inc)(dispatch);
       window.requestAnimationFrame(step);
     }
   };
@@ -41,6 +45,9 @@ export const playReducer = createBasicReducer(PLAYING_KEY, (state, action) => ({
   playingKey: action.transactionId,
 }));
 
+/**
+ * STOP
+ */
 const UI_STOP_KEY = 'UI_STOP';
 export const stopAction = () => async (dispatch, getState) => {
   const transactionId = uuid();

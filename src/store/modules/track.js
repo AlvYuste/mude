@@ -59,6 +59,18 @@ export const deleteTrackReducer = createBasicReducer(
   (state, { payload }) =>
     R.over(tracksLens, R.filter(track => track.id !== payload), state),
 );
+/* TRACK_ADD_CLIP */
+export const TRACK_ADD_CLIP_KEY = 'TRACK_ADD_CLIP';
+export const addClipAction = createBasicAction(TRACK_ADD_CLIP_KEY);
+export const addClipReducer = createBasicReducer(
+  TRACK_ADD_CLIP_KEY,
+  (state, { payload: { trackId, clipId, ...clipProps }, transactionId }) =>
+    R.over(
+      trackPropLens(trackId, 'clips'),
+      R.prepend({ id: clipId || transactionId, ...clipProps }),
+      state,
+    ),
+);
 
 /* HISTORY */
 

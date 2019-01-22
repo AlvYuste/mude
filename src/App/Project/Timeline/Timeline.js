@@ -36,6 +36,7 @@ const TimelineWrapper = styled(Flex)`
   position: sticky;
   top: 0;
   z-index: 10;
+  cursor: pointer;
 `;
 const TicksWrapper = styled(Flex)`
   position: relative;
@@ -87,14 +88,17 @@ export class Timeline extends React.Component {
     const segmentsCount = duration ? Math.ceil(duration / segmentLength) : 10;
     const segments = Array(segmentsCount || 1).fill();
     return (
-      <TimelineWrapper className={`${Classes.ELEVATION_1}`}>
+      <TimelineWrapper
+        className={`${Classes.ELEVATION_1}`}
+        title="Play from here"
+      >
         <Collapse collapsed={collapsed} onCollapsedChange={onCollapsedChange} />
         <TicksWrapper ref={this.wrapperRef} onClick={this.onClick}>
           {segments.map((_, i) =>
             renderSegment(i * segmentLength, segmentLength, zoom),
           )}
           <Timemarker offset={getOffsetFromTime(timeSelected, zoom)}>
-            {renderTime(timeSelected, zoom, 1)}
+            {renderTime(timeSelected, zoom, 2)}
           </Timemarker>
         </TicksWrapper>
       </TimelineWrapper>

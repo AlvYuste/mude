@@ -40,7 +40,7 @@ export class TrackContent extends React.Component {
         />
         {track.clips &&
           track.clips.map(clip => (
-            <Clip startAt={clip.startTime} endAt={clip.endTime} />
+            <Clip key={clip.id} startAt={clip.startAt} endAt={clip.endAt} />
           ))}
       </TrackContentWrapper>
     );

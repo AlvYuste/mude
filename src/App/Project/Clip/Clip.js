@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Colors } from '@blueprintjs/core';
-import { getOffsetFromTime } from '../../../utils/utils';
+import { getOffsetFromTime } from '../../../utils/time';
 
 const ClipWrapper = styled.div`
   left: ${({ offset }) => `${offset}px`};
