@@ -29,3 +29,18 @@ export const getFirstDecimalPosition = rawNumber => {
   }
   return position;
 };
+
+export const shallowEqualArrays = (arrA, arrB) => {
+  if (arrA === arrB) {
+    return true;
+  }
+  if (arrB.length !== arrA.length) {
+    return false;
+  }
+  for (let i = 0; i < arrA.length; i += 1) {
+    if (arrA[i] !== arrB[i]) {
+      return false;
+    }
+  }
+  return true;
+};

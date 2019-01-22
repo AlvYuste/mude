@@ -7,21 +7,21 @@ import * as tsts from './modules/toasts';
 import * as acct from './modules/account';
 import * as proj from './modules/project';
 import * as trck from './modules/track';
-import * as audio from './modules/audio';
+import * as rec from './modules/recording';
+import * as play from './modules/playing';
 
 export const rootReducer = reduceReducers(
   acct.signOutReducer,
-  audio.recordReducer,
-  audio.recordDataReducer,
-  audio.stopRecordReducer,
+  rec.recordReducer,
+  rec.recordDataReducer,
   combineReducers({
+    [rec.RECORDING_KEY]: rec.stopRecordReducer,
+    [play.PLAYING_KEY]: reduceReducers(play.playReducer, play.stopReducer),
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,
       ui.setZoomReducer,
       ui.toggleCollapsedReducer,
       ui.selectTimeReducer,
-      ui.playReducer,
-      ui.stopReducer,
     ),
     [tsts.TOASTS_KEY]: reduceReducers(
       tsts.toastOpenReducer,

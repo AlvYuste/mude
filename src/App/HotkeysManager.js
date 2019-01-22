@@ -6,15 +6,13 @@ import { HotKeys } from 'react-hotkeys';
 import { saveProjectAction, newProjectAction } from '../store/modules/project';
 import { undoHistoryAction, redoHistoryAction } from '../store/modules/history';
 import { prevent, preventInputs } from '../utils/events';
-import { recordAction } from '../store/modules/audio';
+import { recordAction } from '../store/modules/recording';
 import {
-  stopAction,
-  playAction,
-  playingLens,
   zoomInAction,
   zoomOutAction,
   setZoomAction,
 } from '../store/modules/ui';
+import { stopAction, playAction, playingLens } from '../store/modules/playing';
 
 export const RawHotkeysManager = ({ actions, children, playing, ...rest }) => (
   <HotKeys

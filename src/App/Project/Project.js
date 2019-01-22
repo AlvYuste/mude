@@ -4,10 +4,12 @@ import styled from '@emotion/styled';
 import { Colors } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
+import * as R from 'ramda';
 
 import * as projStore from '../../store/modules/project';
 import * as uiStore from '../../store/modules/ui';
-import * as audioStore from '../../store/modules/audio';
+import * as playStore from '../../store/modules/playing';
+import * as recordStore from '../../store/modules/recording';
 import { getSearchValue } from '../../utils/utils';
 import { ProjectHeader } from './ProjectHeader';
 import { TracksList } from './TracksList';
@@ -39,11 +41,18 @@ class RawProject extends React.Component {
   };
 
   render() {
-    const { ui, project, projectLoading, actions, projectError } = this.props;
+    const {
+      ui,
+      project,
+      loading,
+      actions,
+      error,
+      recording,
+      playing,
+    } = this.props;
     const hasTracks = project && project.tracks && project.tracks.length;
     const notFound =
-      (!project && !projectLoading) ||
-      (projectError && projectError.code === 'PERMISSION_DENIED');
+      (!project && !loading) || (error && error.code === 'PERMISSION_DENIED');
     return (
       <ProjectWrapper>
         {notFound ? (
@@ -52,11 +61,11 @@ class RawProject extends React.Component {
           <>
             <ProjectHeader
               title={project.name}
-              loading={projectLoading}
+              loading={loading}
               showDelete={!!project.id}
               showPlay={!!hasTracks}
-              isRecording={ui.recording}
-              isPlaying={ui.playing}
+              isRecording={recording}
+              isPlaying={playing}
               onTitleChange={value => actions.setProjectName(value)}
               onAddTrack={() => actions.addTrack()}
               onDelete={() => actions.deleteProject()}
@@ -87,7 +96,7 @@ class RawProject extends React.Component {
                 />
               </ProjectScroller>
             ) : (
-              !projectLoading && (
+              !loading && (
                 <ProjectEmpty
                   onAddTrack={() => actions.addTrack()}
                   onRecord={() => actions.record()}
@@ -100,13 +109,18 @@ class RawProject extends React.Component {
     );
   }
 }
-const mapStateToProps = (state, ownProps) => ({
-  ...ownProps,
-  project: projStore.getCurrentProject(state).data,
-  projectError: projStore.getCurrentProject(state).error,
-  projectLoading: projStore.getCurrentProject(state).loading,
-  ui: state[uiStore.UI_KEY],
-});
+const mapStateToProps = (state, ownProps) => {
+  const { data: project, error, loading } = projStore.getCurrentProject(state);
+  return {
+    ...ownProps,
+    project,
+    error,
+    loading,
+    ui: state[uiStore.UI_KEY],
+    playing: R.view(playStore.playingLens, state),
+    recording: R.view(recordStore.recordingLens, state),
+  };
+};
 const mapDispatchToProps = dispatch => ({
   actions: {
     newProject: () => dispatch(projStore.newProjectAction()),
@@ -117,9 +131,9 @@ const mapDispatchToProps = dispatch => ({
     toggleCollapsed: () => dispatch(uiStore.toggleCollapsedAction()),
     deleteProject: () => dispatch(projStore.deleteProjectAction()),
     selectTracks: tracksIds => dispatch(uiStore.selectTracksAction(tracksIds)),
-    record: () => dispatch(audioStore.recordAction()),
-    play: time => dispatch(uiStore.playAction(time)),
-    stop: () => dispatch(uiStore.stopAction()),
+    record: () => dispatch(recordStore.recordAction()),
+    play: time => dispatch(playStore.playAction(time)),
+    stop: () => dispatch(playStore.stopAction()),
   },
 });
 
@@ -137,15 +151,19 @@ RawProject.propTypes = {
     tracks: PropTypes.array,
   }),
   ui: PropTypes.object,
-  projectError: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  projectLoading: PropTypes.bool,
+  recording: PropTypes.bool,
+  playing: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  loading: PropTypes.bool,
   actions: PropTypes.object,
 };
 RawProject.defaultProps = {
   location: {},
   project: {},
   ui: {},
-  projectLoading: false,
-  projectError: undefined,
+  loading: false,
+  recording: false,
+  playing: false,
+  error: undefined,
   actions: {},
 };
