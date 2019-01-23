@@ -47,6 +47,8 @@ class RawHeader extends Component {
       currentProject,
       accountLoading,
       ownProjects,
+      redoStack,
+      undoStack,
       actions,
     } = this.props;
     return (
@@ -66,8 +68,8 @@ class RawHeader extends Component {
             onRedo={actions.redo}
             onUndo={actions.undo}
             zoom={ui.zoom}
-            redoStack={actions.redoStack}
-            undoStack={actions.undoStack}
+            redoStack={redoStack}
+            undoStack={undoStack}
             onZoomIn={actions.zoomIn}
             onZoomOut={actions.zoomOut}
             onResetZoom={actions.resetZoom}

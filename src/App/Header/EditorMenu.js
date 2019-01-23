@@ -48,14 +48,14 @@ export const EditorMenu = ({
           onClick={onResetZoom}
         />
         <MenuItem
-          disabled={zoom < MAX_ZOOM}
+          disabled={zoom >= MAX_ZOOM}
           icon="zoom-in"
           text="Zoom in"
           label="Ctrl++"
           onClick={onZoomIn}
         />
         <MenuItem
-          disabled={zoom > MIN_ZOOM}
+          disabled={zoom <= MIN_ZOOM}
           icon="zoom-out"
           text="Zoom out"
           label="Ctrl+-"
