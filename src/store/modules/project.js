@@ -13,7 +13,7 @@ import { createToastAction } from './toasts';
 export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
 
-export const ownProjectsLens = R.lensPath([OWN_PROJECTS_KEY, 'present']);
+export const ownProjectsLens = R.lensProp(OWN_PROJECTS_KEY);
 export const currentProjectLens = R.lensPath([CURRENT_PROJECT_KEY, 'present']);
 export const projectUndoStackLens = R.lensPath([CURRENT_PROJECT_KEY, 'past']);
 export const projectRedoStackLens = R.lensPath([CURRENT_PROJECT_KEY, 'future']);

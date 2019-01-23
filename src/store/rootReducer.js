@@ -7,15 +7,18 @@ import * as tsts from './modules/toasts';
 import * as acct from './modules/account';
 import * as proj from './modules/project';
 import * as trck from './modules/track';
+import * as clip from './modules/clip';
 import * as rec from './modules/recording';
 import * as play from './modules/playing';
 
 export const rootReducer = reduceReducers(
   acct.signOutReducer,
-  rec.recordReducer,
-  rec.recordDataReducer,
   combineReducers({
-    [rec.RECORDING_KEY]: rec.stopRecordReducer,
+    [rec.RECORDING_KEY]: reduceReducers(
+      rec.recordReducer,
+      rec.recordDataReducer,
+      rec.stopRecordReducer,
+    ),
     [play.PLAYING_KEY]: reduceReducers(play.playReducer, play.stopReducer),
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,
@@ -41,8 +44,8 @@ export const rootReducer = reduceReducers(
         proj.saveProjectReducer,
         proj.setProjectNameReducer,
         proj.setProjectTracksReducer,
-        proj.addTrackReducer,
         proj.deleteProjectReducer,
+        proj.addTrackReducer,
 
         trck.updateTrackReducer,
         trck.setTrackNameReducer,
@@ -50,6 +53,8 @@ export const rootReducer = reduceReducers(
         trck.setTrackPanReducer,
         trck.deleteTrackReducer,
         trck.addClipReducer,
+
+        clip.updateClipReducer,
       ),
       {
         limit: 50,

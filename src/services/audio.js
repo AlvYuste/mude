@@ -65,3 +65,27 @@ export const getMicrophoneData = async ({
   };
   return { stream, recorder };
 };
+
+export const getBlobDuration = blob => {
+  const audioEl = document.createElement('audio');
+
+  const durationPromise = new Promise(resolve =>
+    audioEl.addEventListener('loadedmetadata', () => {
+      // Chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=642012
+      if (audioEl.duration === Infinity) {
+        audioEl.currentTime = Number.MAX_SAFE_INTEGER;
+        audioEl.ontimeupdate = () => {
+          audioEl.ontimeupdate = null;
+          resolve(audioEl.duration);
+          audioEl.currentTime = 0;
+        };
+      }
+      // Normal behavior
+      else resolve(audioEl.duration);
+    }),
+  );
+
+  audioEl.src = window.URL.createObjectURL(blob);
+
+  return durationPromise;
+};

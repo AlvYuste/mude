@@ -70,7 +70,7 @@ export const addClipAction = payload => (dispatch, getState) =>
       id: payload.id || uuid(),
       trackId: payload.trackId || getSelectedTracks(getState())[0],
       startAt: payload.startAt || getTimeSelected(getState()),
-      endAt: payload.endAt || payload.startAt,
+      endAt: payload.endAt || payload.startAt || getTimeSelected(getState()),
     },
   });
 export const addClipReducer = createBasicReducer(

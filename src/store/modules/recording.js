@@ -4,17 +4,15 @@ import { createAsyncReducer } from '../helpers/async/async.reducer';
 import { createAsyncTypes } from '../helpers/async/async.types';
 import { addTrackAction } from './project';
 import {
-  selectedTracksIdsLens,
-  selectTracksAction,
-  getTimeSelected,
-} from './ui';
-import {
   getMicrophoneData,
   askMicrophonePermission,
+  getBlobDuration,
 } from '../../services/audio';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
+import { selectTracksAction, getTimeSelected, selectTimeAction } from './ui';
 import { playAction } from './playing';
 import { addClipAction } from './track';
+import { updateClipAction } from './clip';
 
 export const RECORDING_KEY = 'RECORDING';
 export const recordingLens = R.lensPath([RECORDING_KEY, 'isRecording']);
@@ -35,7 +33,7 @@ export const RECORDING_DATA_KEY = 'RECORDING_DATA';
 export const recordAction = () => async (dispatch, getState) => {
   const [req, succ, fail] = createAsyncTypes(RECORDING_KEY);
   const transactionId = uuid();
-  const startedTime = getTimeSelected(getState());
+  const startedAt = getTimeSelected(getState());
   try {
     await askMicrophonePermission();
   } catch (error) {
@@ -44,29 +42,34 @@ export const recordAction = () => async (dispatch, getState) => {
   }
   addTrackAction(transactionId)(dispatch, getState);
   selectTracksAction(transactionId)(dispatch, getState);
-  // TODO: The end time is a draft
-  addClipAction({
-    id: transactionId,
-    endAt: startedTime + 1000,
-  })(dispatch, getState);
+  addClipAction({ id: transactionId })(dispatch, getState);
   const { recorder, stream } = await getMicrophoneData({
     onData: buffer => {
-      if (R.view(recordingLens, getState())) {
+      if (getRecording(getState())) {
         dispatch({
           type: RECORDING_DATA_KEY,
           response: buffer,
-          payload: { recorder, stream },
+          payload: { recorder, stream, startedAt },
           transactionId,
         });
       }
     },
-    onFinish: blob =>
+    onFinish: async blob => {
+      const endAt = startedAt + (await getBlobDuration(blob)) * 1000;
+      updateClipAction({
+        trackId: transactionId,
+        id: transactionId,
+        endAt,
+        blob,
+      })(dispatch, getState);
+      selectTimeAction(endAt)(dispatch, getState);
       dispatch({
         type: succ,
         response: blob,
         payload: { recorder, stream },
         transactionId,
-      }),
+      });
+    },
   });
   dispatch({
     type: req,
@@ -76,48 +79,51 @@ export const recordAction = () => async (dispatch, getState) => {
   playAction()(dispatch, getState);
 };
 export const recordReducer = createAsyncReducer(RECORDING_KEY, {
-  requestReducer: (state, action) =>
-    R.pipe(
-      R.set(recordingLens, true),
-      R.set(recorderLens, action.payload.recorder),
-      R.set(recordingTrackLens, action.transactionId),
-      R.set(recordingClipLens, action.transactionId),
-      R.set(recordingStartedAtLens, getTimeSelected(state)),
-      R.set(selectedTracksIdsLens, [action.transactionId]),
-    )(state),
+  requestReducer: (state, action) => ({
+    isRecording: true,
+    recorder: action.payload.recorder,
+    recordingTrack: action.transactionId,
+    recordingClip: action.transactionId,
+    recordingStartedAt: action.payload.startedAt,
+  }),
   successReducer: (state, action) => {
     // TODO: MANAGE THE RESULTANT RECORDED DATA
-    console.log(action.response);
+    // console.log(action.response);
     return state;
   },
-  errorReducer: state =>
-    R.pipe(
-      R.set(recordingLens, false),
-      R.set(recordingTrackLens, undefined),
-    )(state),
+  errorReducer: state => ({
+    ...state,
+    isRecording: false,
+    recorder: undefined,
+    recordingTrack: undefined,
+    recordingClip: undefined,
+    recordingStartedAt: undefined,
+  }),
 });
 export const recordDataReducer = createBasicReducer(
   RECORDING_DATA_KEY,
   (state, action) => {
     // TODO: MANAGE THE INCREMENTAL RECORDED DATA
-    console.log(action.response);
+    // console.log(action.response);
     return state;
   },
 );
 
 export const RECORDING_STOP_KEY = 'RECORDING_STOP';
 export const stopRecordAction = () => async (dispatch, getState) => {
-  if (!R.view(recordingLens, getState())) {
+  if (!getRecording(getState())) {
     return;
   }
-  const transactionId = uuid();
-  const recorder = R.view(recorderLens, getState());
-  recorder.stop();
+  getRecorder(getState()).stop();
   dispatch({
     type: RECORDING_STOP_KEY,
-    transactionId,
+    transactionId: uuid(),
   });
 };
-export const stopRecordReducer = createBasicReducer(RECORDING_STOP_KEY, () => ({
-  recording: false,
-}));
+export const stopRecordReducer = createBasicReducer(
+  RECORDING_STOP_KEY,
+  state => ({
+    ...state,
+    isRecording: false,
+  }),
+);
