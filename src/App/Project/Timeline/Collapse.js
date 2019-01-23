@@ -13,6 +13,7 @@ const CollapseWrapper = styled.div`
   flex-shrink: 0;
   position: sticky;
   left: ${({ collapsed }) => (collapsed ? 0 : TRACK_HANDLE_WIDTH)};
+  z-index: 1;
 `;
 const CollapseButton = styled(Button)`
   transition: min-width ease 200ms, padding ease 200ms;
