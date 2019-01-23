@@ -14,11 +14,7 @@ import * as play from './modules/playing';
 export const rootReducer = reduceReducers(
   acct.signOutReducer,
   combineReducers({
-    [rec.RECORDING_KEY]: reduceReducers(
-      rec.recordReducer,
-      rec.recordDataReducer,
-      rec.stopRecordReducer,
-    ),
+    [rec.RECORDING_KEY]: rec.recordReducer,
     [play.PLAYING_KEY]: reduceReducers(play.playReducer, play.stopReducer),
     [ui.UI_KEY]: reduceReducers(
       ui.selectTracksReducer,

@@ -8,7 +8,6 @@ import {
   askMicrophonePermission,
   getBlobDuration,
 } from '../../services/audio';
-import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { selectTracksAction, getTimeSelected, selectTimeAction } from './ui';
 import { playAction } from './playing';
 import { addClipAction } from './track';
@@ -44,16 +43,15 @@ export const recordAction = () => async (dispatch, getState) => {
   selectTracksAction(transactionId)(dispatch, getState);
   addClipAction({ id: transactionId })(dispatch, getState);
   const { recorder, stream } = await getMicrophoneData({
-    onData: buffer => {
-      if (getRecording(getState())) {
-        dispatch({
-          type: RECORDING_DATA_KEY,
-          response: buffer,
-          payload: { recorder, stream, startedAt },
-          transactionId,
-        });
-      }
-    },
+    onData: buffer =>
+      getRecording(getState())
+        ? dispatch({
+            type: RECORDING_DATA_KEY,
+            response: buffer,
+            payload: { recorder, stream, startedAt },
+            transactionId,
+          })
+        : null,
     onFinish: async blob => {
       const endAt = startedAt + (await getBlobDuration(blob)) * 1000;
       updateClipAction({
@@ -66,7 +64,7 @@ export const recordAction = () => async (dispatch, getState) => {
       dispatch({
         type: succ,
         response: blob,
-        payload: { recorder, stream },
+        payload: { recorder, stream, startedAt },
         transactionId,
       });
     },
@@ -74,9 +72,15 @@ export const recordAction = () => async (dispatch, getState) => {
   dispatch({
     type: req,
     transactionId,
-    payload: { recorder, stream },
+    payload: { recorder, stream, startedAt },
   });
   playAction()(dispatch, getState);
+};
+export const stopRecordAction = () => async (dispatch, getState) => {
+  if (!getRecording(getState())) {
+    return;
+  }
+  getRecorder(getState()).stop();
 };
 export const recordReducer = createAsyncReducer(RECORDING_KEY, {
   requestReducer: (state, action) => ({
@@ -86,13 +90,14 @@ export const recordReducer = createAsyncReducer(RECORDING_KEY, {
     recordingClip: action.transactionId,
     recordingStartedAt: action.payload.startedAt,
   }),
-  successReducer: (state, action) => {
-    // TODO: MANAGE THE RESULTANT RECORDED DATA
-    // console.log(action.response);
-    return state;
-  },
-  errorReducer: state => ({
-    ...state,
+  successReducer: () => ({
+    isRecording: false,
+    recorder: undefined,
+    recordingTrack: undefined,
+    recordingClip: undefined,
+    recordingStartedAt: undefined,
+  }),
+  errorReducer: () => ({
     isRecording: false,
     recorder: undefined,
     recordingTrack: undefined,
@@ -100,30 +105,3 @@ export const recordReducer = createAsyncReducer(RECORDING_KEY, {
     recordingStartedAt: undefined,
   }),
 });
-export const recordDataReducer = createBasicReducer(
-  RECORDING_DATA_KEY,
-  (state, action) => {
-    // TODO: MANAGE THE INCREMENTAL RECORDED DATA
-    // console.log(action.response);
-    return state;
-  },
-);
-
-export const RECORDING_STOP_KEY = 'RECORDING_STOP';
-export const stopRecordAction = () => async (dispatch, getState) => {
-  if (!getRecording(getState())) {
-    return;
-  }
-  getRecorder(getState()).stop();
-  dispatch({
-    type: RECORDING_STOP_KEY,
-    transactionId: uuid(),
-  });
-};
-export const stopRecordReducer = createBasicReducer(
-  RECORDING_STOP_KEY,
-  state => ({
-    ...state,
-    isRecording: false,
-  }),
-);
