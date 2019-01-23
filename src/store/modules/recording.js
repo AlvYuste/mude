@@ -43,15 +43,16 @@ export const recordAction = () => async (dispatch, getState) => {
   selectTracksAction(transactionId)(dispatch, getState);
   addClipAction({ id: transactionId })(dispatch, getState);
   const { recorder, stream } = await getMicrophoneData({
-    onData: buffer =>
-      getRecording(getState())
-        ? dispatch({
-            type: RECORDING_DATA_KEY,
-            response: buffer,
-            payload: { recorder, stream, startedAt },
-            transactionId,
-          })
-        : null,
+    onData: buffer => {
+      if (!getRecording(getState())) {
+        return;
+      }
+      updateClipAction({
+        trackId: transactionId,
+        id: transactionId,
+        buffer,
+      })(dispatch, getState);
+    },
     onFinish: async blob => {
       const endAt = startedAt + (await getBlobDuration(blob)) * 1000;
       updateClipAction({

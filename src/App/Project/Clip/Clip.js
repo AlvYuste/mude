@@ -15,14 +15,29 @@ const ClipWrapper = styled.div`
   margin: 1px 0;
 `;
 
-export const Clip = ({ startAt, endAt }) => {
-  const duration = endAt - startAt;
-  const offset = getOffsetFromTime(startAt);
-  const width = getOffsetFromTime(duration);
-  return <ClipWrapper offset={offset} width={width} />;
-};
+export class Clip extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.wrapperRef = React.createRef();
+  }
 
+  render() {
+    const { startAt, endAt, blob, buffer } = this.props;
+    const duration = endAt - startAt;
+    const offset = getOffsetFromTime(startAt);
+    const width = getOffsetFromTime(duration);
+    console.log(blob);
+    console.log(buffer);
+    return <ClipWrapper offset={offset} width={width} ref={this.wrapperRef} />;
+  }
+}
 Clip.propTypes = {
   startAt: PropTypes.number.isRequired,
   endAt: PropTypes.number.isRequired,
+  buffer: PropTypes.object,
+  blob: PropTypes.object,
+};
+Clip.defaultProps = {
+  buffer: {},
+  blob: {},
 };

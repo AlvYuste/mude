@@ -39,9 +39,7 @@ export class TrackContent extends React.Component {
           color={isSelected ? Colors.BLUE5 : Colors.DARK_GRAY5}
         />
         {track.clips &&
-          track.clips.map(clip => (
-            <Clip key={clip.id} startAt={clip.startAt} endAt={clip.endAt} />
-          ))}
+          track.clips.map(clip => <Clip key={clip.id} {...clip} />)}
       </TrackContentWrapper>
     );
   }
