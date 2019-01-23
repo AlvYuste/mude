@@ -5,10 +5,17 @@ import { MIN_ZOOM, MAX_ZOOM } from '../../utils/variables';
 import { shallowEqualArrays } from '../../utils/utils';
 
 export const UI_KEY = 'UI';
+export const uiLens = R.lensProp(UI_KEY);
 export const zoomLens = R.lensPath([UI_KEY, 'zoom']);
 export const collapsedLens = R.lensPath([UI_KEY, 'collapsed']);
 export const timeSelectedLens = R.lensPath([UI_KEY, 'timeSelected']);
 export const selectedTracksIdsLens = R.lensPath([UI_KEY, 'selectedTracks']);
+
+export const getUi = R.view(uiLens);
+export const getZoom = R.view(zoomLens);
+export const getCollapsed = R.view(collapsedLens);
+export const getTimeSelected = R.view(timeSelectedLens);
+export const getSelectedTracks = R.view(selectedTracksIdsLens);
 
 const UI_INITIAL_STATE = {
   zoom: 1,
@@ -60,11 +67,12 @@ export const selectTimeReducer = createBasicReducer(
 /* UI_SELECT_TRACK */
 const UI_SELECT_TRACKS_KEY = 'UI_SELECT_TRACK';
 export const selectTracksAction = payload => (dispatch, getState) => {
-  const selectedTracks = R.view(selectedTracksIdsLens, getState());
-  if (shallowEqualArrays(selectedTracks, payload)) {
+  const tracksIds = Array.isArray(payload) ? payload : [payload];
+  const selectedTracks = getSelectedTracks(getState());
+  if (shallowEqualArrays(selectedTracks, tracksIds)) {
     return;
   }
-  dispatch({ type: UI_SELECT_TRACKS_KEY, payload });
+  dispatch({ type: UI_SELECT_TRACKS_KEY, payload: tracksIds });
 };
 createBasicAction(UI_SELECT_TRACKS_KEY);
 export const selectTracksReducer = createBasicReducer(

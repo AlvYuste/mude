@@ -1,7 +1,7 @@
 import { lensPath } from 'ramda';
 import { createAsyncTypes } from './async.types';
 
-export const dataLense = prop => lensPath(['data', prop]);
+export const dataLens = prop => lensPath(['data', prop]);
 export const createAsyncReducer = (
   key,
   {

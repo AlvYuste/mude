@@ -1,5 +1,4 @@
 import React from 'react';
-import * as R from 'ramda';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
@@ -12,7 +11,7 @@ import {
   zoomOutAction,
   setZoomAction,
 } from '../store/modules/ui';
-import { stopAction, playAction, playingLens } from '../store/modules/playing';
+import { stopAction, playAction, getPlaying } from '../store/modules/playing';
 
 export const RawHotkeysManager = ({ actions, children, playing, ...rest }) => (
   <HotKeys
@@ -61,7 +60,7 @@ RawHotkeysManager.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  playing: R.view(playingLens, state),
+  playing: getPlaying(state),
 });
 const mapDispatchToProps = dispatch => ({
   actions: {

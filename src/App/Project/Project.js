@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Colors } from '@blueprintjs/core';
 import { connect } from 'react-redux';
 import { arrayMove } from 'react-sortable-hoc';
-import * as R from 'ramda';
 
 import * as projStore from '../../store/modules/project';
 import * as uiStore from '../../store/modules/ui';
@@ -116,9 +115,9 @@ const mapStateToProps = (state, ownProps) => {
     project,
     error,
     loading,
-    ui: state[uiStore.UI_KEY],
-    playing: R.view(playStore.playingLens, state),
-    recording: R.view(recordStore.recordingLens, state),
+    ui: uiStore.getUi(state),
+    playing: playStore.getPlaying(state),
+    recording: recordStore.getRecording(state),
   };
 };
 const mapDispatchToProps = dispatch => ({

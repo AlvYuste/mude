@@ -1,9 +1,13 @@
+import * as R from 'ramda';
 import uuid from 'uuid';
 import { Intent } from '@blueprintjs/core';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 
 export const TOASTS_KEY = 'TOASTS';
+export const toastsLens = R.lensProp(TOASTS_KEY);
+export const getToasts = R.view(toastsLens);
+
 export const TOAST_OPEN_KEY = 'TOAST_OPEN';
 export const createToast = props => ({
   key: uuid(),

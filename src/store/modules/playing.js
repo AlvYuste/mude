@@ -1,21 +1,31 @@
 import uuid from 'uuid';
 import * as R from 'ramda';
-import { timeSelectedLens, selectTimeAction } from './ui';
+import { selectTimeAction, getTimeSelected } from './ui';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { stopRecordAction } from './recording';
 
 export const PLAYING_KEY = 'PLAYING';
 export const playingLens = R.lensPath([PLAYING_KEY, 'playing']);
 export const playingKeyLens = R.lensPath([PLAYING_KEY, 'playingKey']);
-export const playingStartedAt = R.lensPath([PLAYING_KEY, 'playingStartedAt']);
-export const playingStartedTs = R.lensPath([PLAYING_KEY, 'playingStartedTs']);
+export const playingStartedAtLens = R.lensPath([
+  PLAYING_KEY,
+  'playingStartedAt',
+]);
+export const playingStartedTsLens = R.lensPath([
+  PLAYING_KEY,
+  'playingStartedTs',
+]);
 
+export const getPlaying = R.view(playingLens);
+export const getPlayingKey = R.view(playingKeyLens);
+export const getPlayingStartedAt = R.view(playingStartedAtLens);
+export const getPlayingStartedTs = R.view(playingStartedTsLens);
 /**
  * PLAY
  */
 export const playAction = time => async (dispatch, getState) => {
   const transactionId = uuid();
-  const startedTime = time || R.view(timeSelectedLens, getState());
+  const startedTime = time || getTimeSelected(getState());
   let ts0 = null;
   const step = ts => {
     if (!ts0) {
@@ -27,10 +37,7 @@ export const playAction = time => async (dispatch, getState) => {
       });
     }
     const inc = ts - ts0;
-    if (
-      R.view(playingLens, getState()) &&
-      R.view(playingKeyLens, getState()) === transactionId
-    ) {
+    if (getPlaying(getState()) && getPlayingKey(getState()) === transactionId) {
       selectTimeAction(startedTime + inc)(dispatch);
       window.requestAnimationFrame(step);
     }
@@ -52,7 +59,7 @@ const UI_STOP_KEY = 'UI_STOP';
 export const stopAction = () => async (dispatch, getState) => {
   const transactionId = uuid();
   window.requestAnimationFrame(ts => {
-    if (!R.view(playingLens, getState())) {
+    if (!getPlaying(getState())) {
       return;
     }
     stopRecordAction()(dispatch, getState);

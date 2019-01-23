@@ -1,12 +1,14 @@
 import * as R from 'ramda';
+import uuid from 'uuid';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import { lensById } from '../../utils/fp';
-import { tracksLens } from './project';
+import { getTimeSelected, getSelectedTracks } from './ui';
+import { dataLens } from '../helpers/async/async.reducer';
 
 export const trackLens = trackId =>
   R.compose(
-    tracksLens,
+    dataLens('tracks'),
     lensById(trackId),
   );
 export const trackPropLens = (trackId, prop) =>
@@ -57,19 +59,24 @@ export const deleteTrackAction = createBasicAction(TRACK_DELETE_KEY);
 export const deleteTrackReducer = createBasicReducer(
   TRACK_DELETE_KEY,
   (state, { payload }) =>
-    R.over(tracksLens, R.filter(track => track.id !== payload), state),
+    R.over(dataLens('tracks'), R.filter(track => track.id !== payload), state),
 );
 /* TRACK_ADD_CLIP */
 export const TRACK_ADD_CLIP_KEY = 'TRACK_ADD_CLIP';
-export const addClipAction = createBasicAction(TRACK_ADD_CLIP_KEY);
+export const addClipAction = payload => (dispatch, getState) =>
+  dispatch({
+    type: TRACK_ADD_CLIP_KEY,
+    payload: {
+      id: payload.id || uuid(),
+      trackId: payload.trackId || getSelectedTracks(getState())[0],
+      startAt: payload.startAt || getTimeSelected(getState()),
+      endAt: payload.endAt || payload.startAt,
+    },
+  });
 export const addClipReducer = createBasicReducer(
   TRACK_ADD_CLIP_KEY,
-  (state, { payload: { trackId, clipId, ...clipProps }, transactionId }) =>
-    R.over(
-      trackPropLens(trackId, 'clips'),
-      R.prepend({ id: clipId || transactionId, ...clipProps }),
-      state,
-    ),
+  (state, { payload: { trackId, ...clipProps } }) =>
+    R.over(trackPropLens(trackId, 'clips'), R.prepend(clipProps), state),
 );
 
 /* HISTORY */

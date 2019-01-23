@@ -109,13 +109,13 @@ RawHeader.defaultProps = {
 };
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ui: state[uiStore.UI_KEY],
-  account: state[accStore.CURRENT_ACCOUNT_KEY].data,
-  accountLoading: state[accStore.CURRENT_ACCOUNT_KEY].loading,
+  ui: uiStore.getUi(state),
+  account: accStore.getCurrentAccount(state).data,
+  accountLoading: accStore.getCurrentAccount(state).loading,
   currentProject: prjStore.getCurrentProject(state).data,
-  ownProjects: state[prjStore.OWN_PROJECTS_KEY].data,
-  undoStack: state[prjStore.CURRENT_PROJECT_KEY].past,
-  redoStack: state[prjStore.CURRENT_PROJECT_KEY].future,
+  ownProjects: prjStore.getOwnProjects(state).data,
+  undoStack: prjStore.getProjectUndoStack(state),
+  redoStack: prjStore.getProjectRedoStack(state),
 });
 const mapDispatchToProps = dispatch => ({
   actions: {

@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import { navigate } from '@reach/router';
 import { createAsyncAction } from '../helpers/async/async.action';
 import { createAsyncReducer } from '../helpers/async/async.reducer';
@@ -10,8 +11,12 @@ import {
 } from '../../services/auth';
 import { OWN_PROJECTS_KEY } from './project';
 
-/* CURRENT_ACCOUNT */
 export const CURRENT_ACCOUNT_KEY = 'CURRENT_ACCOUNT';
+
+export const currentAccountLens = R.lensProp(CURRENT_ACCOUNT_KEY);
+export const getCurrentAccount = R.view(currentAccountLens);
+
+/* CURRENT_ACCOUNT */
 export const currentAccountReducer = createAsyncReducer(CURRENT_ACCOUNT_KEY);
 export const currentAccountAction = createAsyncAction(
   CURRENT_ACCOUNT_KEY,

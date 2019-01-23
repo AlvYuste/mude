@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Toaster, Toast } from '@blueprintjs/core';
-import { TOASTS_KEY, toastDismissAction } from '../store/modules/toasts';
+import { toastDismissAction, getToasts } from '../store/modules/toasts';
 
 export const RawToastsManager = ({ toasts, dismissToast }) => (
   <Toaster>
@@ -27,7 +27,7 @@ RawToastsManager.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  toasts: state[TOASTS_KEY],
+  toasts: getToasts(state),
 });
 const mapDispatchToProps = dispatch => ({
   dismissToast: key => dispatch(toastDismissAction(key)),

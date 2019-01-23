@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { pipe } from 'ramda';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Classes, Button } from '@blueprintjs/core';
 import { SortableElement as withSortableElement } from 'react-sortable-hoc';
+
 import { Flex } from '../../../components/layout/Flex';
 import { TRACK_HEIGHT } from '../../../utils/variables';
+import { noPropagate } from '../../../utils/events';
 import * as trckStore from '../../../store/modules/track';
 import * as uiStore from '../../../store/modules/ui';
-import { noPropagate } from '../../../utils/events';
+
 import { TrackHandle } from './TrackHandle';
 import { TrackContent } from './TrackContent';
 import { TrackInfo } from './TrackInfo';
@@ -70,7 +72,7 @@ const RawTrack = ({ track, isSelected, isMuted, actions, ui, ...rest }) => (
 
 const mapStateToProps = (state, ownProps) => ({
   ...ownProps,
-  ui: state[uiStore.UI_KEY],
+  ui: uiStore.getUi(state),
 });
 const mapDispatchToProps = (dispatch, { track: { id } }) => ({
   actions: {
@@ -85,7 +87,7 @@ const mapDispatchToProps = (dispatch, { track: { id } }) => ({
   },
 });
 
-export const Track = pipe(
+export const Track = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,

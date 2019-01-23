@@ -4,17 +4,24 @@ import { ActionCreators } from 'redux-undo';
 import { navigate } from '@reach/router';
 import { Intent } from '@blueprintjs/core';
 import { createAsyncTypes } from '../helpers/async/async.types';
-import { createAsyncReducer, dataLense } from '../helpers/async/async.reducer';
+import { createAsyncReducer, dataLens } from '../helpers/async/async.reducer';
 import { createBasicReducer } from '../helpers/basic/basic.reducer';
 import { createBasicAction } from '../helpers/basic/basic.action';
 import * as projService from '../../services/project';
 import { createToastAction } from './toasts';
 
+export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
 export const CURRENT_PROJECT_KEY = 'CURRENT_PROJECT';
+
+export const ownProjectsLens = R.lensPath([OWN_PROJECTS_KEY, 'present']);
 export const currentProjectLens = R.lensPath([CURRENT_PROJECT_KEY, 'present']);
-export const nameLens = dataLense('name');
-export const tracksLens = dataLense('tracks');
+export const projectUndoStackLens = R.lensPath([CURRENT_PROJECT_KEY, 'past']);
+export const projectRedoStackLens = R.lensPath([CURRENT_PROJECT_KEY, 'future']);
+
+export const getOwnProjects = R.view(ownProjectsLens);
 export const getCurrentProject = R.view(currentProjectLens);
+export const getProjectUndoStack = R.view(projectUndoStackLens);
+export const getProjectRedoStack = R.view(projectRedoStackLens);
 
 /* OPEN PROJECT */
 const OPEN_PROJECT_KEY = 'OPEN_PROJECT';
@@ -44,7 +51,6 @@ export const openProjectAction = payload => dispatch => {
 };
 
 /* OWN_PROJECTS */
-export const OWN_PROJECTS_KEY = 'OWN_PROJECTS';
 export const ownProjectsReducer = createAsyncReducer(OWN_PROJECTS_KEY);
 export const ownProjectsAction = () => dispatch => {
   const [req, succ, fail] = createAsyncTypes(OWN_PROJECTS_KEY);
@@ -137,7 +143,7 @@ export const newProjectAction = () => dispatch => {
 const PROJECT_UPDATE_NAME_KEY = 'PROJECT_UPDATE_NAME';
 export const setProjectNameReducer = createBasicReducer(
   PROJECT_UPDATE_NAME_KEY,
-  (state, action) => R.set(nameLens, action.payload, state),
+  (state, action) => R.set(dataLens('name'), action.payload, state),
 );
 export const setProjectNameAction = createBasicAction(PROJECT_UPDATE_NAME_KEY);
 
@@ -145,7 +151,7 @@ export const setProjectNameAction = createBasicAction(PROJECT_UPDATE_NAME_KEY);
 const PROJECT_UPDATE_TRACKS_KEY = 'PROJECT_UPDATE_TRACKS';
 export const setProjectTracksReducer = createBasicReducer(
   PROJECT_UPDATE_TRACKS_KEY,
-  (state, action) => R.set(tracksLens, action.payload, state),
+  (state, action) => R.set(dataLens('tracks'), action.payload, state),
 );
 export const setProjectTracksAction = createBasicAction(
   PROJECT_UPDATE_TRACKS_KEY,
@@ -158,7 +164,7 @@ export const addTrackReducer = createBasicReducer(
   PROJECT_ADD_TRACK_KEY,
   (state, action) =>
     R.over(
-      tracksLens,
+      dataLens('tracks'),
       R.prepend({ id: action.payload || action.transactionId, volume: 5 }),
       state,
     ),
