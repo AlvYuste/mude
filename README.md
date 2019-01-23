@@ -18,6 +18,7 @@ Web app to write music.
   - [peaks.js](https://github.com/bbc/peaks.js)
   - [waveplayer.js](https://github.com/michaeldzjap/waveplayer.js)
 - Utils
+  - [AudioRecorder](https://github.com/cwilso/AudioRecorder)
   - [web-audio-analyser](https://github.com/hughsk/web-audio-analyser)
   - [webaudio-peaks](https://github.com/naomiaro/webaudio-peaks)
 - Apps
