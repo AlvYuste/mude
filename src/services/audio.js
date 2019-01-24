@@ -60,11 +60,12 @@ export const getMicrophoneData = async ({
     throw new Error('The use of the microphone must be allowed');
   }
   const stream = await getAudioStream();
-  processAudioStream(stream, ({ inputBuffer }) =>
+  processAudioStream(stream, ({ inputBuffer, playbackTime }) =>
     onData({
       l: inputBuffer.getChannelData(0),
       r: inputBuffer.getChannelData(1),
       length: inputBuffer.getChannelData(0).length,
+      duration: playbackTime,
     }),
   );
   playStream(stream);

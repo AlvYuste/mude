@@ -9,7 +9,6 @@ import { getEventRelativeCoords } from '../../../utils/events';
 import { Clip } from '../Clip/Clip';
 
 const TrackContentWrapper = styled.div`
-  background-color: ${Colors.DARK_GRAY1};
   border-bottom: 1px solid ${Colors.DARK_GRAY5};
   position: relative;
   cursor: crosshair;

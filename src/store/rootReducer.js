@@ -17,10 +17,11 @@ export const rootReducer = reduceReducers(
     [rec.RECORDING_KEY]: rec.recordReducer,
     [play.PLAYING_KEY]: reduceReducers(play.playReducer, play.stopReducer),
     [ui.UI_KEY]: reduceReducers(
-      ui.selectTracksReducer,
       ui.setZoomReducer,
       ui.toggleCollapsedReducer,
       ui.selectTimeReducer,
+      ui.selectTracksReducer,
+      ui.selectClipsReducer,
     ),
     [tsts.TOASTS_KEY]: reduceReducers(
       tsts.toastOpenReducer,
@@ -51,6 +52,7 @@ export const rootReducer = reduceReducers(
         trck.addClipReducer,
 
         clip.updateClipReducer,
+        clip.pushBufferClipReducer,
       ),
       {
         limit: 50,

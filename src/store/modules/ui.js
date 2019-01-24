@@ -10,12 +10,14 @@ export const zoomLens = R.lensPath([UI_KEY, 'zoom']);
 export const collapsedLens = R.lensPath([UI_KEY, 'collapsed']);
 export const timeSelectedLens = R.lensPath([UI_KEY, 'timeSelected']);
 export const selectedTracksIdsLens = R.lensPath([UI_KEY, 'selectedTracks']);
+export const selectedClipsIdsLens = R.lensPath([UI_KEY, 'selectedClips']);
 
 export const getUi = R.view(uiLens);
 export const getZoom = R.view(zoomLens);
 export const getCollapsed = R.view(collapsedLens);
 export const getTimeSelected = R.view(timeSelectedLens);
 export const getSelectedTracks = R.view(selectedTracksIdsLens);
+export const getSelectedClips = R.view(selectedClipsIdsLens);
 
 const UI_INITIAL_STATE = {
   zoom: 1,
@@ -64,8 +66,8 @@ export const selectTimeReducer = createBasicReducer(
   UI_INITIAL_STATE,
 );
 
-/* UI_SELECT_TRACK */
-const UI_SELECT_TRACKS_KEY = 'UI_SELECT_TRACK';
+/* UI_SELECT_TRACKS */
+const UI_SELECT_TRACKS_KEY = 'UI_SELECT_TRACKS';
 export const selectTracksAction = payload => (dispatch, getState) => {
   const tracksIds = Array.isArray(payload) ? payload : [payload];
   const selectedTracks = getSelectedTracks(getState());
@@ -78,5 +80,22 @@ createBasicAction(UI_SELECT_TRACKS_KEY);
 export const selectTracksReducer = createBasicReducer(
   UI_SELECT_TRACKS_KEY,
   (state, action) => ({ ...state, selectedTracks: action.payload }),
+  UI_INITIAL_STATE,
+);
+
+/* UI_SELECT_CLIPS */
+const UI_SELECT_CLIPS_KEY = 'UI_SELECT_CLIPS';
+export const selectClipsAction = payload => (dispatch, getState) => {
+  const clipsIds = Array.isArray(payload) ? payload : [payload];
+  const selectedClips = getSelectedClips(getState());
+  if (shallowEqualArrays(selectedClips, clipsIds)) {
+    return;
+  }
+  dispatch({ type: UI_SELECT_CLIPS_KEY, payload: clipsIds });
+};
+createBasicAction(UI_SELECT_CLIPS_KEY);
+export const selectClipsReducer = createBasicReducer(
+  UI_SELECT_CLIPS_KEY,
+  (state, action) => ({ ...state, selectedClips: action.payload }),
   UI_INITIAL_STATE,
 );

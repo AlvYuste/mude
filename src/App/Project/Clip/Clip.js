@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Colors } from '@blueprintjs/core';
 import { getOffsetFromTime } from '../../../utils/time';
+import { Waveform } from './Waveform';
 
 const ClipWrapper = styled.div`
   left: ${({ offset }) => `${offset}px`};
@@ -16,28 +17,23 @@ const ClipWrapper = styled.div`
 `;
 
 export class Clip extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.wrapperRef = React.createRef();
-  }
-
   render() {
-    const { startAt, endAt, blob, buffer } = this.props;
+    const { startAt, endAt, buffer } = this.props;
     const duration = endAt - startAt;
     const offset = getOffsetFromTime(startAt);
     const width = getOffsetFromTime(duration);
-    console.log(blob);
-    console.log(buffer);
-    return <ClipWrapper offset={offset} width={width} ref={this.wrapperRef} />;
+    return (
+      <ClipWrapper offset={offset} width={width}>
+        ({(buffer.l || []).length},{(buffer.r || []).length})
+      </ClipWrapper>
+    );
   }
 }
 Clip.propTypes = {
   startAt: PropTypes.number.isRequired,
   endAt: PropTypes.number.isRequired,
   buffer: PropTypes.object,
-  blob: PropTypes.object,
 };
 Clip.defaultProps = {
   buffer: {},
-  blob: {},
 };

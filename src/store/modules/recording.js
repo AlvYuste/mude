@@ -11,7 +11,7 @@ import {
 import { selectTracksAction, getTimeSelected, selectTimeAction } from './ui';
 import { playAction } from './playing';
 import { addClipAction } from './track';
-import { updateClipAction } from './clip';
+import { updateClipAction, pushBufferClipAction } from './clip';
 
 export const RECORDING_KEY = 'RECORDING';
 export const recordingLens = R.lensPath([RECORDING_KEY, 'isRecording']);
@@ -42,6 +42,7 @@ export const recordAction = () => async (dispatch, getState) => {
   addTrackAction(transactionId)(dispatch, getState);
   selectTracksAction(transactionId)(dispatch, getState);
   addClipAction({ id: transactionId })(dispatch, getState);
+
   const { recorder, stream } = await getMicrophoneData({
     onData: buffer => {
       if (!getRecording(getState())) {
@@ -50,11 +51,17 @@ export const recordAction = () => async (dispatch, getState) => {
       updateClipAction({
         trackId: transactionId,
         id: transactionId,
+        endAt: startedAt + buffer.duration * 1000,
+      })(dispatch, getState);
+      pushBufferClipAction({
+        trackId: transactionId,
+        id: transactionId,
         buffer,
       })(dispatch, getState);
     },
     onFinish: async blob => {
       const endAt = startedAt + (await getBlobDuration(blob)) * 1000;
+
       updateClipAction({
         trackId: transactionId,
         id: transactionId,

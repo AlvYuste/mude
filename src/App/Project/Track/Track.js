@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Classes, Button } from '@blueprintjs/core';
+import { Classes, Button, Colors } from '@blueprintjs/core';
 import { SortableElement as withSortableElement } from 'react-sortable-hoc';
 
 import { Flex } from '../../../components/layout/Flex';
@@ -18,6 +18,7 @@ import { TrackInfo } from './TrackInfo';
 
 const deleteButtonClass = 'track-delete-button';
 const TrackWrapper = styled(Flex)`
+  background-color: ${Colors.DARK_GRAY1};
   position: relative;
   height: ${TRACK_HEIGHT};
   opacity: ${({ isMuted }) => (isMuted ? 0.5 : 1)};
@@ -32,9 +33,9 @@ const TrackWrapper = styled(Flex)`
   }
 `;
 const TrackDeleteButton = styled(Button)`
-  position: absolute;
-  left: 0;
-  top: 0;
+  position: sticky;
+  align-self: flex-start;
+  right: 0;
 `;
 const RawTrack = ({ track, isSelected, isMuted, actions, ui, ...rest }) => (
   <TrackWrapper
